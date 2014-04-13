@@ -74,11 +74,11 @@ Vifi.Platforms = {
 Vifi.Platform = function(name) {
     this.name = name;
     this.defaultPlatform = false;
-    this._mediaPlayer = "videotag";
+    this._mediaPlayer = "browser";
     this.start = $noop;
     this.exit = $noop;
     this._keys = {
-        KEY_RETURN: 36, //8
+        KEY_RETURN: 8,
         KEY_UP: 38,
         KEY_DOWN: 40,
         KEY_LEFT: 37,
@@ -90,6 +90,11 @@ Vifi.Platform = function(name) {
         KEY_BLUE: 68,
         KEY_BACK: 8,
         KEY_PLAY: 80,
+        KEY_FF: 190,
+        KEY_RW: 188,
+        KEY_PAUSE: 189,
+        KEY_STOP: 83,
+
     }
     this.resolution = {
         height: 720,

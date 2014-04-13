@@ -134,6 +134,10 @@ span.stars.r1 {
     background-repeat: repeat;
 }
 
+#searchbar {
+    border-bottom: 0.5em solid rgba(192, 192, 192, 0.25);
+}
+
  .domtabs {
     float: left;
     width: 100%;
@@ -156,7 +160,7 @@ span.stars.r1 {
 }
 
 .domtabs > .normal-item.tv-component-focused.tv-container-selected-child {
-    box-shadow: inset 0 -4px 0 #63D116;
+    box-shadow: 0 4px 0 #63D116;
 }
 
 .domtabs div a {
@@ -354,27 +358,27 @@ span.stars.r1 {
 #homePage:before {
     content: '';
     position: absolute;
-    left: 0.5em;
-    bottom: 0.5em;
+    left: 0.7em;
+    bottom: 0.7em;
     font-size: 9em;
     font-weight: 100;
     color: rgba(255, 255, 255, 0.18);
-    border-top: 0.35em solid transparent;
-    border-bottom: 0.35em solid transparent;
-    border-right: 0.65em solid rgba(255, 255, 255, 0.1);
+    border-top: 0.25em solid transparent;
+    border-bottom: 0.25em solid transparent;
+    border-right: 0.45em solid rgba(255, 255, 255, 0.1);
 }
 
 #homePage:after {
     content: '';
     position: absolute;
-    right: 0.5em;
-    bottom: 0.5em;
+    right: 0.7em;
+    bottom: 0.7em;
     font-size: 9em;
     font-weight: 100;
     color: rgba(255, 255, 255, 0.18);
-    border-top: 0.35em solid transparent;
-    border-bottom: 0.35em solid transparent;
-    border-left: 0.65em solid rgba(255, 255, 255, 0.1);
+    border-top: 0.25em solid transparent;
+    border-bottom: 0.25em solid transparent;
+    border-left: 0.45em solid rgba(255, 255, 255, 0.1);
 }
 
 #moviePage_background, #home-background {
@@ -809,7 +813,7 @@ span.stars.r1 {
  .default.row {
     float: left;
     width:100%;
-    background-image: url('img/background_dark_20.png');
+    background-image: url('img/background_dark_42.png');
     background-repeat: repeat;
     border-bottom: 1px solid #5F5F5F;
 }
@@ -825,9 +829,7 @@ span.stars.r1 {
 
 
 #browserPage .default.row {
-
-     min-height:365px;
-
+     min-height:50em;
 }
 #browserPage .movie-grid {
     overflow: hidden;
@@ -954,7 +956,7 @@ span.stars.r1 {
     position: absolute;
     background-image: url('img/background_dark_90.png');
     background-repeat: repeat;
-    z-index: 16;
+    z-index: 999;
     width: 100%;
     height: 100%;
 }
@@ -982,7 +984,7 @@ span.stars.r1 {
     font-weight: 100;
     text-shadow: 0 0 0.5em black;
     color: #63D116;
-    padding-left: 20%;
+    padding-left: 25%;
 }
 
 #activation-code {
@@ -1000,7 +1002,7 @@ span.stars.r1 {
     line-height: 0.7em;
     color: #5B853E;
     text-shadow: 0 0 0.5em black;
-    padding-left: 20%;
+    padding-left: 25%;
 }
 
 .activation-container .description {
@@ -1009,7 +1011,7 @@ span.stars.r1 {
     line-height: 1.7em;
     text-shadow: 0 0 0.3em black;
     color: #CECECE;
-    padding-left: 20%;
+    padding-left: 25%;
 }
 
 .activation-picture {
@@ -1017,12 +1019,12 @@ span.stars.r1 {
     width: 70%;
     background-image: url('img/activation-background.png');
     background-repeat: no-repeat;
-    margin-left: 20%;
+    margin-left: 25%;
 }
 
 .activation-container .buttonsrow {
     width: 50%;
-    margin-left: 20%;
+    margin-left: 25%;
 }
 
 .activation-container .buttonsrow .button {
@@ -1030,6 +1032,31 @@ span.stars.r1 {
     padding: 0.5em 2em;
 }
 
+
+#action-output {
+  color: black;
+  font-weight: bold;
+  margin: 10px auto;
+  padding: 20px;
+  text-align: center;
+  text-shadow: none;
+  width: 600px;
+  -webkit-border-radius: 5px;
+  position: fixed;
+  top: 10px;
+  z-index: 10000;
+  left: 10px;
+  font-size:15pt;
+
+}
+#action-output.animation {
+  -webkit-transition: all 2s ease;
+}
+
+#action-output.highlight {
+  background-color: #fff3c3;
+  color: black;
+}
 
 #jquery-msg-bg {
   -moz-opacity: 0.9;
@@ -1068,7 +1095,7 @@ span.stars.r1 {
   top:10em;
 }
 #loadingPage{
-z-index:15;
+z-index:50;
 background:rgba(0,0,0,0.3);
 position:absolute;
 width:100%;
@@ -1205,7 +1232,7 @@ text-shadow: #D1AED1 0 0 0;
 
 #moviePage.container.active > #moviePage-header {
     top: 1.5em;
-    border-bottom: 3em solid rgba(255, 255, 255, 0.1);
+    border-bottom: 3em solid rgba(255, 255, 255, 0.3);
     border-top: transparent;
     -webkit-animation-name: fadeInUp;
     -moz-animation-name: fadeInUp;
@@ -1215,7 +1242,7 @@ text-shadow: #D1AED1 0 0 0;
 
 #moviePage.container > #moviePage-header {
     top: 1.5em;
-    border-top: 3em solid rgba(255, 255, 255, 0.1);
+    border-top: 3em solid rgba(255, 255, 255, 0.3);
     border-bottom: transparent;
     -webkit-animation-name: fadeInDown;
     -moz-animation-name: fadeInDown;
@@ -1224,9 +1251,9 @@ text-shadow: #D1AED1 0 0 0;
 }
 
 #toolbar #user:after {
-    border-left: 2em solid transparent;
-    border-right: 2em solid transparent;
-    border-bottom: 3em solid rgba(255, 26, 246, 0.35);
+    border-left: 1.5em solid transparent;
+    border-right: 1.5em solid transparent;
+    border-bottom: 2em solid rgba(255, 26, 246, 0.4);
     border-top: transparent;
     position: absolute;
     right: -5em;

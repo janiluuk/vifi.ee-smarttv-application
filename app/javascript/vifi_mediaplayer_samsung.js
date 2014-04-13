@@ -369,15 +369,17 @@ Vifi.MediaPlayer = {
 _.extend(Vifi.MediaPlayer, Backbone.Events);
 _.extend(Vifi.MediaPlayer, Vifi.MediaPlayerCore);
 
+Vifi.MediaPlayer.bind("mediaplayer:timeupdate", function(time) {
+    $("#player-progress").css({
+        width: Math.floor(time / Vifi.MediaPlayer.duration() * 100) + "%"
+    })
+    var readableCurrent = Vifi.Engine.util.convertMstoHumanReadable(time);
+    var readableDuration = Vifi.Engine.util.convertMstoHumanReadable(Vifi.MediaPlayer.duration());
+    $("#player-current-time").text(readableCurrent.toString() + " / " + readableDuration.toString())
+});
 
 avplayObj.OnRenderError = 'Vifi.MediaPlayer.videoError';
 avplayObj.OnConnectionFailed = 'Vifi.MediaPlayer.videoError';
-avplayObj.OnSubtitle = function(event, param1, param2) {
-
-    $log(event);
-    $log(param1);
-
-}
 
 /*
 
@@ -442,12 +444,3 @@ var playCB = {
 };
 
 Vifi.Engine.addModule("MediaPlayer", Vifi.MediaPlayer);
-
-Vifi.MediaPlayer.bind("mediaplayer:timeupdate", function(time) {
-    $("#player-progress").css({
-        width: Math.floor(time / TVEngine.MediaPlayer.duration() * 100) + "%"
-    })
-    var readableCurrent = Vifi.Engine.util.convertMstoHumanReadable(time);
-    var readableDuration = Vifi.Engine.util.convertMstoHumanReadable(Vifi.MediaPlayer.duration());
-    $("#player-current-time").text(readableCurrent.toString() + " / " + readableDuration.toString())
-})

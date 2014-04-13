@@ -239,4 +239,4 @@ Vifi.MediaPlayer = {
 }
 _.extend(Vifi.MediaPlayer, Backbone.Events);
 _.extend(Vifi.MediaPlayer, Vifi.MediaPlayerCore);
-Vifi.addModule("MediaPlayer", Vifi.MediaPlayer);
+Vifi.Engine.addModule("MediaPlayer", Vifi.MediaPlayer);

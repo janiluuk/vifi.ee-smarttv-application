@@ -615,7 +615,7 @@ $(function() {
         Vifi.Platforms.init();
 
         var logger = Vifi.Utils.Logger;
-        var app = new AppView({
+        window.app = new AppView({
             el: $('#application'),
             collection: collection,
             featured: collection.featured(),
@@ -638,6 +638,7 @@ $(function() {
 
 
 
+        Vifi.Engine.start(Vifi.Settings);
 
 
         // make the app globally available.
@@ -660,15 +661,12 @@ $(function() {
     }
 
     $(window).load(function() {
-
-
         if (initial_search_json == "")  {
             $.getJSON("http://backend.vifi.ee/api/?api_key=12345&jsoncallback=?",
                 initApp, "jsonp");
-
-
-        } else
+        } else {
 
             initApp(initial_search_json);
+        }
     });
 });
