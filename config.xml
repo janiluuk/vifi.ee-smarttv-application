@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns="http://www.samsung.com/">  
+  <cpname itemtype="string"/>  
+  <cplogo itemtype="string"/>  
+  <cpauthjs itemtype="string"/>  
+  <ThumbIcon itemtype="string">icon/logo.png</ThumbIcon>  
+  <BigThumbIcon itemtype="string">icon/logo.png</BigThumbIcon>  
+  <ListIcon itemtype="string">icon/logo.png</ListIcon>  
+  <BigListIcon itemtype="string"/>  
+  <category itemtype="string"/>  
+  <autoUpdate itemtype="boolean">n</autoUpdate>  
+  <ver itemtype="string">0.850</ver>  
+  <mgrver itemtype="string"/>  
+  <audiomute>y</audiomute>
+  <fullwidget itemtype="boolean">y</fullwidget>  
+  <type>user</type>  
+  <srcctl itemtype="boolean">y</srcctl>  
+  <ticker itemtype="boolean">n</ticker>  
+  <childlock itemtype="boolean">n</childlock>  
+  <dcont itemtype="boolean">y</dcont>  
+  <widgetname itemtype="string">VifiTV</widgetname>
+  <description itemtype="string"/>  
+  <width itemtype="string">1280</width>  
+  <height itemtype="string">720</height>  
+  <author itemtype="group"> 
+    <name itemtype="string">Vifi TV</name>  
+    <email itemtype="string">info@vifi.ee</email>  
+    <link itemtype="string"/>  
+    <organization itemtype="string"/> 
+  </author> 
+</widget>

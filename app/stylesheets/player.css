@@ -1,0 +1,215 @@
+.tv-container-start-scroll,
+.tv-container-middle-scroll {
+  position: relative;
+}
+
+.tv-container-mock-scroll {
+  position: absolute;
+  visibility: hidden;
+}
+
+
+/* root element should be positioned relatively so that
+    child elements can be positioned absolutely */
+#playerPage.container {
+    width:100%;
+    height:100%;
+    position: relative;
+  
+}
+
+#player-options {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    z-index:16;
+    background-image: url('img/background_dark_70.png');
+    background-repeat: repeat;
+}
+
+#player-options-selection .tv-component.nav-item {
+    width: 25%;
+}
+
+#player-options-selection .tv-component-focused.tv-container-selected-child {
+    box-shadow: inset 0 -4px 0 #63D116;
+}
+
+#player-options-selection .tv-component.nav-item a {
+    font-size: 5em;
+    font-weight: 100;
+    text-transform: none;
+    line-height: 1.5em;
+}
+
+.secondary_domtabs#player-options-bar {
+    width: 100%;
+    float: left;
+    margin: 0;
+    padding: 0;
+    background-image: url('img/background_dark_42.png');
+    background-repeat: repeat;
+    min-height: 10em;
+}
+
+.secondary_domtabs#player-options-bar .player-controls h2 {
+    display: none;
+}
+
+#player-options-bar.secondary_domtabs .selection {
+    width:100%;
+    min-height: 8em;
+    margin: 1em 0;
+    padding: 0;
+}
+
+#player-options-bar.secondary_domtabs .selection .nav-item.tv-component {
+    font-size: 2.5em;
+}
+
+#player {
+    width:100%;
+    height:100%;
+} 
+
+#playerPage .controls {
+ 
+    height:40px;
+    z-index: 16;
+    /* black background with a gradient */
+    width:90%;
+    margin: 1em 5%;
+}
+
+/* mute / unmute buttons */
+.controls .mute, .controls .unmute {
+    position:absolute;
+    right: 0;
+    width:40px;
+    height:40px;
+    text-align:center;
+    padding:0;
+    cursor:pointer;
+    text-indent:-9999em;
+    background:url(img/player.png) no-repeat 5px -323px;
+    border: 1px solid white;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+    box-shadow: 0 0 10px transparent;
+    transition: all 0.2s;
+}
+
+#playerPage .controls .play:hover, .controls .pause:hover, #playerPage .controls .tv-component-focused a,#playerPage .controls .tv-component-focused a.mute,  .controls .mute:hover, .controls .unmute:hover,.controls .tv-component-focused .unmute {
+background-color: #63D116;
+border-color: #63D116;
+color: black;
+box-shadow: 0 0 2px rgb(11, 75, 11), 0 0 5px rgb(117, 211, 16), 0 0 10px rgb(109, 255, 63), 0 0 15px rgb(161, 255, 124);
+}
+/* play/pause button */
+#playerPage .controls .play, .controls .pause {
+    position:absolute;
+    width: 40px;
+    height: 40px;
+    display:block;
+    text-indent:-9999em;
+    background:url(img/player.png) no-repeat 8px -61px;
+    cursor:pointer;
+    border: 1px solid white;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+    box-shadow: 0 0 10px transparent;
+    transition: all 0.2s;
+}
+
+#playerPage .controls .tv-component-focused .play {
+    background-position:10px -105px;
+}
+.controls .play:hover {
+    background-position:10px -105px;
+}
+
+/* pause state */
+.controls .pause {
+    background-position:8px -148px;
+}
+
+.controls .tv-component-focused .pause {
+    background-position:8px -192px;
+}
+.controls .pause:hover {
+    background-position:8px -192px;
+}
+
+/* the timeline (or "scrubber")  */
+.controls .track {
+    left:75px;
+    position:absolute;
+    cursor:pointer;
+    width:285px;
+    border-left:1px solid #999;<
+    height:40px;
+}
+
+/* the draggable playhead */
+.controls .playhead {
+    position: absolute;
+    cursor: pointer;
+    background-color: #14FF00;
+    box-shadow: 0 0 2px rgb(8, 10, 8), 0 0 5px rgb(173, 255, 173), 0 0 20px rgb(0, 255, 41);
+    opacity: 0.7;
+    filter: alpha(opacity=30);
+    width: 5px;
+    height: 33px;
+    top:5px;
+    border-right: 1px solid #0A5007;
+}
+
+/* buffer- and progress bars. upon runtime the width of these elements grows */
+.controls .progress, .controls .buffer {
+    position:absolute;
+    background-color:#47FF00;
+    filter: alpha(opacity=10);
+    opacity:0.1;
+    width:0px;
+    height:20px;
+    top:10px;
+}
+
+.controls .buffer {
+    background-color:#fff;
+    opacity:0.1;
+    filter: alpha(opacity=10);
+}
+
+/* time display */
+.controls .time {
+    position:absolute;
+    width:250px;
+    left:360px;
+    padding:12px 0;
+    text-align:center;
+    border-width:0 1px;
+    font-size:3em;
+    line-height: 0.6em;
+    font-weight: 100;
+    color:#fff;
+}
+
+/* total duration in time display */
+.controls .time strong {
+    font-weight:normal;
+    color:#666;
+}
+
+.controls .mute:hover, .tv-component-focused .mute {
+    background-position:5px -367px;
+}
+
+/* unmute state */
+.controls .unmute {
+    background-position:5px -235px;
+}
+
+.controls .unmute:hove, .tv-component-focused .unmute {
+    background-position:5px -279px;
+}
