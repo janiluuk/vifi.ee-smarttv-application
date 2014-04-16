@@ -361,8 +361,8 @@
         <script type="text/html" id="mustacheRawFilmTemplate">
                 {{# film }}
                 <a onclick="javascript: return false;" data-id="{{ film.id}}" href="{{ film.seo_friendly_url }}">
-                    <div class="thumbWrap">
-                            <div class="thumb lazy" data-original="{{ poster_url }}" /></div>
+                    <div class="thumbWrap"> 
+                            <div class="thumb loading lazy" data-original="{{ poster_url }}" /></div>
                     </div>
                     <figcaption>
                         <div class="details">
@@ -459,6 +459,22 @@
 
 <script type="text/html" id="playerTemplate">
     
+                <div id="player-info">
+                    <div id="player-info-title">{{ title }}</div>
+                    
+                    <div id="player-info-additional">
+                        <span>{{ year }}</span> - <span>{{ genre }}</span>
+                    </div>
+
+                    <div id="player-info-timer">
+                        <p class="player-info-timer-heading">Movie ends at:</p>
+                        <p class="player-info-timer-time">{{ endingtime }}</p>
+                    </div>
+
+                </div>
+
+
+
                 <div id="player">
                 </div>
                 
