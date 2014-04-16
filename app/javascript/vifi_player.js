@@ -7,6 +7,8 @@ Vifi.Player.FilmContent = Backbone.Model.extend({
         'id': '',
         'title': '',
         'year': '',
+        'director': '',
+        'genre': '',
         'running_time': '',
         'videos': [{
                 'mp4': '',
@@ -20,9 +22,9 @@ Vifi.Player.FilmContent = Backbone.Model.extend({
             'poster': ''
         },
         'subtitles': [{
-            'filename': '',
-            'code': '',
-            'language': ''
+            'filename': '/cloud_atlas_ee.srt',
+            'code': 'ee',
+            'language': 'Estonian'
         }]
     },
 
@@ -31,6 +33,7 @@ Vifi.Player.FilmContent = Backbone.Model.extend({
         this.on("change:params", this.updateParams, this);
         this.on("change:id", this.refresh, this);
         this.on("change:videos", this.loadFilm, this);
+
         if (options && undefined != options.params) {
 
             this.setParams(options.params);
@@ -43,7 +46,8 @@ Vifi.Player.FilmContent = Backbone.Model.extend({
     },
 
     loadFilm: function() {
-        Vifi.Event.trigger("player:content:ready", this);
+        if (!this.session)
+            app.player.trigger("player:ready", app.player.content);
     },
     setParams: function(params) {
 
@@ -69,6 +73,8 @@ Vifi.Player.FilmContent = Backbone.Model.extend({
         this.fetch();
     }
 });
+
+
 Vifi.Player.Player = Backbone.Model.extend({
     movie: false,
     session: false,
@@ -82,38 +88,171 @@ Vifi.Player.Player = Backbone.Model.extend({
 
 
     initialize: function(options) {
-
+        this.unbind('all');
         if (options && undefined != options.session) {
             this.setSession(options.session);
         }
         if (options && undefined != options.content) {
             this.content = options.content;
         }
+        $log("Player initializing...");
 
-        Vifi.Event.on("player:content:ready", this.verify, this);
-        Vifi.Event.on("player:play", this.initPlayer, this);
+        this.on('all', function(event) {
+            $log(event);
+        });
+
+        this.on('player:init', this.onPlayerStart, this);
+        this.on('player:load', this.onLoadFilm, this);
+        this.on('player:ready', this.onPlayerReady, this);
+        this.on("player:play", this.initPlayer, this);
+
     },
 
-    loadFilm: function(id) {
 
-        if (this.verifySession() == true) {
-            this.movie = app.collection.get(id);
-            this.getContentFiles();
-            return true;
+    onPlayerStart: function(event) {
+        $(".container:visible:not(#playerPage)").find(".tv-component").each(function() {
+            $(this).removeClass("tv-component").addClass("tv-component-disabled").addClass("tv-component-hidden");
+        });
+
+        Vifi.Event.trigger("page:change", "player", this.onPlayerPageEnter);
+        Vifi.Event.trigger("page:focus");
+        this.set("ready", false);
+        this.trigger("player:ready");
+
+
+    },
+
+    onPlayerReady: function(event) {
+
+
+        app.playerPage = new Vifi.Player.PlayerView({
+            model: this,
+            content: app.player.content
+        });
+
+
+        if (Vifi.Engine.getPlatform().name == "Samsung") {
+            Vifi.MediaPlayer.init();
+            Vifi.MediaPlayer.setContent(app.player.content);
+        } else {
+            this.url = app.player.content.get("videos")[0].mp4;
+            this.trigger("player:play");
         }
+
+
+        Vifi.KeyHandler.unbind("keyhandler:onReturn");
+        Vifi.KeyHandler.bind("keyhandler:onReturn", this.onPlayerExit, this);
+        app.playerPage.showNavigation();
+    },
+
+
+    onPlayerExit: function(event) {
+
+        Vifi.Event.trigger("mediaplayer:stop", this);
+
+        var lastActivePageId = "home";
+
+        if (Vifi.PageManager.lastActivePage) {
+            lastActivePageId = $(Vifi.PageManager.lastActivePage).attr("id");
+        }
+
+        Vifi.Event.trigger("page:change", lastActivePageId.replace("Page", ""), this.onPlayerPageExit);
+        Vifi.Event.trigger("page:focus");
+
+    },
+
+    onPlayerPageEnter: function() {
+
+        $(".container:not(.container-hidden):visible").addClass("container-hidden").fadeOut(
+            function() {
+                tv.ui.decorate(document.body);
+                tv.ui.getComponentByElement(goog.dom.getElement("application")).removeChildren();
+                tv.ui.decorateChildren(goog.dom.getElement("application"));
+                $.scrollTo("#playerPage");
+                $("#playerPage").fadeIn();
+
+
+
+            }
+        );
+        setTimeout(function() {
+            Vifi.PageManager.decorateHandler.addClassHandler('action-button', function(component) {
+                component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, app.page.onActionEvent, false, app.page)
+            });
+            tv.ui.decorate(document.body, app.page.pageManager.decorateHandler.getHandler(), app.page.pageManager.appComponent);
+            var jee = tv.ui.getComponentByElement(goog.dom.getElement("player-controls")).tryFocus()
+        }, 2000);
+
+    },
+    onPlayerPageExit: function() {
+
+        $(".container-hidden").css("opacity", 0);
+
+        $(".container:not(#playerPage)").find(".tv-component-hidden").each(function() {
+            $(this).removeClass("tv-component-disabled").removeClass("tv-component-hidden").addClass("tv-component");
+
+        });
+        $(".container#playerPage").find(".tv-component").each(function() {
+            $(this).removeClass("tv-component").addClass("tv-component-disabled");
+
+        });
+
+        $(".container-hidden").fadeIn(
+            function() {
+
+                $.scrollTo("#moviePage");
+                $("#playerPage").fadeOut("slow");
+
+                $(".container").css("opacity", 1);
+                $(".container-hidden").removeClass("container-hidden");
+                tv.ui.decorate(document.body);
+                tv.ui.getComponentByElement(goog.dom.getElement("application")).removeChildren();
+                tv.ui.decorateChildren(goog.dom.getElement("application"));
+            }
+
+        );
+
+
+    },
+    /*
+     * Load defined film content to the player
+     */
+
+    onLoadFilm: function(id) {
+        var content = false;
+        if (this.verifySession() == true) {
+
+            this.movie = app.collection.get(id);
+
+            if (this.getContentFiles()) {
+                this.getVideo();
+
+                this.trigger("player:init", this.content, this);
+
+
+                return true;
+            }
+        }
+        $log("!! Error loading movie content for id " + id);
         return false;
 
     },
 
     getVideo: function(profile_name) {
+        var url = false;
+
         if (this.content) {
-            var videos = this.content.get("videos");
+
+            var videos = this.content.get("videos")[0];
             if (!profile_name) {
-                var url = videos[0].mp4;
+
+                url = videos.mp4;
+
 
                 this.url = url;
             }
         }
+
         return url;
     },
     getContentFiles: function() {
@@ -121,13 +260,27 @@ Vifi.Player.Player = Backbone.Model.extend({
 
         if (this.movie && this.movie.get("id")) {
             var params = this.session.getParams();
+            var time = new Date();
+            var details = this.movie.get("film");
+            var duration = details.running_time;
+
+
+            var endingtime = new Date(time.getTime() + duration * 60000);
+            var endingtimestring = endingtime.getHours() + ":" + endingtime.getMinutes();
 
             this.content = new Vifi.Player.FilmContent({
+
                 movie: this.movie.get("id"),
-                params: this.session.getParams()
+                params: this.session.getParams(),
+                title: details.title,
+                year: details.year,
+                director: details.director,
+                endingtime: endingtimestring,
+                genre: details.genres[0].name
             });
 
             this.set("content", this.content);
+
             return this.content;
 
         }
@@ -145,33 +298,19 @@ Vifi.Player.Player = Backbone.Model.extend({
     },
     verifySession: function() {
 
-
-        return true;
+        if (this.session && this.session.isLoggedIn())
+            return true;
+        else
+            alert("You need to be logged in to watch content");
 
     },
     setSession: function(session) {
 
-        if (this.verifySession(session)) {
-            this.session = session;
-
-            return true;
-        }
-
-        return false;
+        this.session = session;
+        return true;
     },
 
-    verify: function() {
 
-
-        if (this.verifySession() == true && this.verifyContent() == true) {
-            this.set("ready", true);
-            Vifi.Event.trigger("player:ready", this);
-
-            var url = this.getVideo();
-            return true;
-        }
-
-    },
 
     initPlayer: function() {
 
@@ -260,10 +399,17 @@ Vifi.Player.Player = Backbone.Model.extend({
     }
 });
 
+
+_.extend(Vifi.Player.Player, Backbone.Events);
+
+
 Vifi.Player.PlayerView = Backbone.View.extend({
     tagName: 'div',
     el: $("#" + Vifi.Settings.playerPageId),
-    model: new Vifi.Player.Player(),
+    hideVideoNavigationTimeout: false,
+    optionsEl: '#player-options',
+    infoEl: '#player-info',
+    model: false,
     content: false,
     initialize: function(options) {
 
@@ -277,60 +423,62 @@ Vifi.Player.PlayerView = Backbone.View.extend({
             this.model = options.model;
 
         }
+
+        _.bindAll(this, 'closeDetails', 'showDetails', 'showNavigation', 'hideNavigation', "clearAllTimeouts", "touchVideoNavigationTimeout");
+
         this.render();
     },
     render: function() {
         this.$el.html(ich.playerTemplate(this.content.toJSON()));
         return this;
+    },
+
+    closeDetails: function() {
+        $(this.infoEl).hide();
+        this.clearAllTimeouts();
+        this.hideMenuTimeout = setTimeout(hideNavigation, 7000);
+    },
+
+    showDetails: function() {
+        this.clearAllTimeouts();
+        $(this.infoEl).show();
+    },
+
+    showNavigation: function() {
+        Vifi.KeyHandler.unbind("all", this.touchVideoNavigationTimeout);
+        this.clearAllTimeouts();
+        this.showDetails();
+        $(this.optionsEl).fadeIn();
+        this.touchVideoNavigationTimeout();
+        Vifi.KeyHandler.bind("all", this.touchVideoNavigationTimeout, this);
+    },
+    hideNavigation: function() {
+        if (Vifi.MediaPlayer.playing()) {
+            this.clearAllTimeouts();
+            $(this.optionsEl).fadeOut();
+            Vifi.KeyHandler.bind("all", this.touchVideoNavigationTimeout, this);
+        }
+    },
+
+    returnToMenu: function() {
+        Vifi.Engine.exit(false);
+    },
+    clearAllTimeouts: function() {
+        clearTimeout(this.hideVideoNavigationTimeout);
+    },
+
+    touchVideoNavigationTimeout: function() {
+        if (!$(this.optionsEl).is(":visible")) {
+            $(this.optionsEl).fadeIn();
+        }
+        if (!$(this.infoEl).is(":visible")) {
+            $(this.infoEl).fadeIn();
+        }
+
+        clearTimeout(this.hideVideoNavigationTimeout);
+        this.hideVideoNavigationTimeout = setTimeout(function() {
+            $(this.optionsEl).fadeOut();
+            $(this.infoEl).fadeOut();
+        }.bind(this), 7000);
     }
 });
-
-var closeDetails = function() {
-    $("#player-info").hide();
-    clearAllTimeouts();
-    Vifi.Navigation.setFocus("brightcove:mainmenu");
-    hideMenuTimeout = setTimeout(hideNavigation, 7000);
-}
-
-var showDetails = function() {
-    clearAllTimeouts()
-    $("#player-info").show();
-}
-
-var showNavigation = function() {
-    Vifi.KeyHandler.unbind("all", touchVideoNavigationTimeout);
-    clearAllTimeouts();
-
-    $("#player-controls").fadeIn();
-
-    Vifi.Navigation.enable();
-    touchVideoNavTimeout();
-    Vifi.KeyHandler.bind("all", touchVideoNavigationTimeout);
-}
-
-var returnToMenu = function() {
-    Vifi.Engine.exit(false);
-}
-var hideNavigation = function() {
-    if (Vifi.MediaPlayer.playing() && $("#player-info").is(":hidden")) {
-        clearAllTimeouts();
-        $("#player-controls").fadeOut();
-        Vifi.KeyHandler.bind("all", touchVideoNavigationTimeout);
-    }
-}
-
-
-var hideVideoNavigationTimeout;
-var clearAllTimeouts = function() {
-    clearTimeout(hideVideoNavigationTimeout);
-}
-
-var touchVideoNavigationTimeout = function() {
-    if (!$("#player-controls").is(":visible")) {
-        $("#player-controls:hidden").fadeIn();
-    }
-    clearTimeout(hideVideoNavigationTimeout);
-    hideVideoNavigationTimeout = setTimeout(function() {
-        $("#player-controls").fadeOut();
-    }, 7000);
-}

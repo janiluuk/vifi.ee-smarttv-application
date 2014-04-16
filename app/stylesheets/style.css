@@ -42,7 +42,7 @@ body {
     opacity:0;
     -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
     filter: alpha(opacity=0);
-    -webkit-transition: opacity 0.7s ease-in-out;
+    -webkit-transition: opacity 1s ease-in-out;
 
 }
 
@@ -410,10 +410,7 @@ span.stars.r1 {
 .active #home-background > .featured_film_background { 
   -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
   filter: alpha(opacity=0);
-    -webkit-transition: opacity 0.4s ease-in-out;
-  -moz-transition: opacity 0.4s ease-in-out;
-  -o-transition: opacity 0.4s ease-in-out;
-  transition: opacity 0.4s ease-in-out;
+
 }
 .active #home-background > .featured_film_background.visible {
   opacity:1;
@@ -527,9 +524,10 @@ span.stars.r1 {
     height: 100%;
     position: absolute;
     top: 0;
-    background-color:black;
+    background-image:url('img/background-80-fade-bottom-to-top.png');
+    background-size:contain;
+    background-repeat: repeat-x;
     z-index: -1;
-    opacity: 0.8;
 }
 .movie_description p {
     padding-left: 10%;
@@ -862,7 +860,29 @@ span.stars.r1 {
     height: 25em;
     background-size: cover;
     box-shadow: 0 0 5em black;
+
 }
+
+.loading {
+    background:rgba(0,0,0,0.4);
+    background-image: url('img/loading-mini-icon.GIF');
+    opacity:0.5;
+   -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+  filter: alpha(opacity=0.5);
+    -webkit-transition: opacity 0.6s ease-in-out;
+  -moz-transition: opacity 0.6s ease-in-out;
+  -o-transition: opacity 0.6s ease-in-out;
+  transition: opacity 0.6s ease-in-out;
+ 
+}
+
+#browserPage .thumb.loading {
+    background-size: 7em;
+    background-repeat: no-repeat;
+    background-position: 50%;
+
+}
+
 #browserPage .thumb img {
     height: 25em;
     width: 15em;
@@ -1213,6 +1233,9 @@ text-shadow: #D1AED1 0 0 0;
 
 /*USER GUIDE*/
 
+.lazy {
+
+}
 #moviePage-header {
     position: absolute;
     width: 0;

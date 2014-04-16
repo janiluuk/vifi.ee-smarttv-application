@@ -17,8 +17,8 @@ Vifi = {
     Event: {},
     Settings: {
         // properties   
-        version: "0.95",
-        debug: true,
+        version: "0.97.1604",
+        debug: false,
         api_url: 'http://backend.vifi.ee/api/',
         api_key: '12345',
         browserpageId: 'browserPage',
@@ -60,7 +60,7 @@ Vifi.Engine = {
         this._modulesToLoad = _.without(this._modulesToLoad, callback);
         if (this._modulesToLoad.length == 0) {
             $log(" NOT WAITING FOR MORE MODULES, TRIGGERING READY ")
-            this.trigger("app:appready");
+            this.trigger("app:ready");
         }
     },
 
@@ -70,6 +70,7 @@ Vifi.Engine = {
         this.getPlatform().start();
         this.trigger("app:starting");
         Vifi.KeyHandler.init();
+
         this._modulesToLoad = this._doneEvents;
         _.each(this.modules, function(m) {
             $log(" <<< INIT MODULE " + m.name + ">>> ");

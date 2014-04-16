@@ -123,18 +123,18 @@ Vifi.PageManager = {
         Vifi.Event.trigger("page:afterpagechange", page);
     },
 
-  
+
 
     onAfterPageChange: function(page) {
 
-    
+
         Vifi.Event.trigger("page:ready", page);
 
-           
+
         $("body").scrollTo(page, 230, {
             onAfter: function() {
 
-                
+
 
             }
         });
@@ -215,7 +215,8 @@ Vifi.Browser.Page = Backbone.View.extend({
     loadBrowserImages: function() {
         $("#browserPage div.lazy").lazyload({
             threshold: 12000,
-            effect: 'fadeIn'
+            effect: 'fadeIn',
+            effectspeed: 1200
         });
     },
     // Handle preloading imags on browser
@@ -229,10 +230,7 @@ Vifi.Browser.Page = Backbone.View.extend({
 
         if (app.collection.pagination.current_page < 1 || idx > threshold) {
             app.collection.pagination.current_page++;
-            $("#browserPage div.lazy").lazyload({
-                threshold: 12000,
-                effect: 'fadeIn'
-            });
+            this.loadBrowserImages();
 
 
         } else if (idx < (threshold - app.collection.pagination.num_pages)) {

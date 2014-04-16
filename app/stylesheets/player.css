@@ -8,6 +8,66 @@
   visibility: hidden;
 }
 
+/* Player info banner */
+
+#player-info {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    background-repeat: repeat-x;
+    background-image:url('img/background-80-fade-top-to-bottom.png');
+    background-size:contain;
+    height:14em;
+    opacity: 0.7;
+}
+
+#player-info-title {
+    font-weight: 100;
+    font-size: 5em;
+    width: 75%;
+    margin: 0.5em 0 0 2%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1em;
+}
+
+#player-info-additional {
+    font-weight: 500;
+    font-size: 3em;
+    width: 75%;
+    margin: 0 0 0 2%;
+    color: #aaa;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#player-info-timer {
+    position: absolute;
+    top: 3em;
+    right: 2%;
+    width: 20%;
+    height: 8em;
+    background-image: url('img/timer.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+#player-info-timer > p.player-info-timer-heading {
+    margin-left: 5em;
+    font-size: 2em;
+    line-height: 0em;
+    font-weight: 500;
+}
+
+#player-info-timer > p.player-info-timer-time {
+    margin-left: 3.3em;
+    font-size: 3em;
+    line-height: 0;
+    font-weight: 900;
+    color: #bea1c0;
+}
 
 /* root element should be positioned relatively so that
     child elements can be positioned absolutely */
@@ -73,7 +133,7 @@
 #playerPage .controls {
  
     height:40px;
-    z-index: 999;
+    z-index: 16;
     /* black background with a gradient */
     width:90%;
     margin: 1em 5%;

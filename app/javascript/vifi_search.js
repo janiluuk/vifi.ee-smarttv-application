@@ -9,7 +9,6 @@ $(function() {
             this.genres = this.options.genres;
             this.queue = this.options.queue;
             this.api = this.options.api;
-            this.player = this.options.player;
             this.account = this.options.account;
             this.session = this.options.session;
             this.logger = this.options.logger;
@@ -18,7 +17,7 @@ $(function() {
             });
             this.options.subgenres.bind('all', this.setSubGenreDropDown, this);
             this.options.genres.bind('all', this.setGenreDropDown, this);
-            this.collection.bind('request sync', this.renderResults, this);
+            this.collection.bind('sync', this.renderResults, this);
             this.collection.state.bind('change', this.onChangeCollectionState, this);
             this.collection.state.bind('change:genre', this.onChangeGenre, this);
             this.collection.state.bind('change:duration', this.onChangeDuration, this);
@@ -66,12 +65,11 @@ $(function() {
 
             $("#application").waitForImages(function() {
 
-                Vifi.Event.trigger("app:ready");
-                $(this).css("opacity", 1).fadeIn();
-                $("#loadingPage").hide();
-
+             
+                $("#loadingPage").fadeOut();
+             $(this).css("opacity", 1).fadeIn("slow");
             });
-
+                 Vifi.Event.trigger("app:ready");
 
         },
         events: {
@@ -289,9 +287,10 @@ $(function() {
         },
 
         renderResults: function(e) {
-
+            if (this.rendering) return false;
+            this.rendering = true;
             this.$('#loading').show();
-            $("#search-results > div.movie").fadeOut("fast");
+            $("#search-results > div.movie").addClass("loading");
 
             var appView = this;
 
@@ -341,17 +340,15 @@ $(function() {
                 }
             }
             $("#search-results div.lazy").lazyload({
-                threshold: 12000
-
+                threshold: 12000,
+                effect: 'fadeIn'
             });
-            setTimeout(function() {
-
-                $("#search-results > div.movie").fadeIn();
-            }, 1000);
+       
 
 
             this.updateUIToState();
             this.$('#loading').hide();
+            this.rendering = false;
         },
         updateUIToState: function() {
             var state = this.collection.state;
