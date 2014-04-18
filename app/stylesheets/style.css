@@ -317,7 +317,7 @@ span.stars.r1 {
     background-color: transparent;
     padding: 0.1em 1em;
     cursor: pointer;
-    border-radius: 7pt;
+    border-radius: 0.4em;
     display: inline-block;
 }
 
@@ -333,10 +333,11 @@ span.stars.r1 {
 .secondary_domtabs .selection .nav-item.tv-component.tv-toggle-button-on {
     background-color: #63D116;
     background-image: url('img/checkmark-20.png');
-    padding-left: 20pt;
+    text-indent: 0.7em;
     color: black;
     background-repeat: no-repeat;
-    background-position: 2pt;
+    background-position: 0.5em;
+    line-height: 1.7em;
 }
 
 /*HOME PAGE*/
@@ -437,7 +438,7 @@ span.stars.r1 {
     top: 0;
 }
 #toolbar #company {
-    margin: 2em 0 0 7em;
+    margin: 4em 0 0 7em;
     float:left;
 }
 .logo {
@@ -476,7 +477,7 @@ span.stars.r1 {
 #toolbar #user {
     margin: 2em 5% 0 0;
     float:right;
-    width: 55%;
+    width: 75%;
     position: relative;
 }
 #user .avatar {
@@ -485,6 +486,7 @@ span.stars.r1 {
     height: 8em;
     width: 8em;
     float:right;
+    margin-top:2em;
     /*border: 3pt solid transparent;
     transition: border-color 0.2s;*/
 }
@@ -493,19 +495,26 @@ span.stars.r1 {
     box-shadow: 0 0 2px rgb(11, 75, 11), 0 0 5px rgb(117, 211, 16), 0 0 10px rgb(109, 255, 63), 0 0 15px rgb(161, 255, 124);
 }*/
 .usercontrol {
-    margin-top: 2.5em;
-}
-.usercontrol li {
+    margin-top: 1.2em;
     float: right;
-    margin-right: 2em;
+}
+
+.usercontrol a {
+    text-decoration: none;
+}
+
+.usercontrol li {
+    text-align: right;
+    margin-right: 1.5em;
     color: #E0E0E0;
     font-weight: 900;
     text-transform: uppercase;
+    text-decoration: none;
     letter-spacing: 1pt;
     transition: color 0.2s;
     font-size:2.1em;
     transition:text-shadow 0.2s, color 0.2s;
-    text-shadow: 0 0 0.5em black, 0 0 1em black;
+    text-shadow: 0 0 0.2em black, 0 0 0.5em black;
 }
 .usercontrol li:hover, #user.tv-component-focused .usercontrol li {
     color: #63D116;
@@ -1280,7 +1289,7 @@ text-shadow: #D1AED1 0 0 0;
     border-top: transparent;
     position: absolute;
     right: -5em;
-    top: 3em;
+    top: 6em;
     content: ' ';
     -webkit-animation-name: fadeInUpx;
     -moz-animation-name: fadeInUpx;
@@ -1474,4 +1483,50 @@ text-shadow: #D1AED1 0 0 0;
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/*NOTIFICATION*/
+
+#account-notification {
+    margin-top: 0.5em;
+}
+
+#account-notification #notification-table {
+    border-spacing: 0;
+}
+
+#account-notification #notification-table tr {
+    background-color: rgba(255,255,255,0.7);
+}
+
+#account-notification #notification-table td.notification-icon {
+    text-align: center;
+    width: 1.7em;
+    background: #BC55CF;
+    font-weight: 900;
+    font-size: 1.5em;
+    position: relative;
+    text-shadow: none;
+    line-height: 1.5em;
+}
+
+#account-notification #notification-table td.notification-icon:after {
+    content: ' ';
+    width: 0;
+    height: 0;
+    position: absolute;
+    border-width: 0.4em;
+    border-color: transparent transparent transparent #BC55CF;
+    border-style: solid;
+    right: -0.7em;
+    top: 0.4em;
+}
+
+#account-notification #notification-table td.notification-message {
+    font-size: 1em;
+    font-weight: 700;
+    color: #673369;
+    text-shadow: none;
+    padding: 0 0.7em;
+    text-transform: none;
 }
