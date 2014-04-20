@@ -619,12 +619,14 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
     },
     playTrailer: function(event) {
         event.preventDefault();
+     
+
         var trailerView = new Vifi.Films.TrailerView({
             model: this.model
         });
-        trailerView.play();
-        trailerView.$el.appendTo("#moviePage");
 
+        trailerView.play();
+        this.$("#trailer").html(trailerView.el);
         event.stopPropagation();
     },
     showFilm: function(id) {
@@ -860,14 +862,15 @@ Vifi.Films.FeaturedFilmCollectionView = Backbone.View.extend({
         return filmView.el;
     }
 });
+
+
 Vifi.Films.TrailerView = Backbone.View.extend({
     tagName: 'div',
-    el: $("#trailer"),
-    model: Vifi.Films.FilmModel,
     events: {},
     initialize: function() {
         Vifi.Event.on("trailer:init", this.play, this);
         this.template = _.template($("#trailerTemplate").html());
+        _.bindAll(this, "render");
     },
     fadeOut: function() {
         this.$el.fadeOut();
@@ -877,8 +880,8 @@ Vifi.Films.TrailerView = Backbone.View.extend({
     },
     play: function() {
         var film = this.model.get("film");
+
         if (film.youtube_id) {
-            this.$el.show();
             this.render();
         }
     },
