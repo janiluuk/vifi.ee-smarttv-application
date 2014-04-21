@@ -222,7 +222,7 @@ span.stars.r1 {
     font-family:'Open Sans';
     font-size: 1em;
     letter-spacing: 1pt;
-    border: 3pt solid transparent;
+    border: 3pt solid gray;
     border-radius: 7px;
     background: rgb(25, 25, 25);
     color: white;
@@ -235,9 +235,6 @@ span.stars.r1 {
 }
 #q:focus, .search-item.tv-component-focused.tv-container-selected-child #q {
     box-shadow: 0 0 2px rgb(11, 75, 11), 0 0 5px rgb(117, 211, 16), 0 0 10px rgb(109, 255, 63), 0 0 15px rgb(161, 255, 124);
-}
-
-#q:focus, .search-item.tv-container-selected-child #q {
     border-color: #63D116;
 }
 
@@ -587,7 +584,7 @@ span.stars.r1 {
     font-size: 2em;
     line-height: 1.7em;
     padding: 12pt 2% 12pt 0;
-    max-height: 19em;
+    max-height: 22em;
     overflow:hidden;
 }
 .movie_description label, .movie_info label {
@@ -684,6 +681,12 @@ span.stars.r1 {
     float:left;
     position: relative;
 }
+
+ #moviePage.container {
+    height: calc(100% - 10em);
+    height: -moz-calc(100% - 10em);
+    height: -webkit-calc(100% - 10em);
+ }
 #moviePage .background_img, #accountPage .background_img {
     filter:blur(2pt);
     -moz-filter:blur(2pt);
