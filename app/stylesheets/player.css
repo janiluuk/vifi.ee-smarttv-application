@@ -278,3 +278,19 @@ box-shadow: 0 0 2px rgb(11, 75, 11), 0 0 5px rgb(117, 211, 16), 0 0 10px rgb(109
 .controls .unmute:hove, .tv-component-focused .unmute {
     background-position:5px -279px;
 }
+
+/* LOADING ICON */
+
+div#playerPage div#player-loading {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    width: 10em;
+    height: 10em;
+    background-image: url('img/loading-mini-icon.GIF');
+    background-size: cover;
+    opacity: 0.5;
+}

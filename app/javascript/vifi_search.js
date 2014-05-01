@@ -65,11 +65,11 @@ $(function() {
 
             $("#application").waitForImages(function() {
 
-             
+
                 $("#loadingPage").fadeOut();
-             $(this).css("opacity", 1).fadeIn("slow");
+                $(this).css("opacity", 1).fadeIn("slow");
             });
-                 Vifi.Event.trigger("app:ready");
+            Vifi.Event.trigger("app:ready");
 
         },
         events: {
@@ -343,7 +343,7 @@ $(function() {
                 threshold: 12000,
                 effect: 'fadeIn'
             });
-       
+
 
 
             this.updateUIToState();
@@ -603,6 +603,9 @@ $(function() {
             model: profile
         });
         var activationPage = new Vifi.User.ActivationView({
+            model: session
+        });
+        var alertPage = new Vifi.User.AlertView({
             model: session
         });
         var toolbar = new Vifi.User.ToolbarView({

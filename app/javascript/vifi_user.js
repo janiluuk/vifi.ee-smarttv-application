@@ -11,11 +11,13 @@
          "user_id": '',
          "lastname": '',
          "firstname": '',
+         "notificationText": '',
          "email": 'Visitor',
          "city": '',
-         "balance": "0",
+         "balance": "",
          "tickets": [],
          "purchase_history": [],
+
          "favorites": '',
          "messages": 0,
          "subscription": "0",
@@ -25,7 +27,20 @@
      initialize: function() {
 
          this.on("change", this.updateParams);
+         Vifi.Event.on('user:logout', this.signout, this);
 
+
+     },
+
+     signout: function() {
+         this.set("id", "");
+         this.set("notificationText", "");
+         this.set("user_id", "");
+         this.set("balance", "");
+
+         this.set("logged_in", false);
+         this.set("sessionId", "");
+         this.set("email", "Visitor");
 
      },
      updateParams: function() {
@@ -65,6 +80,8 @@
          return {
              user_id: '',
              hash: '',
+             step1text: 'Goto www.vifi.ee page, register or login to your account from top of the page. You can login with facebook or register a new user',
+             step2text: 'Enter "CODE" to the field asking pairing code',
              activationCode: '',
              logged_in: false,
              enabled: true
@@ -92,10 +109,14 @@
      initialize: function() {
          this.set("logged_in", false);
          this.hash = "";
+         var code = this.get("step2text").replace("CODE", this.get("activationCode"));
+         this.set("step2text", code);
+
          Vifi.Event.on('session:enable', this.enable, this);
          Vifi.Event.on('session:disable', this.disable, this);
 
          Vifi.Event.on('user:login', this.onUserAuthenticate, this);
+
          Vifi.Event.on('change:sessionId', this.setCookie, this);
          this.on('change:hash', this.authorize, this);
 
@@ -109,7 +130,6 @@
          this.render();
 
      },
-
 
      enable: function() {
          this.set("enabled", true);
@@ -254,28 +274,37 @@
 
  Vifi.User.ProfileView = Backbone.View.extend({
      tagName: 'div',
-     model: Vifi.User.Profile,
+
      defaults: {
 
      },
 
      events: {
-         "click #pairButton": "showPairScreen"
+         "click #pairButton": "showPairScreen",
+         "click #reloadButton": "showAlertScreen"
+
      },
      el: $("#" + Vifi.Settings.accountpageId),
 
      initialize: function() {
          Vifi.Event.on('user:login', this.onUserAuthenticate, this);
+         Vifi.Event.on('user:logout', this.toggleSignedIn, this);
 
          this.model.on('change:email', this.renderEmail, this);
          this.model.on('change:balance', this.renderBalance, this);
+         this.model.on('change:email', this.toggleSignedIn, this);
+
          this.listenTo(this.model, "change", this.renderBalance, this);
          this.template = _.template($("#accountTemplate").html());
          this.render();
      },
 
      renderBalance: function() {
-         $('#account_status', this.$el).html("Balance on account: " + this.model.get('balance') + "€");
+         var text = "";
+         var balance = this.model.get('balance');
+         if (this.model.get("email") == "Visitor") text = "Please pair your account with this device";
+         else text = "Balance on account: " + this.model.get('balance') + "€";
+         $('#account_status', this.$el).html(text);
          return this;
      },
 
@@ -285,10 +314,31 @@
      },
 
      showPairScreen: function() {
-         Vifi.Event.trigger("activation:show");
+         var email = this.model.get("email");
+         if (email == "Visitor")
+             Vifi.Event.trigger("activation:show");
+         else Vifi.Event.trigger("user:logout");
+
+
+     },
+     showAlertScreen: function() {
+
+         Vifi.Event.trigger("alert:show");
 
      },
      onUserAuthenticate: function() {
+
+     },
+     toggleSignedIn: function() {
+         var email = this.model.get("email");
+
+         if (email != "" && email != "Visitor") {
+             this.$("#pair").html("Sign out").addClass("signout").removeClass("signin");
+         } else {
+             this.$("#pair").html("Pair device").addClass("signin").removeClass("signout");
+         }
+         this.renderEmail();
+         this.renderBalance();
 
      },
      render: function() {
@@ -310,21 +360,29 @@
      tagName: 'div',
      initialize: function() {
          this.template = _.template($("#toolbarTemplate").html());
+         this.notificationTemplate = _.template($("#notificationTemplate").html());
          this.listenTo(this.model, 'change:email', this.slideRender);
          this.render();
      },
      render: function() {
 
          this.$el.html(this.template(this.model.toJSON()));
+         var notification = this.model.get("notificationText");
 
+         if (notification != "") {
+             var notificationHtml = this.notificationTemplate(this.model.toJSON());
+             this.$("#account-notification").html(notificationHtml);
+
+         }
 
          return this;
      },
      slideRender: function() {
-         this.$el.slideUp("slow", function() {
+         this.$("#username-text").fadeOut("slow", function() {
              this.render();
+             this.$("#username-text").fadeIn("slow");
+
          }.bind(this));
-         this.$el.slideDown();
      },
      show: function() {
          this.$el.slideDown("slow");
@@ -382,6 +440,56 @@
              Vifi.Event.trigger("page:change", "account");
              Vifi.Event.trigger("page:focus");
              Vifi.Event.trigger("session:disable");
+         }
+     }
+ });
+
+ Vifi.User.AlertView = Backbone.View.extend({
+     el: $("#" + Vifi.Settings.alertPageId),
+     model: new Vifi.User.Session(),
+     events: {
+         'click a': 'hide'
+
+     },
+     tagName: 'div',
+     initialize: function() {
+         this.template = _.template($("#alertTemplate").html());
+         Vifi.Event.on('alert:show', this.show, this);
+         
+         this.model.on('change:alertText', this.renderText, this)
+         this.render();
+     },
+     render: function() {
+         this.$el.html(this.template(this.model.toJSON()));
+         Vifi.Event.trigger("page:ready", "#" + this.$el.attr("id"));
+         return this;
+     },
+     renderText: function() {
+         $('#alert-header', this.$el).html(this.model.get('alertHeader'));
+
+         $('#alert-text', this.$el).html(this.model.get('alertText'));
+         return this;
+     },
+
+     show: function() {
+         $(".container:visible").addClass("hidden-container").fadeOut();
+        this.$el.find("#hideAlert").addClass("tv-component");
+         $(".hidden-container .tv-component").removeClass("tv-component").addClass("tv-component-hidden");
+         this.$el.fadeIn().show();
+         Vifi.Event.on('user:login', this.hide, this);
+         Vifi.Event.trigger("page:change", "alert");
+         Vifi.Event.trigger("page:focus");
+
+
+     },
+     hide: function() {
+         if (this.$el.hasClass("active")) {
+             $(".hidden-container .tv-component-hidden").addClass("tv-component").removeClass("tv-component-hidden");
+             $(".hidden-container").removeClass("hidden-container").fadeIn();
+             this.$el.fadeOut().hide();
+
+             Vifi.Event.trigger("page:back");
+             Vifi.Event.trigger("page:focus");
          }
      }
  });

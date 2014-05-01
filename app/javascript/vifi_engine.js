@@ -27,6 +27,7 @@ Vifi = {
         accountpageId: 'accountPage',
         toolbarId: 'toolbar',
         homePageId: 'homePage',
+        alertPageId: 'alertPage',
         activationPageId: 'activationPage'
     }
 }

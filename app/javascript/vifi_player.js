@@ -105,8 +105,7 @@ Vifi.Player.Player = Backbone.Model.extend({
         this.on('player:load', this.onLoadFilm, this);
         this.on('player:ready', this.onPlayerReady, this);
         this.on("player:play", this.initPlayer, this);
-
-    },
+    }  ,
 
 
     onPlayerStart: function(event) {
@@ -118,6 +117,13 @@ Vifi.Player.Player = Backbone.Model.extend({
         Vifi.Event.trigger("page:focus");
         this.set("ready", false);
         this.trigger("player:ready");
+
+
+    },
+
+
+    onBufferingStart: function(event) {
+
 
 
     },
@@ -266,7 +272,11 @@ Vifi.Player.Player = Backbone.Model.extend({
 
 
             var endingtime = new Date(time.getTime() + duration * 60000);
-            var endingtimestring = endingtime.getHours() + ":" + endingtime.getMinutes();
+            var endingtimestring = endingtime.getHours();
+            var string = ":";
+            if  (endingtime.getMinutes() < 10)  string +=  '0' + endingtime.getMinutes();
+            else string += endingtime.getMinutes();
+            endingtimestring +=string;
 
             this.content = new Vifi.Player.FilmContent({
 
@@ -424,12 +434,29 @@ Vifi.Player.PlayerView = Backbone.View.extend({
 
         }
 
-        _.bindAll(this, 'closeDetails', 'showDetails', 'showNavigation', 'hideNavigation', "clearAllTimeouts", "touchVideoNavigationTimeout");
-
+        _.bindAll(this, 'closeDetails', 'showDetails', 'showNavigation', 'hideNavigation', "clearAllTimeouts", "touchVideoNavigationTimeout", "onBufferingStart");
+        Vifi.Event.on("mediaplayer:bufferingstart", this.onBufferingStart, this);
+        Vifi.Event.on("mediaplayer:bufferingstop", this.onBufferingStop, this);
+      
         this.render();
     },
+
+    onBufferingStart: function() {
+
+        this.$("#player-loading").css("visibility", "visible");
+
+
+    },
+
+    onBufferingStop: function() {
+
+        this.$("#player-loading").css("visibility", "hidden");
+        
+    },
+
     render: function() {
         this.$el.html(ich.playerTemplate(this.content.toJSON()));
+        $("#playerPage .tab-content").each(function() { $(this).find("div:first").addClass("no-left"); $(this).find("div:last").addClass("no-right"); });
         return this;
     },
 
