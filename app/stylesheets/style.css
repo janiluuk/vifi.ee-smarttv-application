@@ -1015,9 +1015,9 @@ span.stars.r1 {
     height: 100%;
 }*/
 
-/* ACTIVATION PAGE */
+/* ACTIVATION PAGE & ALERT PAGE */
 
-#activationPage {
+#activationPage, #alertPage {
     position: absolute;
     background-image: url('img/background_dark_90.png');
     background-repeat: repeat;
@@ -1026,10 +1026,18 @@ span.stars.r1 {
     height: 100%;
 }
 
-.activation-container {
+.activation-container, .alert-container {
     width:80%;
-    margin: 10em 10% 0 10%;
     position: relative;;
+}
+
+.activation-container {
+    margin: 7em 10% 0 10%;
+    z-index: 999;
+}
+
+.alert-container {
+    margin: 15em 10% 0 10%;
 }
 
 .loading-icon {
@@ -1043,14 +1051,14 @@ span.stars.r1 {
     left: 0;  
 }
 
-.activation-container .header {
+.activation-container .header, .alert-container .header {
     font-size: 4.5em;
-    line-height: 0em;
+    line-height: 1em;
     font-weight: 100;
     text-shadow: 0 0 0.5em black;
     color: #63D116;
-    text-align:center;
     position:relative;
+    margin: 0;
 }
 
 .activation-container .header:before {
@@ -1059,7 +1067,7 @@ span.stars.r1 {
     height: 2em;
     background-image: url('img/loading-mini-icon.GIF');
     left: 0%;
-    top: -0.4em;
+    top: -0em;
     position: absolute;
     background-size: cover;
 }
@@ -1073,66 +1081,101 @@ span.stars.r1 {
     color: black;
 }
 
-.activation-container .sub-header {
+.activation-container .sub-header, .alert-container .sub-header {
     font-size: 3em;
     font-weight: 100;
-    line-height: 0.7em;
+    line-height: 1em;
     color: #5B853E;
     text-shadow: 0 0 0.5em black;
-    text-align: center;
+    margin: 0.7em 0;
 }
 
-.activation-container .half-page {
-    width:50%;
-    float:left;
-    position:relative;
-    margin: 1.5em 0;
+.alert-container .sub-header {
+    margin-bottom: 2em;
+    line-height: 1.5em;
+    color: white;
 }
 
 .activation-container .activation-description {
-    position: absolute;
-    font-size: 2.3em;
-    text-shadow: 2px 0 0 black;
+    font-size: 2.5em;
     font-weight: 500;
     line-height: 1.5em;
-    left: 0;
-    bottom: 0.9em;
-    width: 70%;
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 5%;
-    margin: 0 10%;
+    color: #cacaca;
+    text-shadow: 0 0 0.5em black;
 }
 
-.activation-container .activation-description .step {
-    background: white;
-    padding: 0.1em 0.5em;
+.activation-container .activation-description span.step {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.2em 0.6em;
     border-radius: 5em;
-    margin-right: 0.2em;
-    font-weight: 900;
-    color: black;
     text-shadow: none;
+    font-weight: 700;
+    color: #D8D8D8;
 }
 
-.activation-container .half-page img {
-    width:70%;
-    margin:0 15%;
+.activation-container .header, .activation-container .sub-header, .activation-container .activation-description {
+    padding-left: 12%;
 }
 
-.activation-picture {
-    height: 125px;
-    width: 70%;
-    background-image: url('img/activation-background.png');
-    background-repeat: no-repeat;
+.activation-container .buttonsrow .button {
+    margin-left:12%;
 }
 
 .activation-container .buttonsrow {
     width: 100%;
 }
 
-.activation-container .buttonsrow .button {
+.activation-picture {
+    position: absolute;
+    width: 80%;
+    margin: 0 10%;
+    bottom: 0;
+    opacity: 0.7;
+    z-index: 0;
+}
+
+.activation-picture  img#pairing-screenshot {
+    width: 100%;
+}
+
+.activation-picture  #activation-picture-description {
+    position: absolute;
+    font-size: 5em;
+    font-weight: 500;
+    color: #bda0c0;
+    text-shadow: 0.2em 0 0.5em black;
+    letter-spacing: -2px;
+    bottom: 4em;
+    left: 1em;
+    -webkit-transform: rotate(-9deg);
+    transform: rotate(-9deg);
+}
+
+.alert-container .buttonsrow {
+    width: 70%;
+}
+
+.alert-container #alert-icon {
+    width:20em;
+    height: 20em;
+    margin: -2em 5em 100% 0;
+    float:left;
+    background-image: url('img/alert-icon-info.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.alert-container.success #alert-icon {
+    background-image: url('img/alert-icon-success.png');
+}
+
+.alert-container.failure #alert-icon {
+    background-image: url('img/alert-icon-failure.png');
+}
+
+.activation-container .buttonsrow .button, .alert-container .buttonsrow .button {
     text-indent: 0px;
     padding: 0.5em 2em;
-    margin-left:31%;
 }
 
 #action-output {

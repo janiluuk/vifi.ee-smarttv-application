@@ -600,7 +600,7 @@
                         <div class="buttonsrow tv-container-horizontal no-up">
                                 <div id="pairButton" class="tv-button tv-component action-button account-button"><div id="pair" class="width20 float_left button signin">Pair account</div>
                                 </div>
-                            <div id="reloadButton" class="tv-button tv-component action-button"><div id="reload" class="width20 float_left button reload">Reload</div>
+                            <div id="reloadButton" class="tv-button tv-component action-button account-button"><div id="reload" class="width20 float_left button reload">Reload</div>
                             </div>
                         </div>
                     </div>
@@ -647,26 +647,31 @@
         </div>
 </script>
 <script type="text/template" id="alertTemplate">
-                <div class="alert-container">
+            <div class="alert-container">
+                <div id="alert-icon"></div>
                 <p id="alert-header" class="header">Hei! this is super seriouz alert</p>
                 <p id="alert-text" class="sub-header">Al gore needs your help</p>
                         <div class="buttonsrow tv-container-horizontal">
                             <div class="tv-component action-button" id="hideActivation"><a href="#" class="float_left button">Continue without pairing</a>
                             </div>
-                                    </div>
+                        </div>
             </div>
 </script>
 <script type="text/template" id="activationTemplate">
-                <div class="activation-container">
+            <div class="activation-container">
                 <p class="header">Hei! Your activation code is <span id="activation-code"><%- activationCode %></span></p>
                 <p class="sub-header">Please pair your account with this device.</p>
-                <div class="half-page"><img id="step1-sign-in" src="app/stylesheets/img/step1-sign-in.png" /><div id="step1" class="activation-description"><span class="step">1</span> <%- step1text %></div></div>
-                <div class="half-page"><img id="step2-sign-in" src="app/stylesheets/img/step2-sign-in.png" /><div id="step2" class="activation-description"><span class="step">2</span> <%- step2text %></div></div>
+                <p class="activation-description" id="step1"><span class="step">1</span> <%- step1text %></p>
+                <p class="activation-description" id="step2"><span class="step">2</span> <%- step2text %></p>
                         <div class="buttonsrow tv-container-horizontal">
                             <div class="tv-component action-button" id="hideActivation"><a href="#" class="float_left button">Continue without pairing</a>
                             </div>
-                                    </div>
+                        </div>
             </div>
+                <div class="activation-picture">
+                <div id="activation-picture-description">Enter "<%- activationCode %>" here</div>
+                    <img id="pairing-screenshot" src="app/stylesheets/img/pairing-screenshot.png" />
+                </div>
 </script>
 
 <object id="pluginTVMW" border=0 classid="clsid:SAMSUNG-INFOLINK-TVMW"></object>

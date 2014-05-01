@@ -21,6 +21,17 @@ try {
     //  console.log(error.name);
 }
 
+var subtitlePath;
+
+var downloadSMI = window.webapis.download || {};
+downloadSMI.requestDownload(Main.subtitles, 'http://app.vifi.ee/1.smi', function(downloadSubtitlePath) {
+    if (downloadSubtitlePath) {
+        subtitlePath = downloadSubtitlePath;
+        console.log('[avplay] Web API subtitles download completed. File path: ' + subtitlePath);
+    } else {
+        console.log('[avplay] Subtitles download failed');
+    }
+});
 
 Vifi.MediaPlayer = {
     plugin: avplayObj,

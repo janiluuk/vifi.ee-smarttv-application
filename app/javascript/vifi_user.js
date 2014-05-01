@@ -265,6 +265,15 @@
          this.set("logged_in", true);
 
      },
+     onUserLogout: function() {
+
+         this.set("logged_in", false);
+         var profile = new Vifi.User.Profile();
+         this.set("profile", profile);
+
+
+
+     },
 
      render: function() {
          return this;
@@ -455,7 +464,7 @@
      initialize: function() {
          this.template = _.template($("#alertTemplate").html());
          Vifi.Event.on('alert:show', this.show, this);
-         
+
          this.model.on('change:alertText', this.renderText, this)
          this.render();
      },
@@ -466,17 +475,15 @@
      },
      renderText: function() {
          $('#alert-header', this.$el).html(this.model.get('alertHeader'));
-
          $('#alert-text', this.$el).html(this.model.get('alertText'));
          return this;
      },
 
      show: function() {
          $(".container:visible").addClass("hidden-container").fadeOut();
-        this.$el.find("#hideAlert").addClass("tv-component");
+         this.$el.find("#hideAlert").addClass("tv-component");
          $(".hidden-container .tv-component").removeClass("tv-component").addClass("tv-component-hidden");
          this.$el.fadeIn().show();
-         Vifi.Event.on('user:login', this.hide, this);
          Vifi.Event.trigger("page:change", "alert");
          Vifi.Event.trigger("page:focus");
 
