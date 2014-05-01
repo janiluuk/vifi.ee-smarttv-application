@@ -1,0 +1,108 @@
+/* FOR THIS EXACT SCREEN SIZE, WON'T WORK ON OTHER SCREEN SIZE */
+
+/* HOME PAGE */
+#homePage.container {
+	height: calc(100% - 5em);
+	height: -webkit-cal(100% - 5em);
+}
+#homePage .logo {
+	background-size: 8em;
+}
+
+#toolbar #user::after {
+	border-left: 1em solid transparent;
+	border-right: 1em solid transparent;
+	border-bottom: 1.5em solid rgba(255, 26, 246, 0.4);
+	right: -3em;
+	top: 4.5em;
+}
+
+#toolbar #company {
+	margin: 4em 0 0 5em;
+}
+
+.usercontrol li {
+	font-size: 3em;
+}
+
+.user-control {
+	margin-top: 2em;
+}
+
+#user .avatar {
+	margin-top: 1.5em;
+}
+
+#homePage .featuredlist {
+	width: 90%;
+	bottom: 5em;
+}
+
+#featured .tv-component.movie {
+	width: 11em;
+	height: 16em;
+}
+
+#featured .tv-component.tv-button.movie.tv-component-focused {
+	width: 14em !important;
+	height: 20em !important;
+}
+
+#homePage .movie_description {
+	padding: 7em 0 3em 0;
+}
+
+.movie_description .title {
+	font-size: 6em;
+}
+
+.movie_description p {
+	padding-left: 8%;
+}
+
+#featured-description .rating {
+	margin: 0 1% 0 8%;
+}
+
+.movie_description .genre {
+	font-size: 3em;
+}
+
+/* MOVIE PAGE */
+
+#moviePage.container.active > #moviePage-header {
+	top: 2em;
+	border-bottom: 2em solid rgba(255, 255, 255, 0.3);
+}
+
+#moviePage.container > #moviePage-header {
+	top: 2em;
+	border-top: 2em solid rgba(255, 255, 255, 0.3);
+}
+
+#moviePage-header {
+	border-left: 1.2em solid transparent;
+	border-right: 1.2em solid transparent;
+}
+
+#moviePage .movie_info, #accountPage .account_info {
+	margin: 4em 0 2em 1%;
+}
+
+.movie_info .list {
+	font-size: 2.7em;
+}
+
+.movie_description .title {
+	font-size: 6.5em;
+}
+
+.movie_description .genre {
+	font-size: 3.5em;
+}
+
+.movie_description .summary {
+	font-size: 3em;
+	line-height: 1.6em;
+}
+
