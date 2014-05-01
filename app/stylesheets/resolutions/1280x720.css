@@ -1,9 +1,24 @@
 /* FOR THIS EXACT SCREEN SIZE, WON'T WORK ON OTHER SCREEN SIZE */
 
+
+/* ACCOUNT PAGE */
+
+#moviePage .movie_info, #accountPage .account_info {
+	width: 18%;
+}
+
+.account_description .username {
+	font-size: 5.5em;
+}
+
+.account_description .status {
+	font-size: 4.5em;
+}
+
 /* HOME PAGE */
 #homePage.container {
-	height: calc(100% - 5em);
-	height: -webkit-cal(100% - 5em);
+	height: calc(100% - 4em);
+	height: -webkit-calc(100% - 4em);
 }
 #homePage .logo {
 	background-size: 8em;
@@ -35,7 +50,7 @@
 
 #homePage .featuredlist {
 	width: 90%;
-	bottom: 5em;
+	bottom: 4em;
 }
 
 #featured .tv-component.movie {
@@ -49,7 +64,7 @@
 }
 
 #homePage .movie_description {
-	padding: 7em 0 3em 0;
+	padding: 7em 0 2em 0;
 }
 
 .movie_description .title {
@@ -85,6 +100,10 @@
 	border-right: 1.2em solid transparent;
 }
 
+#moviePage .movie_description, #accountPage .account_description {
+	margin: 4em 0 2em 1%;
+}
+
 #moviePage .movie_info, #accountPage .account_info {
 	margin: 4em 0 2em 1%;
 }
@@ -106,3 +125,151 @@
 	line-height: 1.6em;
 }
 
+.button {
+	font-size: 3em;
+	text-indent: 3.7em;
+}
+
+/* BROWSER PAGE */
+
+.search-item #q {
+	padding: 0.5em 5%;
+	font-size: 1.4em;
+	border-radius: 0.7em;
+	text-indent: 0.7em;
+}
+
+.domtabs div a {
+	font-size: 2em;
+}
+
+.secondary_domtabs {
+	padding: 0;
+	height: 4.5em;
+}
+
+.secondary_domtabs .keyboard, .secondary_domtabs .selection {
+	min-height: 4.5em;
+}
+
+.secondary_domtabs .keyboard .key {
+	line-height: 2em;
+	margin-right: 1.5%;
+	font-size: 3.2em;
+}
+
+.secondary_domtabs .keyboard div.key:hover, .secondary_domtabs .keyboard div.key.tv-component-focused {
+	font-size: 5em;
+}
+
+.secondary_domtabs .selection .nav-item.tv-component {
+	font-size: 2.5em;
+}
+
+.secondary_domtabs .selection .nav-item.tv-component {
+	line-height: 2em;
+	padding: 0.1em 1em;
+}
+
+.secondary_domtabs .selection .nav-item.tv-component.tv-toggle-button-on {
+	line-height: 2em;
+	text-indent: 1em;
+}
+
+.row_title {
+	font-size: 3em;
+	margin-left: 3em;
+}
+
+#browserPage .movie-cover-container {
+	margin-left: 7em;
+}
+
+#browserPage .movie-grid .movie {
+	width: 16em;
+	margin-right: 3em;
+}
+
+#browserPage .thumb {
+	height: 20em;
+	box-shadow: 0 0 3em black;
+}
+
+#browserPage .details h5 {
+	font-size: 4em;
+	margin: 1.5em 0 0.7em 0;
+}
+
+#browserPage .details .icon-clock {
+	font-size: 3.5em;
+}
+
+.movie_description .summary {
+	max-height: hidden;
+}
+
+#browserPage .default.row {
+	min-height: 37em;
+}
+
+/* ACTIVATION PAGE & ALERT PAGE*/
+
+.activation-container .header, .alert-container .header {
+	font-size: 6em;
+}
+
+.activation-container .sub-header, .alert-container .sub-header {
+	font-size: 4.5em;
+}
+
+.activation-container .activation-description {
+	font-size: 3.5em;
+}
+
+.activation-picture #activation-picture-description {
+	font-size: 6em;
+}
+
+.alert-container #alert-icon {
+	width: 10em;
+	height: 10em;
+	margin: -0.5em 4em 100% 0;
+}
+
+/* PLAYER PAGE */
+
+#player-info {
+	height: 10em;
+}
+
+#player-info-title {
+	font-size: 6.5em;
+	margin: 0.5em 0 0 5%;
+	width: 65%;
+}
+
+#player-info-additional {
+	font-size: 4em;
+	margin: 0 0 0 5%;
+	width: 65%;
+}
+
+#player-info-timer {
+	width: 25%;
+	height: 5.5em;
+	top: 2.5em;
+}
+
+#trailer-options-selection .tv-component.nav-item {
+	padding: 2em 0;
+}
+
+#player-info-timer > p.player-info-timer-heading {
+	font-size: 3em;
+	margin-left: 4em;
+}
+
+#player-info-timer > p.player-info-timer-time {
+	font-size: 4em;
+	margin-left: 3em;
+}
