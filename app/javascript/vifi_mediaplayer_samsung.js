@@ -8,7 +8,6 @@
  */
 
 var avplayObj;
-var DownloadObject;
 try {
     webapis.avplay.getAVPlay(function(avplay) {
         avplayObj = avplay;
@@ -97,12 +96,12 @@ Vifi.MediaPlayer = {
             $log(error.name);
         }
 
-        
+
         // Reset Platform to default sets.
-        if (Vifi.Settings.debug === true) { 
-        Vifi.Event.on("all", function(thing) {
-            $log(thing);
-        });
+        if (Vifi.Settings.debug === true) {
+            Vifi.Event.on("all", function(thing) {
+                $log(thing);
+            });
         }
         $log("<<< END SAMSUNG NATIVE PLAYER INIT >>>");
         return true;
@@ -181,7 +180,7 @@ Vifi.MediaPlayer = {
         $log("Video URL is " + url.replace("//", "/"));
         url = url.replace("//", "/");
         avplayObj.open("http://media.vifi.ee:1935/tv/_definst_" + video + "/playlist.m3u8|COMPONENT=HLS", {
-          
+
         });
         var status = false;
         avplayObj.play(function() {
@@ -193,14 +192,14 @@ Vifi.MediaPlayer = {
         if (status)
             this.state = this.PLAYING;
         else {
-              this.videoError("FAILED TO START STREAM");
-             this.state = this.STOPPED;
+            this.videoError("FAILED TO START STREAM");
+            this.state = this.STOPPED;
         }
 
         //  this.streamready = false;
         this.trigger("mediaplayer:onplay", this.currentStream.mp4);
         //   if (this.plugin.Play(this.currentStream.url)) {
-        
+
     },
 
     nextVideo: function() {
@@ -229,7 +228,7 @@ Vifi.MediaPlayer = {
         $("#_pluginObjectPlayerContainer_1").css("visibility", "hidden");
         this.visible = false;
     },
-    
+
     // Controls
     // 'play','pause','rewind','fastforward', 'show', 'setCoordinates', 'next','setUserBitrate','stop', 'playing','hide', 'mute']
     stop: function() {
