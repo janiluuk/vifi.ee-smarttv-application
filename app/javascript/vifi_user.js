@@ -251,7 +251,7 @@ Vifi.User.Profile = Backbone.Model.extend({
                  this.fetch();
                  this.send();
 
-             }.bind(this), 5000)
+             }.bind(this), 5000);
          } else {
             $log("Disabling polling, logged in or disabled")
              this.disable();

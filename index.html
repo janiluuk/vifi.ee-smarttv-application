@@ -25,15 +25,13 @@
 
         <script src="app/javascript/flowplayer/flowplayer.js" type="text/javascript"></script>
         <script src="app/javascript/flowplayer/flowplayer.controls.js" type="text/javascript"></script>
-        <script src="app/javascript/vifi_smartpay.js" type="text/javascript"></script>
-
-        <!-- TV dependencies -->
 
         <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/API/Plugin.js'></script>
         <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/API/Widget.js'></script>
         <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/API/TVKeyValue.js'></script>
         <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/webapi/1.0/webapis.js'></script>
 
+        <script src="app/javascript/vifi_smartpay.js" type="text/javascript"></script>
 
         <!-- msg javascript -->
         <link rel="stylesheet" href="app/stylesheets/player.css" type="text/css" />
@@ -384,7 +382,7 @@
         <script type="text/template" id="featuredFilmDetailsTemplate">
                         <p class="title"><%- film.title %></p>
                             <span class="rating">
-                                <span class="stars r5"></span>
+                                <span class="stars r<%- film.star_rating %>"></span>
                             </span>
                             <span class="genre">
                                 <span class="duration"><%- film.running_time_text %></span>
@@ -419,7 +417,7 @@
                                         </p>
                                         <p class="list">
                                             <label>Subtiitrid:</label>
-                                            <span>Eesti</span>
+                                            <span>{{ subtitles }}</span>
                                         </p>
                             
                                 </div>
@@ -431,7 +429,7 @@
                                             <span>{{  genres_text }} </span>
                                         </p>
                                         <p class="rating">
-                                            <span class="stars r5"></span>
+                                            <span class="stars r{{ star_rating }}"></span>
                                         </p>
                                         <div class="buttonsrow tv-container-horizontal">
                                                 <div id="watch" class="tv-button tv-component movie-button action-button"><div id="button-watch" class="width20 float_left button play">Vaata filmi</div>
@@ -533,7 +531,7 @@
                                         <h2><a name="c3" id="c3">Audio</a>
                                         </h2>
                                         <div data-value="en"  class="nav-item tv-toggle-button tv-component tv-toggle-button-on first">
-                                                <span class="first no-left">English</span>
+                                                <span class="first no-left">Originaal</span>
                                         </div>
                             
                                 </div>
@@ -541,11 +539,11 @@
                                 <div class="tab-content selection row tv-container-horizontal">
                                         <h2><a name="c4" id="c4">Quality</a>
                                         </h2>
-                                        <div data-value="auto" data-filename="reset" data-type="radio" data-value="Auto" class="nav-item tv-toggle-button tv-component tv-toggle-button-on no-left">
+                                        <div data-value="auto" data-filename="auto" data-type="radio" data-category="player-quality" data-value="Auto" class="nav-item tv-toggle-button tv-component tv-toggle-button-on no-left">
                                                 <span class="first">Auto</span>
                                         </div>
                                         {{#videos }}
-                                        <div data-value="{{code}}" data-filename="{{mp4}}" data-type="radio" class="nav-item tv-toggle-button tv-component">
+                                        <div data-value="{{code}}"  data-category="player-quality"  data-filename="{{mp4}}" data-type="radio" class="nav-item tv-toggle-button tv-component">
                                                 <span>{{profile}}</span>
                                         </div>
                                         {{/videos }}
@@ -607,10 +605,10 @@
 <script type="text/template" id="trailerTemplate">
 <div style="position: absolute; z-index: 15; width: 100%; height: 100%">
 
-                <div id="player-info">
-                    <div id="player-info-title"><%- film.title %></div>
+                <div id="trailer-info">
+                    <div id="trailer-info-title"><%- film.title %></div>
                     
-                    <div id="player-info-additional">
+                    <div id="trailer-info-additional">
                         <span><%- film.year %></span>
                     </div>
 
@@ -619,7 +617,7 @@
 
 
 
-                <div id="player">
+                <div id="trailer">
 
                 <iframe frameborder="0" height="100%" width="100%" src="http://youtube.com/embed/<%- film.youtube_id %>?autoplay=1&controls=0&showinfo=0&autohide=1">
                 </iframe>

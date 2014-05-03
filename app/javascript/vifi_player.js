@@ -188,8 +188,7 @@ Vifi.Player.Player = Backbone.Model.extend({
         }
 
         this.onPlayerPageExit();
-        
-        Vifi.Event.trigger("page:focus");
+
 
     },
 
@@ -221,7 +220,6 @@ Vifi.Player.Player = Backbone.Model.extend({
 
     },
     onPlayerPageExit: function() {
-        app.pagemanager.needsredraw=true;
         $(".container-hidden").css("opacity", 0);
 
         $(".container:not(#playerPage)").find(".tv-component-hidden").each(function() {
@@ -242,16 +240,15 @@ Vifi.Player.Player = Backbone.Model.extend({
 
           
 
-                tv.ui.getComponentByElement(goog.dom.getElement("playerPage")).removeChildren();
-    
+                tv.ui.getComponentByElement(goog.dom.getElement("application")).removeChildren();
+                tv.ui.decorateChildren(goog.dom.getElement("application"), app.pagemanager.decorateHandler.getHandler());
 
             }
 
         );
         Vifi.Event.trigger("page:back");
-                $(".container, #browserPage").css("opacity", 1);
+        Vifi.Event.trigger("page:focus");
 
-        app.pagemanager.needsredraw=false;
 
 
     },

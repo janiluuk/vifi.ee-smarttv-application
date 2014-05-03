@@ -22,6 +22,7 @@ $(function() {
             this.collection.state.bind('change:duration', this.onChangeDuration, this);
             this.collection.state.bind('change:year', this.onChangeYear, this);
             this.collection.state.bind('change:search', this.onChangeText, this);
+            this.on("browser:pagination", this.onBrowserPaginationEvent, this);
 
             this.session.enable();
 
@@ -188,6 +189,22 @@ $(function() {
             });
         },
       
+      loadBrowserImages: function() {
+        $("#search-results div.lazy").lazyload({
+            threshold: 9000,
+            effect: 'fadeIn',
+            effectspeed: 1200
+        });
+        },
+        // Handle preloading imags on browser
+        onBrowserPaginationEvent: function(e) {
+
+           var images = $(".lazy.loading:in-viewport");
+           if (images.size() > 0)
+                app.loadBrowserImages();
+            
+        },
+
         onSearchFieldChange: function(event) {
 
 
@@ -279,11 +296,8 @@ $(function() {
 
                
             }
-            $("#search-results div.lazy").lazyload({
-                threshold: 12000,
-                effect: 'fadeIn'
-            });
 
+            this.loadBrowserImages();
 
 
             this.updateUIToState();
@@ -522,12 +536,10 @@ $(function() {
         var pagemanager = Vifi.PageManager;
 
         var profile = new Vifi.User.Profile();
-        var sessionId = $.cookie("vifi_session");
 
         var session = new Vifi.User.Session({
             profile: profile,
             activationCode: activationCode,
-            sessionId: sessionId 
 
         });
 
@@ -595,9 +607,6 @@ $(function() {
     }
 
     $(window).load(function() {
-        var sessionId = "";
-        var session = $.cookie("vifi_session");
-        if (undefined != session && session != "") sessionId = session;
         if (initial_search_json == "")  {
             $.getJSON(Vifi.Settings.api_url+"?api_key="+Vifi.Settings.api_key+"&jsoncallback=?",
                 initApp, "jsonp");
