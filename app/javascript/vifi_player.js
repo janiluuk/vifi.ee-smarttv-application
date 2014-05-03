@@ -33,6 +33,7 @@ Vifi.Player.FilmContent = Backbone.Model.extend({
         this.on("change:params", this.updateParams, this);
         this.on("change:id", this.refresh, this);
         this.on("change:videos", this.loadFilm, this);
+        this.on("change:subtitles", this.loadSubtitles, this);
 
         if (options && undefined != options.params) {
 
@@ -45,10 +46,16 @@ Vifi.Player.FilmContent = Backbone.Model.extend({
 
     },
 
+
     loadFilm: function() {
         if (!this.session)
             app.player.trigger("player:ready", app.player.content);
     },
+
+    loadSubtitles: function() {
+            app.player.trigger("subtitles:ready", app.player.content);
+    },
+
     setParams: function(params) {
 
         this.set("params", params);
@@ -80,6 +87,7 @@ Vifi.Player.Player = Backbone.Model.extend({
     session: false,
     content: false,
 
+    subtitles: {},
     url: 'machete/machete.mp4',
     playerId: 'player',
     playerControlsId: 'player-controls',
@@ -100,18 +108,23 @@ Vifi.Player.Player = Backbone.Model.extend({
         this.on('all', function(event) {
             $log(event);
         });
+        
+        this.subtitles = new Vifi.Player.Subtitles();
 
         this.on('player:init', this.onPlayerStart, this);
         this.on('player:load', this.onLoadFilm, this);
         this.on('player:ready', this.onPlayerReady, this);
         this.on("player:play", this.initPlayer, this);
-    }  ,
+        this.on('subtitles:ready', this.onSubtitlesReady, this);
+
+
+        this.on('mediaplayer:stop', this.onPlayerStop, this);
+    },
+
 
 
     onPlayerStart: function(event) {
-        $(".container:visible:not(#playerPage)").find(".tv-component").each(function() {
-            $(this).removeClass("tv-component").addClass("tv-component-disabled").addClass("tv-component-hidden");
-        });
+ 
 
         Vifi.Event.trigger("page:change", "player", this.onPlayerPageEnter);
         Vifi.Event.trigger("page:focus");
@@ -122,12 +135,23 @@ Vifi.Player.Player = Backbone.Model.extend({
     },
 
 
+    onPlayerStop: function(event) {
+
+        Vifi.MediaPlayer.stop();
+
+    },
+
     onBufferingStart: function(event) {
 
 
 
     },
+    onSubtitlesReady: function(event) {
 
+        var subtitles = app.player.content.get("subtitles");
+        this.subtitles.load(subtitles);
+
+    },
     onPlayerReady: function(event) {
 
 
@@ -142,10 +166,11 @@ Vifi.Player.Player = Backbone.Model.extend({
             Vifi.MediaPlayer.setContent(app.player.content);
         } else {
             this.url = app.player.content.get("videos")[0].mp4;
+
             this.trigger("player:play");
         }
 
-
+ 
         Vifi.KeyHandler.unbind("keyhandler:onReturn");
         Vifi.KeyHandler.bind("keyhandler:onReturn", this.onPlayerExit, this);
         app.playerPage.showNavigation();
@@ -154,7 +179,7 @@ Vifi.Player.Player = Backbone.Model.extend({
 
     onPlayerExit: function(event) {
 
-        Vifi.Event.trigger("mediaplayer:stop", this);
+        this.trigger("mediaplayer:stop", this);
 
         var lastActivePageId = "home";
 
@@ -162,20 +187,25 @@ Vifi.Player.Player = Backbone.Model.extend({
             lastActivePageId = $(Vifi.PageManager.lastActivePage).attr("id");
         }
 
-        Vifi.Event.trigger("page:change", lastActivePageId.replace("Page", ""), this.onPlayerPageExit);
+        this.onPlayerPageExit();
+        
         Vifi.Event.trigger("page:focus");
 
     },
 
     onPlayerPageEnter: function() {
+       
+       $(".container:visible:not(#playerPage)").find(".tv-component").each(function() {
+            $(this).removeClass("tv-component").addClass("tv-component-disabled").addClass("tv-component-hidden");
+        });
 
         $(".container:not(.container-hidden):visible").addClass("container-hidden").fadeOut(
             function() {
-                tv.ui.decorate(document.body);
                 tv.ui.getComponentByElement(goog.dom.getElement("application")).removeChildren();
-                tv.ui.decorateChildren(goog.dom.getElement("application"));
+                tv.ui.decorateChildren(goog.dom.getElement("playerPage"));
                 $.scrollTo("#playerPage");
                 $("#playerPage").fadeIn();
+                tv.ui.decorate(document.body);
 
 
 
@@ -191,32 +221,37 @@ Vifi.Player.Player = Backbone.Model.extend({
 
     },
     onPlayerPageExit: function() {
-
+        app.pagemanager.needsredraw=true;
         $(".container-hidden").css("opacity", 0);
 
         $(".container:not(#playerPage)").find(".tv-component-hidden").each(function() {
             $(this).removeClass("tv-component-disabled").removeClass("tv-component-hidden").addClass("tv-component");
 
         });
-        $(".container#playerPage").find(".tv-component").each(function() {
+        $("#playerPage").find(".tv-component").each(function() {
             $(this).removeClass("tv-component").addClass("tv-component-disabled");
 
         });
+        $("#playerPage").fadeOut("slow");
 
-        $(".container-hidden").fadeIn(
-            function() {
+        $(".container, #browserPage").css("opacity", 1);
 
-                $.scrollTo("#moviePage");
-                $("#playerPage").fadeOut("slow");
+        $(".container-hidden, #browserPage").removeClass("container-hidden").fadeIn(
+            function() {    
 
-                $(".container").css("opacity", 1);
-                $(".container-hidden").removeClass("container-hidden");
-                tv.ui.decorate(document.body);
-                tv.ui.getComponentByElement(goog.dom.getElement("application")).removeChildren();
-                tv.ui.decorateChildren(goog.dom.getElement("application"));
+
+          
+
+                tv.ui.getComponentByElement(goog.dom.getElement("playerPage")).removeChildren();
+    
+
             }
 
         );
+        Vifi.Event.trigger("page:back");
+                $(".container, #browserPage").css("opacity", 1);
+
+        app.pagemanager.needsredraw=false;
 
 
     },
@@ -226,7 +261,9 @@ Vifi.Player.Player = Backbone.Model.extend({
 
     onLoadFilm: function(id) {
         var content = false;
-        if (this.verifySession() == true) {
+        var movie =  app.collection.get(id);
+
+        if (this.verifySession(movie) == true) {
 
             this.movie = app.collection.get(id);
 
@@ -239,7 +276,7 @@ Vifi.Player.Player = Backbone.Model.extend({
                 return true;
             }
         }
-        $log("!! Error loading movie content for id " + id);
+        $log("!! Error loading movie content for id " + id + " - invalid session");
         return false;
 
     },
@@ -253,14 +290,13 @@ Vifi.Player.Player = Backbone.Model.extend({
             if (!profile_name) {
 
                 url = videos.mp4;
-
-
                 this.url = url;
             }
         }
 
         return url;
     },
+
     getContentFiles: function() {
 
 
@@ -306,13 +342,21 @@ Vifi.Player.Player = Backbone.Model.extend({
         return true;
 
     },
-    verifySession: function() {
+    verifySession: function(movie) {
 
-        if (this.session && this.session.isLoggedIn())
+        // Check if user is paired at all
+
+        if (!this.session || !this.session.isLoggedIn()) {
+            Vifi.Event.trigger("activation:show");
+            return false;
+        }
+         var profile = this.session.get("profile");
+
+         if (profile.purchase(movie) == true) { 
             return true;
-        else
-            alert("You need to be logged in to watch content");
+         }
 
+        return false;        
     },
     setSession: function(session) {
 

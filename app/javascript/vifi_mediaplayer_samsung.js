@@ -21,18 +21,6 @@ try {
     //  console.log(error.name);
 }
 
-var subtitlePath;
-
-var downloadSMI = window.webapis.download || {};
-downloadSMI.requestDownload(Main.subtitles, 'http://app.vifi.ee/1.smi', function(downloadSubtitlePath) {
-    if (downloadSubtitlePath) {
-        subtitlePath = downloadSubtitlePath;
-        console.log('[avplay] Web API subtitles download completed. File path: ' + subtitlePath);
-    } else {
-        console.log('[avplay] Subtitles download failed');
-    }
-});
-
 Vifi.MediaPlayer = {
     plugin: avplayObj,
     audioPlugin: null,
@@ -43,8 +31,10 @@ Vifi.MediaPlayer = {
     /* Callback function to be set by client */
     originalSource: null,
     streamready: false,
+    currentTime: 0,
     allowFastForward: true,
     content: null,
+    visible: false,
     STOPPED: 10,
     PLAYING: 11,
     PAUSED: 12,
@@ -93,12 +83,6 @@ Vifi.MediaPlayer = {
             autoratio: true
         });
 
-        DownloadPlugin = document.getElementById("DownloadPlugin");
-        DownloadPlugin.OnEvent = function(event) {
-            $log(event);
-        };
-        DownloadPlugin.Open('Download', '1.000', 'Download');
-        DownloadPlugin.Execute('StartDownFile', 'http://backend.vifi.ee/subs/jee.smi', '$TEMP/1.smi', 10, 5);
 
 
         var tvWindowObject = null;
@@ -113,14 +97,13 @@ Vifi.MediaPlayer = {
             $log(error.name);
         }
 
-        $.scrollTo(0);
-        avplayObj.show();
-
+        
         // Reset Platform to default sets.
+        if (Vifi.Settings.debug === true) { 
         Vifi.Event.on("all", function(thing) {
             $log(thing);
         });
-
+        }
         $log("<<< END SAMSUNG NATIVE PLAYER INIT >>>");
         return true;
     },
@@ -136,7 +119,11 @@ Vifi.MediaPlayer = {
 
     },
 
+    getCurrentTime: function() {
 
+        return parseInt(Vifi.MediaPlayer.currentTime.millisecond);
+
+    },
 
     setPlaylist: function(playlist) {
         this.playlist = playlist;
@@ -153,6 +140,7 @@ Vifi.MediaPlayer = {
     play: function() {
 
         $log("Playing Media");
+        if (!this.visible) this.show();
 
         if (!this.currentStream || this.currentStream.mp4 == "") {
             $log("NO VIDEO URL SET");
@@ -181,51 +169,38 @@ Vifi.MediaPlayer = {
         };
 
     },
-    _getSubtitle: function() {
 
-        alert("init() - ");
-
-
-        return true;
-
-
-    },
     _playVideo: function() {
 
         var video = this.currentStream.mp4;
-        var subtitles = this.content.get("subtitles");
+
         var url = "http://media.vifi.ee:1935/tv/_definst_" + video + "/playlist.m3u8|COMPONENT=HLS";
-        var subtitle = subtitles[0].filename;
-        $log("Subtitle file is " + subtitle);
+        $("#_pluginObjectPlayerContainer_1").css("visibility", "visible");
 
         avplayObj.stop();
         $log("Video URL is " + url.replace("//", "/"));
         url = url.replace("//", "/");
         avplayObj.open("http://media.vifi.ee:1935/tv/_definst_" + video + "/playlist.m3u8|COMPONENT=HLS", {
-            subtitle: {
-                path: '$TEMP/1.smi',
-                streamID: 5,
-                sync: 1000,
-                callback: function(syncTime, data) {
-                    $log("sync time : " + syncTime + " : " + data);
-                }
-            }
+          
         });
+        var status = false;
         avplayObj.play(function() {
-            $log("Loading subtitles");
+            status = true;
         }, function(error) {
             $log("ERROR!! " + error.message);
         });
 
+        if (status)
+            this.state = this.PLAYING;
+        else {
+              this.videoError("FAILED TO START STREAM");
+             this.state = this.STOPPED;
+        }
+
         //  this.streamready = false;
         this.trigger("mediaplayer:onplay", this.currentStream.mp4);
         //   if (this.plugin.Play(this.currentStream.url)) {
-        this.state = this.PLAYING;
-        //  } else {
-        //      this.videoError("FAILED TO START STREAM");
-        //     this.state = this.STOPPED;
-        //  }
-
+        
     },
 
     nextVideo: function() {
@@ -241,7 +216,20 @@ Vifi.MediaPlayer = {
             this.trigger("mediaplayer:onplaylistend");
         }
     },
+    show: function() {
 
+        $.scrollTo(0);
+        avplayObj.show();
+        $("#_pluginObjectPlayerContainer_1").css("visibility", "visible");
+        this.visible = true;
+    },
+    hide: function() {
+
+        avplayObj.hide();
+        $("#_pluginObjectPlayerContainer_1").css("visibility", "hidden");
+        this.visible = false;
+    },
+    
     // Controls
     // 'play','pause','rewind','fastforward', 'show', 'setCoordinates', 'next','setUserBitrate','stop', 'playing','hide', 'mute']
     stop: function() {
@@ -357,6 +345,7 @@ Vifi.MediaPlayer = {
     },
 
     currentPlayTime: function(currentTime) {
+
         this.trigger("mediaplayer:timeupdate", currentTime.toString());
 
     },
@@ -381,6 +370,7 @@ _.extend(Vifi.MediaPlayer, Backbone.Events);
 _.extend(Vifi.MediaPlayer, Vifi.MediaPlayerCore);
 
 Vifi.MediaPlayer.bind("mediaplayer:timeupdate", function(time) {
+
     $("#player-progress").css({
         width: Math.floor(time / Vifi.MediaPlayer.duration() * 100) + "%"
     })
@@ -441,7 +431,9 @@ var bufferingCB = {
 
 var playCB = {
     oncurrentplaytime: function(time) {
+        Vifi.MediaPlayer.currentTime = time;
         Vifi.MediaPlayer.currentPlayTime(time);
+
     },
     onresolutionchanged: function(width, height) {
         console.log('resolution changed : ' + width + ', ' + height);

@@ -75,6 +75,7 @@ Vifi.Platform = function(name) {
     this.name = name;
     this.defaultPlatform = false;
     this._mediaPlayer = "browser";
+
     this.start = $noop;
     this.exit = $noop;
     this._keys = {
@@ -119,7 +120,7 @@ Vifi.Platform.prototype.fetchMediaPlayer = function() {
     if (this._mediaPlayer) {
         //	$log("Adding media player path");
         var path = "app/javascript/vifi_mediaplayer_" + this._mediaPlayer.toLowerCase() + ".js?" + new Date().getTime();
-        //	$log("Adding media player path: " + path);
+        $log("Adding media player path: " + path);
         $("<script />", {
             src: path,
             type: 'text/javascript'
@@ -177,7 +178,7 @@ Vifi.Platform.prototype.proxy = function() {
     var browser = new Vifi.Platform('browser');
     // browser.needsProxy = true;
     // We want this to fail, and get added as default
-    browser.setResolution(1280, 720);
+    browser.setResolution(1920, 1080);
     browser.defaultPlatform = true;
     Vifi.Platforms.addSupportedPlatform(browser);
 }());

@@ -1,10 +1,7 @@
- Vifi.User.Profile = Backbone.Model.extend({
+
+Vifi.User.Profile = Backbone.Model.extend({
      url: Vifi.Settings.api_url + "profile/?jsoncallback=?",
      params: "",
-
-     events: {
-         'change': 'shout'
-     },
 
      defaults: {
          "id": '',
@@ -27,7 +24,6 @@
      initialize: function() {
 
          this.on("change", this.updateParams);
-         Vifi.Event.on('user:logout', this.signout, this);
 
 
      },
@@ -36,9 +32,7 @@
          this.set("id", "");
          this.set("notificationText", "");
          this.set("user_id", "");
-         this.set("balance", "");
-
-         this.set("logged_in", false);
+         this.set("balance", 0);
          this.set("sessionId", "");
          this.set("email", "Visitor");
 
@@ -64,6 +58,11 @@
          return this.params;
 
      },
+     purchase: function(item) {
+        $log("Purchasing " + item);
+        return true;
+
+     },
      refresh: function() {
 
          this.updateParams();
@@ -71,7 +70,7 @@
  });
 
  Vifi.User.Session = Backbone.Model.extend({
-     model: Vifi.User.Profile,
+     model: false,
 
      url: '',
      baseUrl: Vifi.Settings.api_url + "session",
@@ -84,7 +83,7 @@
              step2text: 'Enter "CODE" to the field asking pairing code',
              activationCode: '',
              logged_in: false,
-             enabled: true
+             enabled: false
          }
      },
      getParams: function() {
@@ -107,8 +106,6 @@
      },
 
      initialize: function() {
-         this.set("logged_in", false);
-         this.hash = "";
          var code = this.get("step2text").replace("CODE", this.get("activationCode"));
          this.set("step2text", code);
 
@@ -116,14 +113,15 @@
          Vifi.Event.on('session:disable', this.disable, this);
 
          Vifi.Event.on('user:login', this.onUserAuthenticate, this);
+         Vifi.Event.on('user:logout', this.onUserSignout, this);
 
          Vifi.Event.on('change:sessionId', this.setCookie, this);
          this.on('change:hash', this.authorize, this);
 
-         _.bindAll(this, 'send', 'authorize', 'isLoggedIn', 'fetch', "isEnabled", "setCookie");
+         _.bindAll(this, 'send', 'authorize', 'isLoggedIn', 'fetch',  "setCookie");
 
          if (!this.isLoggedIn()) {
-
+            this.enable();
 
          }
 
@@ -145,7 +143,16 @@
          this.set("enabled", false);
 
      },
+     onUserSignout: function() {
+        this.set('logged_in', false);
+        this.get("profile").signout();
+        this.disable();
+
+        return false;
+     },
+
      fetch: function(opts) {
+        if (!this.isEnabled()) return;
 
          if (!this.isLoggedIn()) this.url = this.baseUrl + '/' + this.get('activationCode');
          else this.url = this.baseUrl;
@@ -163,11 +170,11 @@
 
                      that.setCookie(data.cookie);
 
+
                      if (data.activationKey != "") {
                          that.set("hash", data.activationKey);
                          that.status = "paired";
-                         Vifi.Event.trigger("user:login");
-
+                         this.authorize();
 
                      }
 
@@ -181,7 +188,7 @@
 
              }
 
-         }, "jsonp");
+         }.bind(this), "jsonp");
      },
 
 
@@ -196,7 +203,7 @@
          var session = this.get("sessionId");
          if (session != "" && cookie == "") cookie = session;
          this.set("sessionId", cookie);
-         if (cookie != "") { 
+         if (cookie != "" && cookie) { 
              $.cookie("vifi_session", cookie, {
 
              });
@@ -204,9 +211,9 @@
          return this;
      },
      getCookie: function() {
-
-         return this.get("sessionId");
-
+         var sessionId = $.cookie("vifi_session");
+         if (!sessionId) sessionId = this.get("sessionId");
+        return sessionId;
      },
 
      authorize: function() {
@@ -219,14 +226,12 @@
              var profile = this.get("profile");
 
              var params = this.getParams();
-
-
              profile.set("user_id", user_id);
              profile.fetch(params);
 
              if (profile.get("email") != "Visitor") {
                  this.set("profile", profile);
-
+                $log("Logging in with user "+profile.get("email"));
 
                  Vifi.Event.trigger("user:login");
              }
@@ -239,13 +244,16 @@
 
 
          if (!this.isLoggedIn() && this.isEnabled()) {
+
+            this.fetch();
+
              setTimeout(function() {
                  this.fetch();
                  this.send();
 
              }.bind(this), 5000)
          } else {
-
+            $log("Disabling polling, logged in or disabled")
              this.disable();
          }
      },
@@ -263,15 +271,6 @@
      onUserAuthenticate: function() {
 
          this.set("logged_in", true);
-
-     },
-     onUserLogout: function() {
-
-         this.set("logged_in", false);
-         var profile = new Vifi.User.Profile();
-         this.set("profile", profile);
-
-
 
      },
 
@@ -296,7 +295,6 @@
      el: $("#" + Vifi.Settings.accountpageId),
 
      initialize: function() {
-         Vifi.Event.on('user:login', this.onUserAuthenticate, this);
          Vifi.Event.on('user:logout', this.toggleSignedIn, this);
 
          this.model.on('change:email', this.renderEmail, this);
@@ -335,9 +333,7 @@
          Vifi.Event.trigger("alert:show");
 
      },
-     onUserAuthenticate: function() {
-
-     },
+  
      toggleSignedIn: function() {
          var email = this.model.get("email");
 
@@ -406,7 +402,6 @@
 
  Vifi.User.ActivationView = Backbone.View.extend({
      el: $("#" + Vifi.Settings.activationPageId),
-     model: new Vifi.User.Session(),
      events: {
          'click a': 'hide'
 
@@ -446,16 +441,15 @@
              $(".hidden-container").removeClass("hidden-container").fadeIn();
              this.$el.fadeOut().hide();
 
-             Vifi.Event.trigger("page:change", "account");
+             Vifi.Event.trigger("page:back");
              Vifi.Event.trigger("page:focus");
-             Vifi.Event.trigger("session:disable");
          }
      }
  });
 
  Vifi.User.AlertView = Backbone.View.extend({
      el: $("#" + Vifi.Settings.alertPageId),
-     model: new Vifi.User.Session(),
+    
      events: {
          'click a': 'hide'
 
@@ -464,7 +458,7 @@
      initialize: function() {
          this.template = _.template($("#alertTemplate").html());
          Vifi.Event.on('alert:show', this.show, this);
-
+         
          this.model.on('change:alertText', this.renderText, this)
          this.render();
      },
@@ -475,15 +469,17 @@
      },
      renderText: function() {
          $('#alert-header', this.$el).html(this.model.get('alertHeader'));
+
          $('#alert-text', this.$el).html(this.model.get('alertText'));
          return this;
      },
 
      show: function() {
          $(".container:visible").addClass("hidden-container").fadeOut();
-         this.$el.find("#hideAlert").addClass("tv-component");
+        this.$el.find("#hideAlert").addClass("tv-component");
          $(".hidden-container .tv-component").removeClass("tv-component").addClass("tv-component-hidden");
          this.$el.fadeIn().show();
+         Vifi.Event.on('user:login', this.hide, this);
          Vifi.Event.trigger("page:change", "alert");
          Vifi.Event.trigger("page:focus");
 

@@ -244,7 +244,7 @@
 
 #player-info-title {
 	font-size: 6.5em;
-	margin: 0.5em 0 0 5%;
+	margin: 0.7em 0 0 5%;
 	width: 65%;
 }
 
@@ -257,7 +257,7 @@
 #player-info-timer {
 	width: 25%;
 	height: 5.5em;
-	top: 2.5em;
+	top: 3em;
 }
 
 #trailer-options-selection .tv-component.nav-item {
@@ -272,4 +272,20 @@
 #player-info-timer > p.player-info-timer-time {
 	font-size: 4em;
 	margin-left: 3em;
+}
+
+#player-options .domtabs > div {
+	padding: 1.5em 0 1em 0;
+}
+
+.secondary_domtabs#player-options-bar {
+	min-height: 8em;
+}
+
+#player-options-bar.secondary_domtabs .selection .nav-item.tv-component {
+	font-size: 3.5em;
+}
+
+#subtitles { 
+	font-size: 4.5em;
 }

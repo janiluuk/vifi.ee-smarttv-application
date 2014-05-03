@@ -15,6 +15,10 @@ Vifi.MediaPlayer = {
     deactive: function() {
         this._active = false
     },
+    getCurrentTime: function() {
+
+        return $f().getTime()*1000;
+    },
     _videoElement: null,
     allowFastFoward: true,
     init: function() {

@@ -31,6 +31,7 @@ Vifi.PageManager = {
         Vifi.Event.on('page:ready', this.redraw, this);
         Vifi.Event.on('page:focus', this.focusFirst, this);
         Vifi.Event.on('page:change', this.switchToPage, this);
+
         Vifi.Event.on('page:back', this.switchToPrevious, this);
 
         this.decorateHandler = new tv.ui.DecorateHandler;
@@ -129,10 +130,13 @@ Vifi.PageManager = {
         return false;
     },
 
-    switchToPage: function(page, cb) {
+    switchToPage: function(page, cb, noredraw, element) {
         if (page != "") var pageid = '#' + page + "Page";
         else return false;
+
         if (this.changing) return false;
+        if (noredraw) this.needsredraw = false;
+      
 
         this.callback = cb;
 
@@ -140,10 +144,10 @@ Vifi.PageManager = {
 
         Vifi.Event.trigger("page:beforepagechange", pageid);
     },
-    switchToPrevious: function() {
+    switchToPrevious: function(cb) {
         if (this.lastActivePage) {
             var pageName = this.lastActivePage.replace("Page", "").replace("#", "");
-            this.switchToPage(pageName);
+            this.switchToPage(pageName, cb, true);
         }
 
     },
@@ -183,6 +187,7 @@ Vifi.PageManager = {
     },
     redraw: function(focus) {
 
+
         if (!this.drawing) {
             this.drawing = true;
             var str = "";
@@ -195,10 +200,22 @@ Vifi.PageManager = {
             if (str != "") el = str;
             else str = el;
 
-            if (this.needsredraw && this.appComponent) {
-                this.appComponent.removeChildren();
-                if (this.appElement) tv.ui.decorateChildren(this.appElement, this.decorateHandler.getHandler(), this.appComponent);
+            var appComponent = this.appComponent;
+            var appElement = this.appElement;
 
+            if (this.needsredraw && appComponent) {
+               appComponent.removeChildren();
+                if (appElement) tv.ui.decorateChildren(appElement, this.decorateHandler.getHandler(), appComponent);
+
+
+            }
+
+
+            if (!this.needsredraw) { 
+                               tv.ui.decorate(document.body);
+
+                var page = this.activePage.substr(1);
+                tv.ui.decorateChildren(goog.dom.getElement(page), this.decorateHandler.getHandler());
             }
 
             this.focusFirst();
@@ -225,14 +242,12 @@ Vifi.Browser.Page = Backbone.View.extend({
     historyManager: false,
     historyHandlers: [],
     // Selected item in browser
-    debug: true,
+    debug: false,
     initialize: function() {
         this.pageManager = Vifi.PageManager;
         this.filmDetailPage = new Vifi.Films.FilmDetailView();
         this.featuredFilmDetails = new Vifi.Films.FeaturedFilmDetailView();
-        Vifi.Event.on('*', function(event) {
-            console.log(event);
-        });
+       
         Vifi.Event.on('app:ready', this.render, this);
         Vifi.Event.on("browser:pagination", this.onBrowserPaginationEvent, this);
         this.pageManager.initialize();
@@ -245,7 +260,7 @@ Vifi.Browser.Page = Backbone.View.extend({
 
         Vifi.Event.trigger("page:change", "home");
         $log("Application ready")
-        $("#application").css("opacity", 1.0);
+        $("#application").animate({ "opacity": 1.0},500);
 
 
         return this;
@@ -441,9 +456,10 @@ Vifi.Browser.Page = Backbone.View.extend({
 
             }
             if (keyCode == 38 /*Up*/ ) {
+                                event.stopPropagation();
+
                 var el = tv.ui.getComponentByElement(goog.dom.getElement("search-options-bar"));
                 el.tryFocus(true);
-                event.stopPropagation();
             }
             if (keyCode == 40 /*Down*/ ) {
                 event.stopPropagation();
@@ -524,7 +540,8 @@ Vifi.Browser.Page = Backbone.View.extend({
         var val = element.attr("data-value");
         var type = element.attr("data-type");
         var selected = false;
-
+        var category = element.attr("data-category");
+        if (undefined != category) Vifi.Event.trigger("button:"+category, val, this);
         if (undefined != type && type == "radio") {
 
             var butvalue = element.attr("data-value");
@@ -535,6 +552,7 @@ Vifi.Browser.Page = Backbone.View.extend({
             $(resetbuttons).each(function() {
                 var btn = tv.ui.getComponentByElement(this);
                 var value = $(this).attr("data-value");
+
                 if (value == butvalue) btn.setOn(true);
                 else btn.setOn(false);
             });
@@ -582,6 +600,7 @@ Vifi.Browser.Page = Backbone.View.extend({
     /* Handle focusing on browser */
     handleMovieFocus: function(event) {
         var item = event.target.element_;
+
         Vifi.Event.trigger("browser:pagination", item);
     },
     /* Handle focusing on the frontpage */
@@ -610,6 +629,9 @@ Vifi.Browser.Page = Backbone.View.extend({
             Vifi.Event.trigger("page:change", "account");
         }
         if (keyCode == 13 /*Enter*/ ) {
+
+                $(item).addClass("active-item");
+
             var item = event.target.element_;
             var link = item.firstChild;
             $(link).trigger("click");
@@ -788,12 +810,13 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
             }, 500, function() {
                 $("#moviePage").removeAttr("style");
 
-                Vifi.Event.trigger("page:change", "movie");
+                Vifi.Event.trigger("page:change", "movie", false, true);
             }).show();
 
         } else {
             $("#moviePage").show();
-            Vifi.Event.trigger("page:change", "movie");
+            Vifi.Event.trigger("page:change", "movie", false, true);
+
 
         }
 
@@ -801,9 +824,14 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
     },
     render: function() {
         this.$el.html(ich.filmDetailsTemplate(this.model.toJSON()));
+        var description = this.$("#movie_description").text();
+        var maxAmount = Vifi.Platforms.platform.resolution.height > 720 ? 1100 : 900
+        if (description.length > maxAmount) { 
+            this.$("#movie_description").html(description.substr(0,maxAmount) + "...");
+        }
         if (!this.model.get("film").youtube_id) {
             this.$("#preview").attr("class", "");
-            this.$("#button-trailer").addClass("no-trailer").html("Treilerit pole")
+            this.$("#button-trailer").addClass("no-trailer").html("Treilerit pole");
         }
         return this;
     }
@@ -829,6 +857,7 @@ Vifi.Films.FilmView = Backbone.View.extend({
         event.preventDefault();
         var view = this;
         var model = this.model;
+        this.$el.find(".active-item").removeClass("active-item");
         Vifi.Event.trigger("film:show", model.id);
         this.$el.addClass("active-item");
     },

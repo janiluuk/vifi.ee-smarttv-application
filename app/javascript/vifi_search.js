@@ -15,7 +15,6 @@ $(function() {
             this.player = new Vifi.Player.Player({
                 session: this.session
             });
-            this.options.subgenres.bind('all', this.setSubGenreDropDown, this);
             this.options.genres.bind('all', this.setGenreDropDown, this);
             this.collection.bind('sync', this.renderResults, this);
             this.collection.state.bind('change', this.onChangeCollectionState, this);
@@ -29,7 +28,6 @@ $(function() {
         },
         initializeUI: function() {
             //app and router now exist in the scope
-            this.options.subgenres.update();
             this.setGenreDropDown();
 
 
@@ -131,25 +129,7 @@ $(function() {
             }
 
         },
-        setSubGenreDropDown: function(action, subgenres_obj) {
-            $('#div_id_subgenre select').empty();
-
-            if (this.options.page_type != 'channel') {
-                if (this.options.subgenres.length > 0) {
-                    if (this.options.subgenres.length > 1) {
-                        $('#div_id_subgenre select').append(new Option('Any Sub-Genre', ''));
-                    }
-                    _.each(this.options.subgenres.models, function(subgenre, key, list) {
-                        $('#div_id_subgenre select').append(new Option(subgenre.attributes.name, subgenre.id));
-                    });
-                    $('#div_id_subgenre').show();
-                    this.$('#id_subgenre option[value="' + state.get('subgenre') + '"]').attr('selected', 'selected');
-                } else {
-                    $('#div_id_subgenre select').append(new Option('No Sub Genres', ''));
-                    $('#div_id_subgenre').show();
-                }
-            }
-        },
+      
         redirectToBaseURL: function() {
             window.location = 'http://' + window.location.host + '/#search/' + this.collection.state.getHash();
         },
@@ -165,12 +145,7 @@ $(function() {
                 this.redirectToBaseURL();
             }
         },
-        onChangeSubGenre: function(model, subgenre) {
-            //This is a state change event, not a dom event
-            if (this.options.redirect_on_genre_change && subgenre != this.collection.initial_search.subgenre) {
-                this.redirectToBaseURL();
-            }
-        },
+      
         onChangeGenre: function(model, genre) {
             // this function is a model state change, not the dom event: change
 
@@ -212,32 +187,7 @@ $(function() {
                 'page': 1
             });
         },
-        onClickPage: function(event) {
-            event.preventDefault();
-            var page = event.target.innerHTML;
-            if (page == '...') return;
-            this.collection.state.set({
-                'page': page
-            });
-        },
-        onClickNextPage: function(event) {
-
-            if (this.collection.pagination.has_next) {
-                var page = this.collection.pagination.next_page_number;
-                this.collection.state.set({
-                    'page': page
-                });
-            }
-        },
-        onClickPreviousPage: function(event) {
-            event.preventDefault();
-            if (this.collection.pagination.has_previous) {
-                var page = this.collection.pagination.previous_page_number;
-                this.collection.state.set({
-                    'page': page
-                });
-            }
-        },
+      
         onSearchFieldChange: function(event) {
 
 
@@ -327,17 +277,7 @@ $(function() {
                 }
                 this.$('#pagination_count').html(pagination_count);
 
-                if (this.collection.pagination.has_previous) {
-                    $('.previous_page').addClass('active');
-                } else {
-                    $('.previous_page').removeClass('active');
-                }
-
-                if (this.collection.pagination.has_next) {
-                    $('.next_page').addClass('active');
-                } else {
-                    $('.next_page').removeClass('active');
-                }
+               
             }
             $("#search-results div.lazy").lazyload({
                 threshold: 12000,
@@ -442,15 +382,11 @@ $(function() {
 
             var changed_keys = _.keys(state.changedAttributes());
             var genre_is_changed = _.contains(changed_keys, 'genre');
-            var subgenre_is_changed = _.contains(changed_keys, 'subgenre');
 
-            if (this.options.redirect_on_genre_change && (genre_is_changed || subgenre_is_changed)) {
+            if (this.options.redirect_on_genre_change && (genre_is_changed)) {
                 return this.redirectToBaseURL();
 
-            } else if (genre_is_changed) {
-                this.options.subgenres.update();
             }
-
             //Update the url of the browser using the router navigate method
             router.navigate('search/' + this.collection.state.getHash());
 
@@ -545,8 +481,6 @@ $(function() {
     function initApp(initial_search_json) {
 
 
-
-
         var models = initial_search_json.results;
         var pagination = initial_search_json.pagination;
         var activationCode = initial_search_json.activationCode;
@@ -582,17 +516,18 @@ $(function() {
 
         // Create collection of featured films and add them to the frontpage
 
-        var subgenres = new Vifi.Films.SubGenreCollection();
         var genres = new Vifi.Films.GenreCollection(genredata);
         var queue = new Vifi.Films.QueueCollection(initial_search_json.queue);
         var page = new Vifi.Browser.Page;
         var pagemanager = Vifi.PageManager;
 
         var profile = new Vifi.User.Profile();
+        var sessionId = $.cookie("vifi_session");
 
         var session = new Vifi.User.Session({
             profile: profile,
             activationCode: activationCode,
+            sessionId: sessionId 
 
         });
 
@@ -626,7 +561,6 @@ $(function() {
             logger: logger,
             pagemanager: pagemanager,
             genres: genres,
-            subgenres: subgenres,
             user_is_authenticated: user_is_authenticated,
             queue: queue,
             api: api,
@@ -661,8 +595,11 @@ $(function() {
     }
 
     $(window).load(function() {
+        var sessionId = "";
+        var session = $.cookie("vifi_session");
+        if (undefined != session && session != "") sessionId = session;
         if (initial_search_json == "")  {
-            $.getJSON("http://backend.vifi.ee/api/?api_key=12345&jsoncallback=?",
+            $.getJSON(Vifi.Settings.api_url+"?api_key="+Vifi.Settings.api_key+"&jsoncallback=?",
                 initApp, "jsonp");
         } else {
 
