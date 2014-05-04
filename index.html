@@ -338,7 +338,7 @@
                     </div>
 
                     <div class="movie-grid">
-                        <div id="film-results" class="default animation tv-container-horizontal row">
+                        <div id="film-results" class="default tv-container-horizontal row">
                             <div class="row_title" id="search-results-title">Tulemused</div>
                             <div class="tv-container-start-scroll tv-container-transient-selection movie-cover-container animation" id="search-results">
                             </div>
@@ -491,7 +491,7 @@
                         <div id="player-options-bar" class="tv-tab-container-content tv-container-horizontal tab-content-container secondary_domtabs">
 
 
-                    <div id="player-controls" class="controls tab-content row tv-container-horizontal tv-container">
+                        <div id="player-controls" class="controls tab-content row tv-container-horizontal tv-container">
                         
                           <h2><a id="c1" name="c1">Controls</a></h2>
                     <div class="tv-button action-button no-left">
@@ -605,10 +605,10 @@
 <script type="text/template" id="trailerTemplate">
 <div style="position: absolute; z-index: 15; width: 100%; height: 100%">
 
-                <div id="trailer-info">
-                    <div id="trailer-info-title"><%- film.title %></div>
+                <div id="player-info">
+                    <div id="player-info-title"><%- film.title %></div>
                     
-                    <div id="trailer-info-additional">
+                    <div id="player-info-additional">
                         <span><%- film.year %></span>
                     </div>
 
@@ -617,7 +617,7 @@
 
 
 
-                <div id="trailer">
+                <div id="player">
 
                 <iframe frameborder="0" height="100%" width="100%" src="http://youtube.com/embed/<%- film.youtube_id %>?autoplay=1&controls=0&showinfo=0&autohide=1">
                 </iframe>
@@ -628,10 +628,10 @@
                     <div id="trailer-options" class="tv-tab-container tv-container-vertical">
                         <div id="trailer-options-selection" class="tv-tab-container-bar tv-container-horizontal tv-container tab-bar domtabs row">
                                 <div id="closeTrailer"  class="tv-component tab nav-item normal-item">
-                                        <a href="#c1">Tagasi filmi lehele</a>
+                                        <a href="#d1">Tagasi filmi lehele</a>
                                 </div>
                                 <div id="watchFilm" class="tv-component tab nav-item normal-item">
-                                        <a href="#c2">Vaata see film</a>
+                                        <a href="#d2">Vaata see film</a>
                                 </div>
                     
                             
@@ -657,6 +657,7 @@
 <script type="text/template" id="activationTemplate">
             <div class="activation-container">
                 <p class="header">Hei! Your activation code is <span id="activation-code"><%- activationCode %></span></p>
+
                 <p class="activation-description" id="step1"><span class="step">1</span> <%- step1text %></p>
                 <p class="activation-description" id="step2"><span class="step">2</span> <%- step2text %></p>
                         <div class="buttonsrow tv-container-horizontal">
@@ -673,7 +674,8 @@
 <object id="pluginTVMW" border=0 classid="clsid:SAMSUNG-INFOLINK-TVMW"></object>
 <object id="audio-plugin" style="opacity:0.0; background-color:#000000;" border="0" classid="clsid:SAMSUNG-INFOLINK-AUDIO"></object>
 <object id="window-plugin" style="opacity:0.0; background-color:#000000;" border="0" classid="clsid:SAMSUNG-INFOLINK-WINDOW"></object>
-<object id="network-plugin" style="opacity:0.0; background-color:#000000;" border="0" classid="clsid:SAMSUNG-INFOLINK-NETWORK"></object>
+<object id='pluginNetwork' border=0 classid='clsid:SAMSUNG-INFOLINK-NETWORK'></object>
+
 <!-- The id has to be exactly 'pluginObjectNNavi' -->
 <object id="pluginObjectNNavi" border="0" style="opacity:0.0; background-color:#000000;" classid="clsid:SAMSUNG-INFOLINK-NNAVI"></object>
 

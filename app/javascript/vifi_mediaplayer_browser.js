@@ -9,6 +9,9 @@
 
 Vifi.MediaPlayer = {
     _active: false,
+    content: false,
+
+
     active: function() {
         this._active = true
     },
@@ -17,7 +20,7 @@ Vifi.MediaPlayer = {
     },
     getCurrentTime: function() {
 
-        return $f().getTime()*1000;
+        return $f().getTime() * 1000;
     },
     _videoElement: null,
     allowFastFoward: true,
@@ -31,6 +34,7 @@ Vifi.MediaPlayer = {
         }
         this.speedtest();
     },
+
     _createVideoTag: function() {
         $log(" ___ CREATING VIDEO TAG ___ ")
         this.eventsBound = false;
@@ -40,7 +44,11 @@ Vifi.MediaPlayer = {
         this._trackEvents();
         return obj;
     },
+    setContent: function(content) {
 
+        this.content = content;
+
+    },
     setPlaylist: function(playlist) {
         $log(" Setting new Playlist ");
         this.trigger("mediaplayer:onnewplaylist", playlist);

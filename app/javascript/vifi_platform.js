@@ -163,7 +163,7 @@ Vifi.Platform.prototype.addPlatformCSS = function() {
 
 // Override this 
 Vifi.Platform.prototype.detectPlatform = function() {
-    if (!this.defaultPlatform) $error(" <<< PLATFORM MUST OVERRIDE THE DETECT PLATFORM METHOD >>>");
+    if (!this.defaultPlatform) $log(" <<< PLATFORM MUST OVERRIDE THE DETECT PLATFORM METHOD >>>");
 }
 
 
@@ -181,6 +181,20 @@ Vifi.Platform.prototype.proxy = function() {
     browser.setResolution(1920, 1080);
     browser.defaultPlatform = true;
     Vifi.Platforms.addSupportedPlatform(browser);
+}());
+
+/* The second default platform "browser" */
+
+(function() {
+    var browser = new Vifi.Platform('flash');
+    // browser.needsProxy = true;
+    // We want this to fail, and get added as default
+    browser.setResolution(1920, 1080);
+
+    browser.defaultPlatform = true;
+    Vifi.Platforms.addSupportedPlatform(browser);
+    browser.setMediaPlayer("flash");
+
 }());
 
 (function() {

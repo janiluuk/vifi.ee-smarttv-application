@@ -173,8 +173,13 @@ Vifi.PageManager = {
 
         Vifi.Event.trigger("page:ready", page);
 
+
         $("body").scrollTo(page, 230, {
-            onAfter: function() {}
+            onAfter: function() {
+
+
+
+            }
         });
         if (this.callback) this.callback();
 
@@ -208,8 +213,9 @@ Vifi.PageManager = {
 
             if (!this.needsredraw) {
                 tv.ui.decorate(document.body);
+
                 var page = this.activePage.substr(1);
-                tv.ui.decorateChildren(goog.dom.getElement(page), this.decorateHandler.getHandler(), appComponent);
+                tv.ui.decorateChildren(goog.dom.getElement(page), this.decorateHandler.getHandler());
             }
 
             this.focusFirst();
@@ -243,6 +249,7 @@ Vifi.Browser.Page = Backbone.View.extend({
         this.featuredFilmDetails = new Vifi.Films.FeaturedFilmDetailView();
 
         Vifi.Event.on('app:ready', this.render, this);
+        Vifi.Event.on("browser:pagination", this.onBrowserPaginationEvent, this);
         this.pageManager.initialize();
         this.setHandlers();
     },
@@ -258,7 +265,33 @@ Vifi.Browser.Page = Backbone.View.extend({
         return this;
     },
 
-    
+    loadBrowserImages: function() {
+        $("#browserPage div.lazy").lazyload({
+            threshold: 12000,
+            effect: 'fadeIn',
+            effectspeed: 1200
+        });
+    },
+    // Handle preloading imags on browser
+    onBrowserPaginationEvent: function(e) {
+        var item = e.element_;
+        var idx = $(item).index();
+
+
+        idx++;
+        var threshold = app.collection.pagination.current_page * app.collection.pagination.num_pages;
+
+        if (app.collection.pagination.current_page < 1 || idx > threshold) {
+            app.collection.pagination.current_page++;
+            this.loadBrowserImages();
+
+
+        } else if (idx < (threshold - app.collection.pagination.num_pages)) {
+            app.collection.pagination.current_page--;
+        }
+
+    },
+
 
     // Handle pushing account-buttons
     onAccountEvent: function(event) {
@@ -405,6 +438,36 @@ Vifi.Browser.Page = Backbone.View.extend({
 
     },
 
+    onDecorateFilmResult: function(component) {
+        var browser = this;
+
+        goog.events.listen(component, tv.ui.Component.EventType.KEY, function(event) {
+            var keyCode = event.keyCode;
+            event.preventDefault();
+            if (keyCode == 13 /*Enter*/ ) {
+                var item = event.target.element_;
+                var link = item.firstChild;
+                $(link).trigger("click");
+                event.stopPropagation();
+            }
+            if (keyCode == 39 /*Right */ ) {
+                Vifi.Event.trigger("browser:pagination", component.getElement());
+
+            }
+            if (keyCode == 38 /*Up*/ ) {
+                event.stopPropagation();
+
+                var el = tv.ui.getComponentByElement(goog.dom.getElement("search-options-bar"));
+                el.tryFocus(true);
+            }
+            if (keyCode == 40 /*Down*/ ) {
+                event.stopPropagation();
+            }
+
+
+        });
+
+    },
     /** Handle buttons on the onscreen keyboard  */
     handleKeyboardEvent: function(event) {
         var keyCode = event.keyCode;
@@ -452,9 +515,7 @@ Vifi.Browser.Page = Backbone.View.extend({
 
                 else {
                     el.removeChildren();
-                    tv.ui.decorateChildren(el.getElement(), function(component) {
-                            goog.events.listen(component, tv.ui.Component.EventType.KEY, this.handleMovieEvent); }.bind(this),el);
-
+                    tv.ui.decorateChildren(el.getElement(), this.onDecorateFilmResult, el);
                     el.tryFocus();
                 }
             }
@@ -538,6 +599,8 @@ Vifi.Browser.Page = Backbone.View.extend({
     /* Handle focusing on browser */
     handleMovieFocus: function(event) {
         var item = event.target.element_;
+
+        Vifi.Event.trigger("browser:pagination", item);
     },
     /* Handle focusing on the frontpage */
     handleFeaturedFocus: function(event) {
@@ -593,7 +656,7 @@ Vifi.Browser.Page = Backbone.View.extend({
 
 
             var item = event.target;
-            app.trigger("browser:pagination", item);
+            Vifi.Event.trigger("browser:pagination", item);
         }
 
         if (keyCode == 40 /*Down*/ ) {
