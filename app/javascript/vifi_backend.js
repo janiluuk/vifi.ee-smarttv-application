@@ -171,7 +171,7 @@ Vifi.PageManager = {
         Vifi.Event.trigger("page:ready", page);
 
 
-        $("body").scrollTo(page, 230, {
+        $("body").scrollTo(page, 280, {
             onAfter: function() {
 
 
@@ -434,37 +434,6 @@ Vifi.Browser.Page = Backbone.View.extend({
         });
 
     },
-
-    onDecorateFilmResult: function(component) {
-        var browser = this;
-
-        goog.events.listen(component, tv.ui.Component.EventType.KEY, function(event) {
-            var keyCode = event.keyCode;
-            event.preventDefault();
-            if (keyCode == 13 /*Enter*/ ) {
-                var item = event.target.element_;
-                var link = item.firstChild;
-                $(link).trigger("click");
-                event.stopPropagation();
-            }
-            if (keyCode == 39 /*Right */ ) {
-                Vifi.Event.trigger("browser:pagination", component.getElement());
-
-            }
-            if (keyCode == 38 /*Up*/ ) {
-                event.stopPropagation();
-
-                var el = tv.ui.getComponentByElement(goog.dom.getElement("search-options-bar"));
-                el.tryFocus(true);
-            }
-            if (keyCode == 40 /*Down*/ ) {
-                event.stopPropagation();
-            }
-
-
-        });
-
-    },
     /** Handle buttons on the onscreen keyboard  */
     handleKeyboardEvent: function(event) {
         var keyCode = event.keyCode;
@@ -503,6 +472,7 @@ Vifi.Browser.Page = Backbone.View.extend({
     handleBrowserOptionKeys: function(event) {
         var keyCode = event.keyCode;
         event.preventDefault();
+        var that = this;
         if (keyCode == 40 /*Down*/ ) {
             var el = tv.ui.getComponentByElement(goog.dom.getElement("film-results"));
             if (undefined !== el) {
@@ -512,7 +482,9 @@ Vifi.Browser.Page = Backbone.View.extend({
 
                 else {
                     el.removeChildren();
-                    tv.ui.decorateChildren(el.getElement(), this.onDecorateFilmResult, el);
+                    tv.ui.decorateChildren(el.getElement(), function(component) {
+                        goog.events.listen(component, tv.ui.Component.EventType.KEY, that.handleMovieEvent, that);
+                    });
                     el.tryFocus();
                 }
             }
@@ -527,10 +499,6 @@ Vifi.Browser.Page = Backbone.View.extend({
         return false;
     },
 
-    handleResetEvent: function(event) {
-
-
-    },
     /* Handle togglebutton */
     handleToggleEvent: function(event) {
         var button = event.target;
@@ -653,9 +621,6 @@ Vifi.Browser.Page = Backbone.View.extend({
         }
         if (keyCode == 39 /*Right */ ) {
 
-
-            var item = event.target;
-            Vifi.Event.trigger("browser:pagination", item);
         }
 
         if (keyCode == 40 /*Down*/ ) {
@@ -747,8 +712,6 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
 
     playTrailer: function(event) {
         event.preventDefault();
-
-
         var trailerView = new Vifi.Films.TrailerView({
             model: this.model
         });
