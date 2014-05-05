@@ -163,14 +163,18 @@ Vifi.Player.PlayerView = Backbone.View.extend({
     },
 
     onPlayerPageEnter: function() {
+        Vifi.Event.trigger("page:change", "player");
+
         $.scrollTo(0);
 
         $(".container:visible:not(#playerPage)").addClass("container-hidden").fadeOut();
         this.$el.fadeIn();
 
         setTimeout(function() {
-
-            tv.ui.decorateChildren(goog.dom.getElement("playerPage"));
+            Vifi.PageManager.decorateHandler.addClassHandler('action-button', function(component) {
+                component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, app.page.onActionEvent, false, app.page)
+            });
+            tv.ui.decorateChildren(goog.dom.getElement("playerPage"), app.page.pageManager.decorateHandler.getHandler());
             var focus = tv.ui.getComponentByElement(goog.dom.getElement("player-options")).tryFocus();
 
         }, 1200);
@@ -181,17 +185,14 @@ Vifi.Player.PlayerView = Backbone.View.extend({
 
         app.player.trigger("mediaplayer:stop", this);
         tv.ui.getComponentByElement(goog.dom.getElement("application")).removeChildren();
-
+        tv.ui.decorate(document.body);
         $("#playerPage").empty().fadeOut();
 
         $(".container-hidden").fadeIn().removeClass("container-hidden");
-        app.pagemanager.redraw(false, true);
 
         tv.ui.decorateChildren(goog.dom.getElement("application"));
 
         Vifi.Event.trigger("page:change", "movie");
-
-        Vifi.Event.trigger("page:focus");
 
     },
 

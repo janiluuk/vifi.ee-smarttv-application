@@ -43,9 +43,6 @@ Vifi.PageManager = {
             tv.ui.decorate(document.body);
             this.appComponent = tv.ui.getComponentByElement(this.appElement);
         }
-        tv.ui.postponeRender(function() {
-
-        });
 
 
 
@@ -259,13 +256,8 @@ Vifi.Browser.Page = Backbone.View.extend({
     render: function() {
 
         Vifi.Event.trigger("page:change", "home");
-
-        $("#application").waitForImages(function() {
-            $("#loadingPage").fadeOut();
-            $("#application").css("opacity", 1.0);
-
-        });
-
+        $log("Application ready")
+        $("#application").css("opacity", 1.0)
 
         return this;
     },
@@ -279,7 +271,21 @@ Vifi.Browser.Page = Backbone.View.extend({
     },
     // Handle preloading imags on browser
     onBrowserPaginationEvent: function(e) {
-        if ($("#browserPage .loading:in-viewport").size() > 0) this.loadBrowserImages();
+        var item = e.element_;
+        var idx = $(item).index();
+
+
+        idx++;
+        var threshold = app.collection.pagination.current_page * app.collection.pagination.num_pages;
+
+        if (app.collection.pagination.current_page < 1 || idx > threshold) {
+            app.collection.pagination.current_page++;
+            this.loadBrowserImages();
+
+
+        } else if (idx < (threshold - app.collection.pagination.num_pages)) {
+            app.collection.pagination.current_page--;
+        }
 
     },
 
@@ -520,6 +526,11 @@ Vifi.Browser.Page = Backbone.View.extend({
         }
         return false;
     },
+
+    handleResetEvent: function(event) {
+
+
+    },
     /* Handle togglebutton */
     handleToggleEvent: function(event) {
         var button = event.target;
@@ -532,9 +543,11 @@ Vifi.Browser.Page = Backbone.View.extend({
         var selected = false;
         var category = element.attr("data-category");
         if (undefined != category) Vifi.Event.trigger("button:" + category, val, this);
-        if (undefined != type && type == "radio") {
 
-            var butvalue = element.attr("data-value");
+        var rowSize = element.parent().find(".tv-toggle-button-on").size();
+
+        if ((undefined != type && type == "radio" || val == "reset")) {
+
             element.parent().find(".tv-toggle-button").each(function() {
                 $(this).addClass("reset-toggle");
             });
@@ -543,46 +556,41 @@ Vifi.Browser.Page = Backbone.View.extend({
                 var btn = tv.ui.getComponentByElement(this);
                 var value = $(this).attr("data-value");
 
-                if (value == butvalue) btn.setOn(true);
+                if (value == val) btn.setOn(true);
                 else btn.setOn(false);
             });
 
 
-        }
-        // Reset selections if user pushed reset button
-        if (val == "reset" || type == "radio") {
-            var reset = true;
-            element.parent().find(".tv-toggle-button").each(function() {
-                $(this).addClass("reset-toggle");
-            });
-            var resetbuttons = goog.dom.getElementsByClass("reset-toggle");
-            $(resetbuttons).each(function() {
-                var btn = tv.ui.getComponentByElement(this);
-                var attribute = $(this).attr("data-value");
-                if (attribute == "reset" || attribute == val) btn.setOn(true);
-                else btn.setOn(false);
-            });
         } else {
+
             //    Mute Reset choices exist
             element.parent().find(".tv-toggle-button:first").addClass("reset-toggle");
             var resetbutton = goog.dom.getElementByClass("reset-toggle");
             var tvbutton = tv.ui.getComponentByElement(resetbutton);
             if (tvbutton != false && tvbutton != "undefined") {
-                tvbutton.setOn(false);
-                $("#id_" + coll + " option:first").attr("selected", false);
+                var resetOnOff = rowSize > 0 ? false : true;
+                tvbutton.setOn(resetOnOff);
+
             }
         }
-        $(".reset-toggle").removeClass("reset-toggle");
-        if (button.isOn() == true) selected = true;
+
+        element.parent().find(".reset-toggle").removeClass("reset-toggle");
+
+
+
+
         if (val != undefined && coll != undefined) {
+            if (val == "reset" || rowSize == 0) {
+                app.collection.state.set(coll, "");
+            }
             $("#id_" + coll + " option").each(function() {
-                if (reset) {
-                    if (this.value > 0) $(this).attr("selected", false);
-                    else $(this).attr("selected", "selected")
-                }
+                if (val == "reset") {
+                    $(this).attr("selected", false);
+                } else
                 if (this.value == val) {
-                    $(this).attr("selected", selected);
+                    $(this).attr("selected", button.isOn() && rowSize > 0 ? "selected" : false);
                 }
+
             });
         }
         app.onSearchFieldChange(event);
@@ -783,7 +791,7 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
         }
     },
     showPage: function() {
-        var height = $("#browserPage")
+        var height = $("#browserPage");
         if (this.$el.is(":hidden") === true && $("#browserPage").hasClass("active")) {
             var height = $(window).height() + "px";
 

@@ -8,17 +8,6 @@
  */
 
 var avplayObj;
-try {
-    webapis.avplay.getAVPlay(function(avplay) {
-        avplayObj = avplay;
-    }, function(error) {
-        alert(error.message);
-
-    });
-} catch (error) {
-    console.log("Samsung platform not supported");
-    //  console.log(error.name);
-}
 
 Vifi.MediaPlayer = {
     plugin: avplayObj,
@@ -61,11 +50,22 @@ Vifi.MediaPlayer = {
 
     init: function() {
         if (this.initialized) return true;
+        try {
+            webapis.avplay.getAVPlay(function(avplay) {
+                avplayObj = avplay;
+            }, function(error) {
+                alert(error.message);
+
+            });
+        } catch (error) {
+            console.log("Samsung platform not supported");
+            //  console.log(error.name);
+            return false;
+        }
 
         $log(" ___  SAMSUNG PLAYER INIT ___ ")
         var success = true;
         this.state = this.STOPPED;
-        var that = this;
         this.initialized = true;
 
         avplayObj.init({
@@ -96,7 +96,9 @@ Vifi.MediaPlayer = {
             $log(error.name);
         }
 
-
+        setTimeout(function() {
+            Vifi.MediaPlayer.hide();
+        }, 1000);
         // Reset Platform to default sets.
         if (Vifi.Settings.debug === true) {
             Vifi.Event.on("all", function(thing) {
@@ -233,7 +235,9 @@ Vifi.MediaPlayer = {
     // 'play','pause','rewind','fastforward', 'show', 'setCoordinates', 'next','setUserBitrate','stop', 'playing','hide', 'mute']
     stop: function() {
         $log("HARD STOPPING VIDEO");
-        this.state = this.STOPPED
+        this.state = this.STOPPED;
+        if (this.visible) this.hide();
+
         if (this.plugin) {
             $log(" Calling MediaPlayer Stop ")
             this.plugin.stop();
@@ -254,13 +258,13 @@ Vifi.MediaPlayer = {
     fastforward: function() {
         if (this.allowFastForward) {
             this.trigger("mediaplayer:onfastforward");
-            this.plugin.jumpForward(5);
+            this.plugin.jumpForward(10);
         }
     },
 
     rewind: function() {
         this.trigger("mediaplayer:onrewind");
-        this.plugin.jumpBackward(5);
+        this.plugin.jumpBackward(10);
     },
 
     mute: function() {
@@ -372,10 +376,10 @@ Vifi.MediaPlayer.bind("mediaplayer:timeupdate", function(time) {
 
     $("#player-progress").css({
         width: Math.floor(time / Vifi.MediaPlayer.duration() * 100) + "%"
-    })
-    var readableCurrent = Vifi.Engine.util.convertMstoHumanReadable(time);
-    var readableDuration = Vifi.Engine.util.convertMstoHumanReadable(Vifi.MediaPlayer.duration());
-    $("#player-current-time").text(readableCurrent.toString() + " / " + readableDuration.toString())
+    });
+
+   
+    $("#player-current-time").text(Vifi.MediaPlayer.currentTime.toString());
 });
 
 avplayObj.OnRenderError = 'Vifi.MediaPlayer.videoError';

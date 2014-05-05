@@ -46,9 +46,7 @@ body {
 }
 #application {
     opacity:0;
-    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-    filter: alpha(opacity=0);
-    -webkit-transition: opacity 1s ease-in-out;
+  
 
 }
 
@@ -274,19 +272,19 @@ span.stars.r1 {
     color:#63D116;
     cursor:pointer;
     transition: font-size 0.1s, line-height 0.1s;
-    line-height: 2.1em;
+    line-height: 2.4em;
     float: left;
     margin-right: 1.4%;
     position: relative;
-    font-size:2.7em;
+    font-size:2.4em;
     display:inline-block;
 }
 
 .key.first {
-    margin-left: 1em;
+    margin-left: 0.5em;
 }
 .secondary_domtabs .keyboard div.key:hover, .secondary_domtabs .keyboard div.key.tv-component-focused {
-    font-size: 4.2em;
+    font-size: 4em;
     line-height: 1.2em;
     text-shadow: 0 1px 2px rgb(128, 82, 0), 0 2px 7px rgb(255, 255, 236);
     color: rgb(235, 235, 83);
@@ -981,8 +979,8 @@ span.stars.r1 {
     width: 200px;
 }
 .animation {
-    -webkit-transition: all 0.3s ease;
-    transition: all 0.3s ease;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
 }
 #browserPage .movie-cover-container {
     margin-left: 10em;
