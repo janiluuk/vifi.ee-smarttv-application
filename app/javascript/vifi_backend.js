@@ -209,7 +209,6 @@ Vifi.PageManager = {
 
 
             if (!this.needsredraw) {
-                tv.ui.decorate(document.body);
 
                 var page = this.activePage.substr(1);
                 tv.ui.decorateChildren(goog.dom.getElement(page), this.decorateHandler.getHandler());
@@ -256,8 +255,14 @@ Vifi.Browser.Page = Backbone.View.extend({
     render: function() {
 
         Vifi.Event.trigger("page:change", "home");
-        $log("Application ready")
-        $("#application").css("opacity", 1.0)
+
+        $("#application").waitForImages(function() {
+            $(this).animate({
+                "opacity": 1.0
+            }, 800);
+            $log("Application ready");
+
+        });
 
         return this;
     },
@@ -777,7 +782,7 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
 
         } else {
             $("#moviePage").show();
-            Vifi.Event.trigger("page:change", "movie", false, true);
+            Vifi.Event.trigger("page:change", "movie", false);
 
 
         }
