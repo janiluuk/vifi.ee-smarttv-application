@@ -260,6 +260,8 @@ Vifi.Browser.Page = Backbone.View.extend({
             $(this).animate({
                 "opacity": 1.0
             }, 800);
+            $("#loadingWrapper").fadeOut();
+
             $log("Application ready");
 
         });
