@@ -21,8 +21,8 @@ $(function() {
             this.collection.state.bind('change:genre', this.onChangeGenre, this);
             this.collection.state.bind('change:duration', this.onChangeDuration, this);
             this.collection.state.bind('change:year', this.onChangeYear, this);
+            this.collection.state.bind('change:period', this.onChangePeriod, this);
             this.collection.state.bind('change:search', this.onChangeText, this);
-            this.on("browser:pagination", this.onBrowserPaginationEvent, this);
 
             this.session.enable();
 
@@ -68,7 +68,10 @@ $(function() {
                 $("#loadingPage").fadeOut();
                 $(this).css("opacity", 1).fadeIn("slow");
             });
-            Vifi.Event.trigger("app:ready");
+
+            setTimeout(function() {
+                Vifi.Event.trigger("app:ready");
+            }, 1000);
 
         },
         events: {
@@ -78,13 +81,6 @@ $(function() {
             'change #search-form input[type="hidden"]': 'onSearchFieldChange',
             'change #div_id_intended_audience input[type="checkbox"]': 'onAudienceCheckboxFieldChange',
             'change #div_id_hide_coming_soon input[type="checkbox"]': 'onHideComingSoonChange',
-            'change #div_id_hide_web_series input[type="checkbox"]': 'onHideWebSeriesChange',
-            'click .next_page': 'onClickNextPage',
-            'click .previous_page': 'onClickPreviousPage',
-            'click .page-number-link': 'onClickPage',
-            'click .sort-options a': 'onClickSort',
-            'click #toggle-grid': 'onClickToggleGrid',
-            'click #toggle-list': 'onClickToggleList'
 
         },
 
@@ -109,7 +105,7 @@ $(function() {
                 'hide_web_series': value
             });
         },
-        setGenreDropDown: function(action, subgenres_obj) {
+        setGenreDropDown: function(action) {
 
             $('#div_id_genre select').empty();
 
@@ -130,7 +126,7 @@ $(function() {
             }
 
         },
-      
+
         redirectToBaseURL: function() {
             window.location = 'http://' + window.location.host + '/#search/' + this.collection.state.getHash();
         },
@@ -146,7 +142,7 @@ $(function() {
                 this.redirectToBaseURL();
             }
         },
-      
+
         onChangeGenre: function(model, genre) {
             // this function is a model state change, not the dom event: change
 
@@ -188,23 +184,32 @@ $(function() {
                 'page': 1
             });
         },
-      
-      loadBrowserImages: function() {
-        $("#search-results div.lazy").lazyload({
-            threshold: 9000,
-            effect: 'fadeIn',
-            effectspeed: 1200
-        });
+        onClickPage: function(event) {
+            event.preventDefault();
+            var page = event.target.innerHTML;
+            if (page == '...') return;
+            this.collection.state.set({
+                'page': page
+            });
         },
-        // Handle preloading imags on browser
-        onBrowserPaginationEvent: function(e) {
+        onClickNextPage: function(event) {
 
-           var images = $(".lazy.loading:in-viewport");
-           if (images.size() > 0)
-                app.loadBrowserImages();
-            
+            if (this.collection.pagination.has_next) {
+                var page = this.collection.pagination.next_page_number;
+                this.collection.state.set({
+                    'page': page
+                });
+            }
         },
-
+        onClickPreviousPage: function(event) {
+            event.preventDefault();
+            if (this.collection.pagination.has_previous) {
+                var page = this.collection.pagination.previous_page_number;
+                this.collection.state.set({
+                    'page': page
+                });
+            }
+        },
         onSearchFieldChange: function(event) {
 
 
@@ -218,7 +223,6 @@ $(function() {
             var search_dict = {}
 
             search_dict[name] = value;
-            search_dict['page'] = 1;
 
             $("#search-form select :selected").each(function() {
                 var fieldid = $(this).parent().attr("id");
@@ -249,7 +253,6 @@ $(function() {
                     search_dict['plus17'] = value
                     break;
             }
-            search_dict['page'] = 1;
             this.collection.state.set(search_dict);
         },
 
@@ -294,10 +297,23 @@ $(function() {
                 }
                 this.$('#pagination_count').html(pagination_count);
 
-               
-            }
+                if (this.collection.pagination.has_previous) {
+                    $('.previous_page').addClass('active');
+                } else {
+                    $('.previous_page').removeClass('active');
+                }
 
-            this.loadBrowserImages();
+                if (this.collection.pagination.has_next) {
+                    $('.next_page').addClass('active');
+                } else {
+                    $('.next_page').removeClass('active');
+                }
+            }
+            $("#search-results div.lazy").lazyload({
+                threshold: 9000,
+                effect: 'fadeIn'
+            });
+
 
 
             this.updateUIToState();
@@ -307,17 +323,6 @@ $(function() {
         updateUIToState: function() {
             var state = this.collection.state;
             // set intended audience checkboxes
-
-
-            if (this.collection.state.get('list_style') == 'grid') {
-                $('#movie-grid').addClass("grid-view").removeClass("list-view");
-                $('.toggle-g').addClass("active");
-                $('.toggle-l').removeClass("active");
-            } else {
-                $('#movie-grid').addClass("list-view").removeClass("grid-view");
-                $('.toggle-l').addClass("active");
-                $('.toggle-g').removeClass("ˇve");
-            }
 
 
             if (this.collection.state.get('family') == 1) {
@@ -351,14 +356,10 @@ $(function() {
             }
 
             // selects
+
             this.$('#id_genre option[value="' + state.get('genre') + '"]').attr('selected', 'selected');
-            this.$('#id_subgenre option[value="' + state.get('subgenre') + '"]').attr('selected', 'selected');
             this.$('#id_period option[value="' + state.get('period') + '"]').attr('selected', 'selected');
             this.$('#id_duration option[value="' + state.get('duration') + '"]').attr('selected', 'selected');
-
-
-            // year
-            this.$('#id_period').val(state.get('period'));
 
             // sorting buttons
             this.$('.sort-options a.active').removeClass('active').removeClass('sort-dir-asc').removeClass('sort-dir-desc');
@@ -374,17 +375,6 @@ $(function() {
             }
             this.$(sort_button).addClass('active').addClass(sort_dir_class);
 
-            /* Set the values for the slider */
-
-
-            var end_time = this.collection.state.get('end_time');
-            var start_time = this.collection.state.get('start_time');
-
-
-            this.$('#id_end_time').val(end_time);
-            this.$('#id_start_time').val(start_time);
-            this.$('#noUi-slider-mins .lower-mins').text(start_time);
-            this.$('#noUi-slider-mins .upper-mins').text(end_time);
 
             // main search text box
             var query = this.collection.state.get('q');
@@ -396,11 +386,14 @@ $(function() {
 
             var changed_keys = _.keys(state.changedAttributes());
             var genre_is_changed = _.contains(changed_keys, 'genre');
+            var period_is_changed = _.contains(changed_keys, 'period');
+            var duration_is_changed = _.contains(changed_keys, 'duration');
 
-            if (this.options.redirect_on_genre_change && (genre_is_changed)) {
+            if (this.options.redirect_on_genre_change && (genre_is_changed || duration_is_changed)) {
                 return this.redirectToBaseURL();
 
             }
+
             //Update the url of the browser using the router navigate method
             router.navigate('search/' + this.collection.state.getHash());
 
@@ -495,6 +488,8 @@ $(function() {
     function initApp(initial_search_json) {
 
 
+
+
         var models = initial_search_json.results;
         var pagination = initial_search_json.pagination;
         var activationCode = initial_search_json.activationCode;
@@ -555,6 +550,7 @@ $(function() {
         var alertPage = new Vifi.User.AlertView({
             model: session
         });
+
         var toolbar = new Vifi.User.ToolbarView({
             model: profile
         });
@@ -608,7 +604,7 @@ $(function() {
 
     $(window).load(function() {
         if (initial_search_json == "")  {
-            $.getJSON(Vifi.Settings.api_url+"?api_key="+Vifi.Settings.api_key+"&jsoncallback=?",
+            $.getJSON("http://backend.vifi.ee/api/?api_key=12345&jsoncallback=?",
                 initApp, "jsonp");
         } else {
 

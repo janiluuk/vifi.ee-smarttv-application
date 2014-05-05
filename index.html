@@ -91,14 +91,20 @@
                             </div>
                             <div id="div_id_period">
                                 <select id="id_period" multiple>
-
+                                    <option value="2014-2014"></option>
+                                    <option value="2013-2013"></option>
+                                    <option value="2000-2012"></option>
+                                    <option value="1990-2000"></option>
+                                    <option value="1980-1990"></option>
+                                    <option value="1900-1980"></option>
+ 
                                 </select>
                             </div>
                             <div id="div_id_duration">
                                 <select id="id_duration" multiple>
-                                    <option value="60"></option>
-                                    <option value="120"></option>
-                                    <option value="999"></option>
+                                    <option value="0-60"></option>
+                                    <option value="60-120"></option>
+                                    <option value="120-"></option>
                                 </select>
                             </div>
                         </div>
@@ -288,13 +294,13 @@
                                 <div data-value="reset"  class="nav-item tv-toggle-button tv-toggle-button-on tv-component no-left first">
                                     <span class="first">All</span>
                                 </div>
-                                <div data-value="60"  class="nav-item tv-toggle-button tv-component">
+                                <div data-value="0-60"  class="nav-item tv-toggle-button tv-component">
                                     <span>Alla 1 tunni</span>
                                 </div>
-                                <div data-value="120"  class="nav-item tv-toggle-button tv-component">
+                                <div data-value="60-120"  class="nav-item tv-toggle-button tv-component">
                                     <span>1-2 tundi</span>P
                                 </div>
-                                <div data-value="240"  class="nav-item tv-toggle-button tv-component no-right">
+                                <div data-value="120-"  class="nav-item tv-toggle-button tv-component no-right">
                                     <span>Üle 2 tunni</span>
                                 </div>
                             </div>
@@ -304,25 +310,22 @@
                                 <div data-value="reset"  class="nav-item tv-toggle-button tv-toggle-button-on tv-component no-left first">
                                     <span class="first">All</span>
                                 </div>
-                                <div  data-value="2012-" class="nav-item tv-toggle-button tv-component">
-                                    <span>2012</span>
+                                <div  data-value="2014-2014" class="nav-item tv-toggle-button tv-component">
+                                    <span>2014</span>
                                 </div>
-                                <div  data-value="2011" class="nav-item tv-toggle-button tv-component">
-                                    <span>2011</span>
+                                <div  data-value="2013-2013" class="nav-item tv-toggle-button tv-component">
+                                    <span>2013</span>
                                 </div>
-                                <div data-value="2010"  class="nav-item tv-toggle-button tv-component">
-                                    <span>2010</span>
-                                </div>
-                                <div  data-value="2000-2009" class="nav-item tv-toggle-button tv-component">
+                                <div  data-value="2000-2012" class="nav-item tv-toggle-button tv-component">
                                     <span>00-ndad</span>
                                 </div>
-                                <div data-value="1990-1999"  class="nav-item tv-toggle-button tv-component">
+                                <div data-value="1990-2000"  class="nav-item tv-toggle-button tv-component">
                                     <span>90-ndad</span>
                                 </div>
-                                <div data-value="1980-1989" class="nav-item tv-toggle-button tv-component">
+                                <div data-value="1980-1990" class="nav-item tv-toggle-button tv-component">
                                     <span>80-ndad</span>
                                 </div>
-                                <div  data-value="-1979" class="nav-item tv-toggle-button tv-component no-right">
+                                <div data-value="1900-1980" class="nav-item tv-toggle-button tv-component no-right">
                                     <span>70-ndad</span>
                                 </div>
                             </div>
@@ -338,7 +341,7 @@
                     </div>
 
                     <div class="movie-grid">
-                        <div id="film-results" class="default tv-container-horizontal row">
+                        <div id="film-results" class="default tv-container-horizontal animation row">
                             <div class="row_title" id="search-results-title">Tulemused</div>
                             <div class="tv-container-start-scroll tv-container-transient-selection movie-cover-container animation" id="search-results">
                             </div>
@@ -563,10 +566,9 @@
 <script type="text/template" id="toolbarTemplate">
         <div id="company">
                     <div class="logo"></div>
-<!--<span class="slogan">Esilinastus</span>-->
 </div>
 <div id="user" class="">
-<div class="avatar " style="background-image: url('app/stylesheets/img/anonymous_avatar.png')"></div>
+<div class="avatar" style="background-image: url('app/stylesheets/img/anonymous_avatar.png')"></div>
 <ul class="usercontrol">
     <a href="#">
     <li id="username-text"><%- email %></li>
