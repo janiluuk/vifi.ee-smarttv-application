@@ -393,6 +393,7 @@ Vifi.Browser.Page = Backbone.View.extend({
         Vifi.PageManager.decorateHandler.addClassHandler('film-result', function(component) {
             component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, browser.handleMovieEvent, false, browser);
         });
+
         Vifi.PageManager.decorateHandler.addIdHandler("search-options-bar", function(button) {
             button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, browser.handleBrowserOptionKeys, false, browser);
         });
@@ -483,8 +484,8 @@ Vifi.Browser.Page = Backbone.View.extend({
                 else {
                     el.removeChildren();
                     tv.ui.decorateChildren(el.getElement(), function(component) {
-                        goog.events.listen(component, tv.ui.Component.EventType.KEY, that.handleMovieEvent, that);
-                    });
+                        goog.events.listen(component, tv.ui.Component.EventType.KEY, that.handleMovieEvent, false, that);
+                    }, el);
                     el.tryFocus();
                 }
             }
