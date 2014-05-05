@@ -40,38 +40,9 @@ $(function() {
             var featuredCollection = this.collection.featured();
 
             var featuredview = new Vifi.Films.FeaturedFilmCollectionView(featuredCollection);
-            // make sure that the original checkboxes are checked if necessary.
-            // TODO: seems like this is not quite right... be nicer if django would handle this
-            // with the form upload.
-
-            if (this.collection.state.get('family') == 1) {
-                this.$('#id_intended_audience_1').attr('checked', true);
-            }
-            if (this.collection.state.get('teen') == 1) {
-                this.$('#id_intended_audience_2').attr('checked', true);
-            }
-            if (this.collection.state.get('plus17') == 1) {
-                this.$('#id_intended_audience_3').attr('checked', true);
-            }
-
-            /* Set the values for the slider */
-            var end_time = this.collection.state.get('end_time')
-            var start_time = this.collection.state.get('start_time')
-            // this.$('#id_end_time').val(end_time);
-            // this.$('#id_start_time').val(start_time);
-            this.$('#noUi-slider-mins .lower-mins').text(start_time);
-            this.$('#noUi-slider-mins .upper-mins').text(end_time);
-
-            $("#application").waitForImages(function() {
 
 
-                $("#loadingPage").fadeOut();
-                $(this).css("opacity", 1).fadeIn("slow");
-            });
 
-            setTimeout(function() {
-                Vifi.Event.trigger("app:ready");
-            }, 1000);
 
         },
         events: {
@@ -79,8 +50,6 @@ $(function() {
             'change #search-form select': 'onSearchFieldChange',
             'change #search-form input[type="text"]': 'onSearchFieldChange',
             'change #search-form input[type="hidden"]': 'onSearchFieldChange',
-            'change #div_id_intended_audience input[type="checkbox"]': 'onAudienceCheckboxFieldChange',
-            'change #div_id_hide_coming_soon input[type="checkbox"]': 'onHideComingSoonChange',
 
         },
 
@@ -184,32 +153,7 @@ $(function() {
                 'page': 1
             });
         },
-        onClickPage: function(event) {
-            event.preventDefault();
-            var page = event.target.innerHTML;
-            if (page == '...') return;
-            this.collection.state.set({
-                'page': page
-            });
-        },
-        onClickNextPage: function(event) {
 
-            if (this.collection.pagination.has_next) {
-                var page = this.collection.pagination.next_page_number;
-                this.collection.state.set({
-                    'page': page
-                });
-            }
-        },
-        onClickPreviousPage: function(event) {
-            event.preventDefault();
-            if (this.collection.pagination.has_previous) {
-                var page = this.collection.pagination.previous_page_number;
-                this.collection.state.set({
-                    'page': page
-                });
-            }
-        },
         onSearchFieldChange: function(event) {
 
 
@@ -233,26 +177,6 @@ $(function() {
                 search_dict[fieldname] = search_dict[fieldname] == undefined ? val : search_dict[fieldname] += ";" + val;
 
             });
-            this.collection.state.set(search_dict);
-        },
-        onAudienceCheckboxFieldChange: function(event) {
-            var id = event.target.id;
-            var value = event.target.checked ? 1 : 0;
-            var search_dict = {};
-
-            switch (id) {
-                case 'id_intended_audience_1':
-                    search_dict['family'] = value
-                    break;
-
-                case 'id_intended_audience_2':
-                    search_dict['teen'] = value
-                    break;
-
-                case 'id_intended_audience_3':
-                    search_dict['plus17'] = value
-                    break;
-            }
             this.collection.state.set(search_dict);
         },
 
@@ -287,28 +211,6 @@ $(function() {
 
             appView.$("#search-results").html(fragment);
 
-            if (this.collection.pagination != undefined) {
-                // changing the "showing xx - yy of zzzz films"
-                this.$('#pagination_start_index').html(this.collection.pagination.page_start_index);
-                this.$('#pagination_end_index').html(this.collection.pagination.page_end_index);
-                var pagination_count = 'many';
-                if (this.collection.pagination.count < 500) {
-                    pagination_count = this.collection.pagination.count;
-                }
-                this.$('#pagination_count').html(pagination_count);
-
-                if (this.collection.pagination.has_previous) {
-                    $('.previous_page').addClass('active');
-                } else {
-                    $('.previous_page').removeClass('active');
-                }
-
-                if (this.collection.pagination.has_next) {
-                    $('.next_page').addClass('active');
-                } else {
-                    $('.next_page').removeClass('active');
-                }
-            }
             $("#search-results div.lazy").lazyload({
                 threshold: 9000,
                 effect: 'fadeIn'
@@ -598,7 +500,9 @@ $(function() {
         if (window.location.hash.indexOf('#search') == -1) {
             app.renderResults();
         }
-
+        setTimeout(function() {
+            Vifi.Event.trigger("app:ready");
+        }, 500);
 
     }
 

@@ -259,8 +259,13 @@ Vifi.Browser.Page = Backbone.View.extend({
     render: function() {
 
         Vifi.Event.trigger("page:change", "home");
-        $log("Application ready")
-        $("#application").css("opacity", 1.0)
+
+        $("#application").waitForImages(function() {
+            $("#loadingPage").fadeOut();
+            $("#application").css("opacity", 1.0);
+
+        });
+
 
         return this;
     },
@@ -274,21 +279,7 @@ Vifi.Browser.Page = Backbone.View.extend({
     },
     // Handle preloading imags on browser
     onBrowserPaginationEvent: function(e) {
-        var item = e.element_;
-        var idx = $(item).index();
-
-
-        idx++;
-        var threshold = app.collection.pagination.current_page * app.collection.pagination.num_pages;
-
-        if (app.collection.pagination.current_page < 1 || idx > threshold) {
-            app.collection.pagination.current_page++;
-            this.loadBrowserImages();
-
-
-        } else if (idx < (threshold - app.collection.pagination.num_pages)) {
-            app.collection.pagination.current_page--;
-        }
+        if ($("#browserPage .loading:in-viewport").size() > 0) this.loadBrowserImages();
 
     },
 

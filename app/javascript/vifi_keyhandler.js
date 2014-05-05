@@ -56,7 +56,7 @@ Vifi.KeyHandler = {
         });
         $(document).bind("keyup", function(event) {
             var action = _this.keyActions[_this.keyMap[event.keyCode]] + "Release";
-            $log("<<< GOT KEY ACTION: " + action + " >>>");
+            // $log("<<< GOT KEY ACTION: " + action + " >>>");
             if (action) _this.trigger("keyhandler:" + action);
             return true;
         })
