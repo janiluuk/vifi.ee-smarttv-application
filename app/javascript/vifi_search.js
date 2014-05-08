@@ -8,7 +8,7 @@ $(function() {
             this.page = this.options.page;
             this.genres = this.options.genres;
             this.queue = this.options.queue;
-            this.api = this.options.api;
+            this.api = this.options.api ;
             this.account = this.options.account;
             this.session = this.options.session;
             this.logger = this.options.logger;
@@ -398,7 +398,6 @@ $(function() {
         var user_is_authenticated = initial_search_json.user_is_authenticated;
         var search = initial_search_json.search;
         var genredata = initial_search_json.genres;
-        var api = new Vifi.Utils.Api();
 
 
 
@@ -473,7 +472,7 @@ $(function() {
             genres: genres,
             user_is_authenticated: user_is_authenticated,
             queue: queue,
-            api: api,
+       
             redirect_on_genre_change: initial_search_json.redirect_on_genre_change,
             redirect_on_duration_change: initial_search_json.redirect_on_duration_change,
             redirect_on_period_change: initial_search_json.redirect_on_period_change,

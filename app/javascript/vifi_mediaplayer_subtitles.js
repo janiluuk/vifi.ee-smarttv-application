@@ -12,8 +12,8 @@ Vifi.Player.Subtitles = Backbone.Model.extend({
     enabled: true,
     initialize: function() {
 
-         _.bindAll(this, 'load', 'start', 'playSubtitles', 'strip', 'toSeconds','loadLanguage');
-         Vifi.Event.on("button:player-subtitles", this.handleSubtitleSelection, this);
+        _.bindAll(this, 'load', 'start', 'playSubtitles', 'strip', 'toSeconds', 'loadLanguage');
+        Vifi.Event.on("button:player-subtitles", this.handleSubtitleSelection, this);
     },
     toSeconds: function(t) {
         var s = 0.0;
@@ -22,7 +22,7 @@ Vifi.Player.Subtitles = Backbone.Model.extend({
             for (i = 0; i < p.length; i++)
                 s = s * 60 + parseFloat(p[i].replace(',', '.'))
         }
-        return parseInt(s*1000);
+        return parseInt(s * 1000);
     },
 
 
@@ -48,7 +48,7 @@ Vifi.Player.Subtitles = Backbone.Model.extend({
         var videoId = this.videoElement;
         var el = $(subtitleElement);
         var srt = el.text();
-       
+
         $(subtitleElement).text('');
         srt = srt.replace(/\r\n|\r|\n/g, '\n')
 
@@ -80,7 +80,7 @@ Vifi.Player.Subtitles = Backbone.Model.extend({
 
             }
         }
-        $("#"+this.subtitleElement).html('');
+        $("#" + this.subtitleElement).html('');
 
         app.player.subtitles.currentSubtitle = -1;
         var ival = setInterval(function() {
@@ -90,23 +90,23 @@ Vifi.Player.Subtitles = Backbone.Model.extend({
 
             for (s in app.player.subtitles.subtitledata) {
 
-                if (s > currentTime ) 
+                if (s > currentTime)
                     break;
-                  subtitle = s;
+                subtitle = s;
 
             }
-         
+
             if (subtitle > 0) {
 
                 if (subtitle != app.player.subtitles.currentSubtitle) {
 
-                    if (currentTime >0) $("#"+this.subtitleElement).html(app.player.subtitles.subtitledata[subtitle].t);
+                    if (currentTime > 0) $("#" + this.subtitleElement).html(app.player.subtitles.subtitledata[subtitle].t);
                     app.player.subtitles.currentSubtitle = subtitle;
-                    console.log("Setting subtitle at "+currentTime+ " - "+app.player.subtitles.subtitledata[subtitle].t );
-                    console.log(app.player.subtitles.subtitledata[subtitle]);
+                    $log("Setting subtitle at " + currentTime + " - " + app.player.subtitles.subtitledata[subtitle].t);
+                    $log(app.player.subtitles.subtitledata[subtitle]);
 
                 } else if (app.player.subtitles.subtitledata[subtitle].os < currentTime) {
-                 $("#"+this.subtitleElement).html('');
+                    $("#" + this.subtitleElement).html('');
                 }
             }
         }.bind(this), 100);
@@ -130,23 +130,23 @@ Vifi.Player.Subtitles = Backbone.Model.extend({
 
     load: function(subtitles, nodefault) {
         if (!subtitles) return false;
-        this.subtitles ={}
+        this.subtitles = {}
         var that = this;
         var i = 0;
-        $(subtitles).each(function() { 
+        $(subtitles).each(function() {
             var code = this.code;
             that.subtitles[code] = this;
             i++;
         });
 
         if (!nodefault) this.loadLanguage(this.defaultCode);
-        console.log("loaded "+i+" subtitles");
+        $log("loaded " + i + " subtitles");
 
     },
     loadLanguage: function(code) {
 
         if (this.subtitles && this.subtitles[code]) {
-            this.subtitleFile = this.srtUrl+this.subtitles[code].file;
+            this.subtitleFile = this.srtUrl + this.subtitles[code].file;
         }
         if (this.ival) clearInterval(this.ival);
         this.start();

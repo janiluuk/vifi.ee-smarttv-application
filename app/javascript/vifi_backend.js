@@ -40,9 +40,10 @@ Vifi.PageManager = {
 
         if (!this.appComponent) {
             this.appElement = goog.dom.getElement(el);
-            tv.ui.decorate(document.body);
+            tv.ui.decorate(this.appElement);
             this.appComponent = tv.ui.getComponentByElement(this.appElement);
         }
+
 
 
 
@@ -150,9 +151,7 @@ Vifi.PageManager = {
     },
 
     onBeforePageChange: function(page) {
-        $(".container.active .tv-component-focused").removeClass("tv-component-focused");
-
-        $(".container.active").removeClass("active");
+        $(".container.active .tv-component-focused").removeClass("tv-component-focused").removeClass("active");
 
         this.lastActivePage = this.activePage;
 
@@ -171,7 +170,7 @@ Vifi.PageManager = {
         Vifi.Event.trigger("page:ready", page);
 
 
-        $("body").scrollTo(page, 280, {
+        $("body").scrollTo(page, 330, {
             onAfter: function() {
 
 
@@ -201,6 +200,7 @@ Vifi.PageManager = {
             var appElement = this.appElement;
 
             if (this.needsredraw && appComponent) {
+                tv.ui.decorate(document.body);
                 appComponent.removeChildren();
                 if (appElement) tv.ui.decorateChildren(appElement, this.decorateHandler.getHandler(), appComponent);
 
@@ -210,8 +210,10 @@ Vifi.PageManager = {
 
             if (!this.needsredraw) {
 
+
                 var page = this.activePage.substr(1);
                 tv.ui.decorateChildren(goog.dom.getElement(page), this.decorateHandler.getHandler());
+
             }
 
             this.focusFirst();
@@ -255,16 +257,8 @@ Vifi.Browser.Page = Backbone.View.extend({
     render: function() {
 
         Vifi.Event.trigger("page:change", "home");
-
-        $("#application").waitForImages(function() {
-            $(this).animate({
-                "opacity": 1.0
-            }, 800);
-            $("#loadingWrapper").fadeOut();
-
-            $log("Application ready");
-
-        });
+        $log("Application ready")
+        $("#application").css("opacity", 1.0)
 
         return this;
     },
@@ -400,7 +394,6 @@ Vifi.Browser.Page = Backbone.View.extend({
         Vifi.PageManager.decorateHandler.addClassHandler('film-result', function(component) {
             component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, browser.handleMovieEvent, false, browser);
         });
-
         Vifi.PageManager.decorateHandler.addIdHandler("search-options-bar", function(button) {
             button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, browser.handleBrowserOptionKeys, false, browser);
         });
@@ -442,6 +435,37 @@ Vifi.Browser.Page = Backbone.View.extend({
         });
 
     },
+
+    onDecorateFilmResult: function(component) {
+        var browser = this;
+
+        goog.events.listen(component, tv.ui.Component.EventType.KEY, function(event) {
+            var keyCode = event.keyCode;
+            event.preventDefault();
+            if (keyCode == 13 /*Enter*/ ) {
+                var item = event.target.element_;
+                var link = item.firstChild;
+                $(link).trigger("click");
+                event.stopPropagation();
+            }
+            if (keyCode == 39 /*Right */ ) {
+                Vifi.Event.trigger("browser:pagination", component.getElement());
+
+            }
+            if (keyCode == 38 /*Up*/ ) {
+                event.stopPropagation();
+
+                var el = tv.ui.getComponentByElement(goog.dom.getElement("search-options-bar"));
+                el.tryFocus(true);
+            }
+            if (keyCode == 40 /*Down*/ ) {
+                event.stopPropagation();
+            }
+
+
+        });
+
+    },
     /** Handle buttons on the onscreen keyboard  */
     handleKeyboardEvent: function(event) {
         var keyCode = event.keyCode;
@@ -480,7 +504,6 @@ Vifi.Browser.Page = Backbone.View.extend({
     handleBrowserOptionKeys: function(event) {
         var keyCode = event.keyCode;
         event.preventDefault();
-        var that = this;
         if (keyCode == 40 /*Down*/ ) {
             var el = tv.ui.getComponentByElement(goog.dom.getElement("film-results"));
             if (undefined !== el) {
@@ -490,9 +513,7 @@ Vifi.Browser.Page = Backbone.View.extend({
 
                 else {
                     el.removeChildren();
-                    tv.ui.decorateChildren(el.getElement(), function(component) {
-                        goog.events.listen(component, tv.ui.Component.EventType.KEY, that.handleMovieEvent, false, that);
-                    }, el);
+                    tv.ui.decorateChildren(el.getElement(), this.onDecorateFilmResult, el);
                     el.tryFocus();
                 }
             }
@@ -506,7 +527,6 @@ Vifi.Browser.Page = Backbone.View.extend({
         }
         return false;
     },
-
     /* Handle togglebutton */
     handleToggleEvent: function(event) {
         var button = event.target;
@@ -520,10 +540,12 @@ Vifi.Browser.Page = Backbone.View.extend({
         var category = element.attr("data-category");
         if (undefined != category) Vifi.Event.trigger("button:" + category, val, this);
 
+
         var rowSize = element.parent().find(".tv-toggle-button-on").size();
 
-        if ((undefined != type && type == "radio" || val == "reset")) {
+        if ((undefined != type && type == "radio")) {
 
+            var butvalue = element.attr("data-value");
             element.parent().find(".tv-toggle-button").each(function() {
                 $(this).addClass("reset-toggle");
             });
@@ -532,13 +554,27 @@ Vifi.Browser.Page = Backbone.View.extend({
                 var btn = tv.ui.getComponentByElement(this);
                 var value = $(this).attr("data-value");
 
-                if (value == val) btn.setOn(true);
+                if (value == butvalue) btn.setOn(true);
                 else btn.setOn(false);
             });
 
 
-        } else {
+        }
+        // Reset selections if user pushed reset button
+        if (val == "reset" || type == "radio") {
 
+            var reset = true;
+            element.parent().find(".tv-toggle-button").each(function() {
+                $(this).addClass("reset-toggle");
+            });
+            var resetbuttons = goog.dom.getElementsByClass("reset-toggle");
+            $(resetbuttons).each(function() {
+                var btn = tv.ui.getComponentByElement(this);
+                var attribute = $(this).attr("data-value");
+                if ((attribute == "reset" || attribute == val)) btn.setOn(true);
+                else btn.setOn(false);
+            });
+        } else {
             //    Mute Reset choices exist
             element.parent().find(".tv-toggle-button:first").addClass("reset-toggle");
             var resetbutton = goog.dom.getElementByClass("reset-toggle");
@@ -547,24 +583,23 @@ Vifi.Browser.Page = Backbone.View.extend({
                 var resetOnOff = rowSize > 0 ? false : true;
                 tvbutton.setOn(resetOnOff);
 
+                if (!resetOnOff)
+                    $("#id_" + coll + " option").attr("selected", false);
             }
         }
 
         element.parent().find(".reset-toggle").removeClass("reset-toggle");
 
 
-
-
         if (val != undefined && coll != undefined) {
-            if (val == "reset" || rowSize == 0) {
-                app.collection.state.set(coll, "");
-            }
             $("#id_" + coll + " option").each(function() {
-                if (val == "reset") {
-                    $(this).attr("selected", false);
-                } else
+                if (reset) {
+
+                    if (this.value > 0) $(this).attr("selected", false);
+                }
+
                 if (this.value == val) {
-                    $(this).attr("selected", button.isOn() && rowSize > 0 ? "selected" : false);
+                    $(this).attr("selected", button.isOn() ? "selected" : false);
                 }
 
             });
@@ -629,6 +664,9 @@ Vifi.Browser.Page = Backbone.View.extend({
         }
         if (keyCode == 39 /*Right */ ) {
 
+
+            var item = event.target;
+            Vifi.Event.trigger("browser:pagination", item);
         }
 
         if (keyCode == 40 /*Down*/ ) {
@@ -638,20 +676,43 @@ Vifi.Browser.Page = Backbone.View.extend({
         return false;
     },
 });
-Vifi.Utils.Api = Backbone.Model.extend({
-    defaults: {},
-    baseUrl: Vifi.Settings.api_url,
-    params: "api_key=" + Vifi.Settings.api_key + "&jsoncallback=?",
-    send: function(key, data, callback) {
-        this.url = key;
-        var params = this.params + $(data).serialize();
-        $.getJSON(this.baseUrl + key, params, function(data) {
-            if (null !== callback) {
-                callback(data);
-            }
-        }, "jsonp");
+Vifi.Utils.ApiModel = Backbone.Model.extend({
+    defaults: {
+        "id": '',
+        'session': false
     },
-    onFinishGet: function(event) {}
+    path: "",
+    params: false,
+
+
+    url: function() {
+        return Vifi.Settings.api_url + this.path + '?' + this.params;
+    },
+
+    // override backbone synch to force a jsonp call
+    sync: function(method, model, options) {
+        // Default JSON-request options.
+        this.params = "api_key=" + Vifi.Settings.api_key;
+        var session = this.get("session");
+        if (session) {
+            this.params += "&sessionId=" + session.get("sessionId") + "&authId=" + session.get("hash");
+        }
+        var params = _.extend({
+            type: 'GET',
+            dataType: 'jsonp',
+            url: model.url(),
+            jsonp: "jsoncallback", // the api requires the jsonp callback name to be this exact name
+            processData: true
+        }, options);
+
+        // Make the request.
+        return $.ajax(params);
+    },
+
+
+
+
+
 });
 //A utility model to track state using the hash and also generate a url
 Vifi.Utils.State = Backbone.Model.extend({
@@ -720,6 +781,8 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
 
     playTrailer: function(event) {
         event.preventDefault();
+
+
         var trailerView = new Vifi.Films.TrailerView({
             model: this.model
         });
@@ -784,7 +847,7 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
 
         } else {
             $("#moviePage").show();
-            Vifi.Event.trigger("page:change", "movie", false);
+            Vifi.Event.trigger("page:change", "movie", false, true);
 
 
         }

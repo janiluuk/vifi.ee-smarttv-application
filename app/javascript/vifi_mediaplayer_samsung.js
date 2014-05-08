@@ -72,8 +72,8 @@ Vifi.MediaPlayer = {
 
             zIndex: 14,
             displayRect: {
-                width: 1280,
-                height: 720,
+                width: 960,
+                height: 540,
                 top: 0,
                 left: 0,
             },
@@ -83,6 +83,8 @@ Vifi.MediaPlayer = {
         });
 
 
+        avplayObj.OnRenderError = 'Vifi.MediaPlayer.videoError';
+        avplayObj.OnConnectionFailed = 'Vifi.MediaPlayer.videoError';
 
         var tvWindowObject = null;
 
@@ -96,9 +98,7 @@ Vifi.MediaPlayer = {
             $log(error.name);
         }
 
-        setTimeout(function() {
-            Vifi.MediaPlayer.hide();
-        }, 1000);
+
         // Reset Platform to default sets.
         if (Vifi.Settings.debug === true) {
             Vifi.Event.on("all", function(thing) {
@@ -116,8 +116,15 @@ Vifi.MediaPlayer = {
 
         this.currentStream = videos[0];
         this.trigger("mediaplayer:oncontentchange", content);
+
+
         this.play();
 
+    },
+
+    getUrl: function() {
+
+        return url;
     },
 
     getCurrentTime: function() {
@@ -141,7 +148,7 @@ Vifi.MediaPlayer = {
     play: function() {
 
         $log("Playing Media");
-        if (!this.visible) this.show();
+        this.show();
 
         if (!this.currentStream || this.currentStream.mp4 == "") {
             $log("NO VIDEO URL SET");
@@ -170,20 +177,22 @@ Vifi.MediaPlayer = {
         };
 
     },
+    getUrl: function() {
+        var video = this.currentStream.mp4;
+        var url = "http://media.vifi.ee:1935/tv/_definst_" + video + "/playlist.m3u8|COMPONENT=HLS";
 
+        $log("Video URL is " + url.replace("//", "/"));
+        return url;
+    },
     _playVideo: function() {
 
-        var video = this.currentStream.mp4;
 
-        var url = "http://media.vifi.ee:1935/tv/_definst_" + video + "/playlist.m3u8|COMPONENT=HLS";
-        $("#_pluginObjectPlayerContainer_1").css("visibility", "visible");
+        var url = this.getUrl();
 
-        avplayObj.stop();
-        $log("Video URL is " + url.replace("//", "/"));
-        url = url.replace("//", "/");
-        avplayObj.open("http://media.vifi.ee:1935/tv/_definst_" + video + "/playlist.m3u8|COMPONENT=HLS", {
+        avplayObj.open(url, {
 
         });
+
         var status = false;
         avplayObj.play(function() {
             status = true;
@@ -378,12 +387,10 @@ Vifi.MediaPlayer.bind("mediaplayer:timeupdate", function(time) {
         width: Math.floor(time / Vifi.MediaPlayer.duration() * 100) + "%"
     });
 
-   
+
     $("#player-current-time").text(Vifi.MediaPlayer.currentTime.toString());
 });
 
-avplayObj.OnRenderError = 'Vifi.MediaPlayer.videoError';
-avplayObj.OnConnectionFailed = 'Vifi.MediaPlayer.videoError';
 
 /*
 
@@ -439,7 +446,7 @@ var playCB = {
 
     },
     onresolutionchanged: function(width, height) {
-        console.log('resolution changed : ' + width + ', ' + height);
+        $log('resolution changed : ' + width + ', ' + height);
     },
     onstreamcompleted: function() {
         Vifi.MediaPlayer.nextVideo();

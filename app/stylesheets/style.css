@@ -1250,13 +1250,15 @@ margin-left: auto;
 margin-right: auto;
 width: 100%;
 height: 100%;
+display:none;
 }
 
 #loadingPage{
+display:none;
 position: absolute;
 width: 384px;
 height: 384px;
-z-index: 60;
+z-index: 12;
 top: 30%;
 left: 40%;
 
@@ -1266,6 +1268,7 @@ left: 40%;
 background-color:#318759;
 border:3px solid #161A16;
 float:left;
+display:none;
 height:91px;
 margin-left:7px;
 width:24px;

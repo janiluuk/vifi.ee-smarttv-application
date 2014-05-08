@@ -476,15 +476,16 @@
 <script type="text/html" id="playerTemplate">
                 <div id="player-loading" style="visibility:hidden"></div>
                 <div id="player-info">
-                    <div id="player-info-title">{{ title }}</div>
+                  
+                    <div id="player-info-title">{{ movie.title }}</div>
                     
                     <div id="player-info-additional">
-                        <span>{{ year }}</span> - <span>{{ genre }}</span>
+                        <span>{{ movie.year }}</span> - <span>{{ movie.genres_text }}</span>
                     </div>
 
                     <div id="player-info-timer">
                         <p class="player-info-timer-heading">Movie ends at:</p>
-                        <p class="player-info-timer-time">{{ endingtime }}</p>
+                        <p class="player-info-timer-time">{{ movie.endingtime }}</p>
                     </div>
 
                 </div>

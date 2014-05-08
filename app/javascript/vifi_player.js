@@ -1,14 +1,7 @@
-Vifi.Player.FilmContent = Backbone.Model.extend({
-    url: "",
-    params: "",
-    session: false,
+Vifi.Player.FilmContent = Vifi.Utils.ApiModel.extend({
+    'path' : 'content',
     defaults: {
-        'id': '',
-        'title': '',
-        'year': '',
-        'director': '',
-        'genre': '',
-        'running_time': '',
+        'id' : false,
         'videos': [{
                 'mp4': '',
                 'profile': '',
@@ -28,55 +21,29 @@ Vifi.Player.FilmContent = Backbone.Model.extend({
     },
 
     initialize: function(options) {
+        this.refresh();
 
-        this.on("change:params", this.updateParams, this);
         this.on("change:id", this.refresh, this);
         this.on("change:videos", this.loadFilm, this);
         this.on("change:subtitles", this.loadSubtitles, this);
 
-        if (options && undefined != options.params) {
-
-            this.setParams(options.params);
-
-        }
-        if (options && undefined != options.movie) {
-            this.set("id", options.movie);
-        }
 
     },
 
 
     loadFilm: function() {
-        if (!this.session)
-            app.player.trigger("player:load", this.get("id"));
+            app.player.trigger("content:ready");
+
     },
 
     loadSubtitles: function() {
-        app.player.trigger("subtitles:ready", app.player.content);
+        app.player.trigger("subtitles:ready");
     },
 
-    setParams: function(params) {
 
-        this.set("params", params);
-    },
-    updateParams: function() {
-
-
-        if (this.get("params") != "") {
-            var params = this.get("params");
-
-            var sessionId = params.data.sessionId;
-            var authId = params.data.authId;
-            var apiKey = params.data.api_key;
-
-            this.url = Vifi.Settings.api_url + "content/" + this.get("id") + "?jsoncallback=?&sessionId=" + sessionId + "&authId=" + authId + "&api_key=" + apiKey;
-        }
-
-    },
-
+  
     refresh: function() {
-        this.updateParams();
-        this.fetch();
+        this.path = "content/"+this.get("id");
     }
 });
 
@@ -84,11 +51,11 @@ Vifi.Player.FilmContent = Backbone.Model.extend({
 
 Vifi.Player.PlayerView = Backbone.View.extend({
     tagName: 'div',
+    defaults: { player: false, content: false, model: false },
     el: $("#" + Vifi.Settings.playerPageId),
     hideVideoNavigationTimeout: false,
     optionsEl: '#player-options',
     infoEl: '#player-info',
-    model: false,
     initialize: function(options) {
 
 
@@ -98,12 +65,22 @@ Vifi.Player.PlayerView = Backbone.View.extend({
 
         }
 
-        _.bindAll(this, 'onPlayerPageExit', 'onPlayerPageEnter', 'closeDetails', 'showDetails', 'showNavigation', 'hideNavigation', "clearAllTimeouts", "touchVideoNavigationTimeout", "onBufferingStart");
-        Vifi.Event.on("mediaplayer:bufferingstart", this.onBufferingStart, this);
-        Vifi.Event.on("mediaplayer:bufferingstop", this.onBufferingStop, this);
-        this.on("player:show", this.onPlayerPageEnter);
-        this.on("player:exit", this.onPlayerPageExit);
+        _.bindAll(this,  'onPlayerPageExit', 'onPlayerPageEnter', 'closeDetails', 'showDetails', 'showNavigation', 'hideNavigation', "clearAllTimeouts", "touchVideoNavigationTimeout", "onBufferingStart");
+        Vifi.MediaPlayer.on("mediaplayer:bufferingstart", this.onBufferingStart, this);
+        Vifi.MediaPlayer.on("mediaplayer:bufferingstop", this.onBufferingStop, this);
+        this.on("player:show", this.onPlayerPageEnter, this);
+        this.on("player:exit", this.onPlayerPageExit, this);
         this.render();
+        this.renderPlayer();
+
+    },
+
+    renderPlayer: function() {
+
+       Vifi.MediaPlayer.init();
+
+
+
     },
 
     onBufferingStart: function() {
@@ -125,7 +102,10 @@ Vifi.Player.PlayerView = Backbone.View.extend({
             $(this).find("div:first").addClass("no-left");
             $(this).find("div:last").addClass("no-right");
         });
+        this.renderPlayer();
+
         return this;
+
     },
 
     closeDetails: function() {
@@ -183,16 +163,18 @@ Vifi.Player.PlayerView = Backbone.View.extend({
     },
     onPlayerPageExit: function() {
 
-        app.player.trigger("mediaplayer:stop", this);
+        Vifi.MediaPlayer.trigger("mediaplayer:stop");
         tv.ui.getComponentByElement(goog.dom.getElement("application")).removeChildren();
         tv.ui.decorate(document.body);
         $("#playerPage").empty().fadeOut();
 
-        $(".container-hidden").fadeIn().removeClass("container-hidden");
+        $(".container-hidden").fadeIn();
+        $(".container-hidden").removeClass("container-hidden");
 
         tv.ui.decorateChildren(goog.dom.getElement("application"));
 
         Vifi.Event.trigger("page:change", "movie");
+        this.hideNavigation();
 
     },
 
@@ -218,11 +200,9 @@ Vifi.Player.Player = Backbone.Model.extend({
     content: false,
     playerPage: false,
     subtitles: {},
-    playerId: 'player',
-    playerControlsId: 'player-controls',
     debug: true,
     ready: false,
-
+    endingTime: "",
 
     initialize: function(options) {
         this.unbind('all');
@@ -241,24 +221,21 @@ Vifi.Player.Player = Backbone.Model.extend({
         this.subtitles = new Vifi.Player.Subtitles();
 
         this.on('player:load', this.onLoadFilm, this);
+        this.on('change:content', this.onContentReady, this);
+        this.on('content:ready', this.onPlayerReady, this);
+ 
         this.on('player:ready', this.onPlayerReady, this);
         this.on('subtitles:ready', this.onSubtitlesReady, this);
 
 
-        this.on('mediaplayer:stop', this.onPlayerStop, this);
     },
 
     onPlayerReady: function(playerPage) {
-        playerPage.trigger("player:show");
+        var content = this.get("content");
+        Vifi.MediaPlayer.setContent(content);
     },
 
 
-
-    onPlayerStop: function(event) {
-
-        Vifi.MediaPlayer.stop();
-
-    },
 
     onBufferingStart: function(event) {
 
@@ -267,12 +244,40 @@ Vifi.Player.Player = Backbone.Model.extend({
     },
     onSubtitlesReady: function(event) {
 
-        var subtitles = app.player.content.get("subtitles");
+        var subtitles = this.get("content").get("subtitles");
         this.subtitles.load(subtitles);
 
     },
+    onContentReady: function(content) {
+
+             var endingtime = this.getEndingTime(this.get("content").get("movie").running_time);
+
+              this.get("content").get("movie").endingtime = endingtime;
 
 
+             this.playerPage = new Vifi.Player.PlayerView({
+                    model: this,
+                    player: Vifi.MediaPlayer,
+                    content: content
+                });
+
+                Vifi.KeyHandler.unbind("keyhandler:onReturn");
+                Vifi.KeyHandler.bind("keyhandler:onReturn", this.playerPage.onPlayerPageExit, this);
+
+                this.playerPage.trigger("player:show");
+    },
+
+    getEndingTime: function(duration) {
+        if (!duration || duration == "") return false;
+            var time = new Date();
+            var endingtime = new Date(time.getTime() + duration * 60000);
+            var endingtimestring = endingtime.getHours();
+            var string = ":";
+            if (endingtime.getMinutes() < 10) string += '0' + endingtime.getMinutes();
+            else string += endingtime.getMinutes();
+            endingtimestring += string;
+            return endingtimestring;
+    },
 
     /*
      * Load defined film content to the player
@@ -284,26 +289,20 @@ Vifi.Player.Player = Backbone.Model.extend({
 
         if (this.verifySession(movie) == true) {
 
-            this.movie = app.collection.get(id);
+            this.set("movie", movie);
+            var content = new Vifi.Player.FilmContent({
+                id: id,
+                session: this.session,
+                movie: movie.get("film")
 
-            if (content = this.getContentFiles()) {
-                this.getVideo();
-                this.playerPage = new Vifi.Player.PlayerView({
-                    model: this
-                });
-
-                Vifi.MediaPlayer.init();
-                Vifi.MediaPlayer.setContent(content);
+            });
+            content.fetch();
 
 
-                Vifi.KeyHandler.unbind("keyhandler:onReturn");
-                Vifi.KeyHandler.bind("keyhandler:onReturn", this.playerPage.onPlayerPageExit, this);
-                this.trigger("player:ready", this.playerPage, this);
-
-
+            this.set("content", content);
                 return true;
             }
-        }
+        
         $log("!! Error loading movie content for id " + id + " - invalid session");
         return false;
 
@@ -311,10 +310,10 @@ Vifi.Player.Player = Backbone.Model.extend({
 
     getVideo: function(profile_name) {
         var url = false;
+        var content = this.get("content");
 
-        if (this.content) {
-
-            var videos = this.content.get("videos")[0];
+        if (content) { 
+            var videos = content.get("videos")[0];
             if (!profile_name) {
 
                 url = videos.mp4;
@@ -325,42 +324,7 @@ Vifi.Player.Player = Backbone.Model.extend({
         return url;
     },
 
-    getContentFiles: function() {
-
-
-        if (this.movie && this.movie.get("id")) {
-            if (this.get("content") && this.get("content").id == this.movie.get("id")) return this.get("content");
-            var params = this.session.getParams();
-            var time = new Date();
-            var details = this.movie.get("film");
-            var duration = details.running_time;
-
-
-            var endingtime = new Date(time.getTime() + duration * 60000);
-            var endingtimestring = endingtime.getHours();
-            var string = ":";
-            if (endingtime.getMinutes() < 10) string += '0' + endingtime.getMinutes();
-            else string += endingtime.getMinutes();
-            endingtimestring += string;
-
-            this.content = new Vifi.Player.FilmContent({
-
-                movie: this.movie.get("id"),
-                params: this.session.getParams(),
-                title: details.title,
-                year: details.year,
-                director: details.director,
-                endingtime: endingtimestring,
-                genre: details.genres[0].name
-            });
-
-            this.set("content", this.content);
-
-            return this.content;
-
-        }
-        return false;
-    },
+  
 
     loadContent: function() {
 
@@ -379,11 +343,15 @@ Vifi.Player.Player = Backbone.Model.extend({
             Vifi.Event.trigger("activation:show");
             return false;
         }
+
+      
+
         var profile = this.session.get("profile");
 
         if (profile.purchase(movie) == true) {
             return true;
         }
+      
 
         return false;
     },
