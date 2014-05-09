@@ -39,9 +39,8 @@ Vifi.MediaPlayer = {
 
         this.content = content;
         if (content) {
-            var videos = content.get("videos");
 
-            this.currentStream = videos[0];
+            this.currentStream = content[0];
             this._createPlayer();
         }
     },

@@ -8,7 +8,6 @@ $(function() {
             this.page = this.options.page;
             this.genres = this.options.genres;
             this.queue = this.options.queue;
-            this.api = this.options.api ;
             this.account = this.options.account;
             this.session = this.options.session;
             this.logger = this.options.logger;
@@ -21,8 +20,8 @@ $(function() {
             this.collection.state.bind('change:genre', this.onChangeGenre, this);
             this.collection.state.bind('change:duration', this.onChangeDuration, this);
             this.collection.state.bind('change:year', this.onChangeYear, this);
-            this.collection.state.bind('change:period', this.onChangePeriod, this);
             this.collection.state.bind('change:search', this.onChangeText, this);
+            this.on("browser:pagination", this.onBrowserPaginationEvent, this);
 
             this.session.enable();
 
@@ -40,7 +39,19 @@ $(function() {
             var featuredCollection = this.collection.featured();
 
             var featuredview = new Vifi.Films.FeaturedFilmCollectionView(featuredCollection);
+            // make sure that the original checkboxes are checked if necessary.
+            // TODO: seems like this is not quite right... be nicer if django would handle this
+            // with the form upload.
 
+            if (this.collection.state.get('family') == 1) {
+                this.$('#id_intended_audience_1').attr('checked', true);
+            }
+            if (this.collection.state.get('teen') == 1) {
+                this.$('#id_intended_audience_2').attr('checked', true);
+            }
+            if (this.collection.state.get('plus17') == 1) {
+                this.$('#id_intended_audience_3').attr('checked', true);
+            }
 
 
 
@@ -50,6 +61,10 @@ $(function() {
             'change #search-form select': 'onSearchFieldChange',
             'change #search-form input[type="text"]': 'onSearchFieldChange',
             'change #search-form input[type="hidden"]': 'onSearchFieldChange',
+            'change #div_id_intended_audience input[type="checkbox"]': 'onAudienceCheckboxFieldChange',
+            'change #div_id_hide_coming_soon input[type="checkbox"]': 'onHideComingSoonChange',
+            'change #div_id_hide_web_series input[type="checkbox"]': 'onHideWebSeriesChange',
+
 
         },
 
@@ -74,7 +89,7 @@ $(function() {
                 'hide_web_series': value
             });
         },
-        setGenreDropDown: function(action) {
+        setGenreDropDown: function(action, subgenres_obj) {
 
             $('#div_id_genre select').empty();
 
@@ -154,6 +169,22 @@ $(function() {
             });
         },
 
+        loadBrowserImages: function() {
+            $("#search-results div.lazy").lazyload({
+                threshold: 9000,
+                effect: 'fadeIn',
+                effectspeed: 1200
+            });
+        },
+        // Handle preloading imags on browser
+        onBrowserPaginationEvent: function(e) {
+
+            var images = $("#search-results .lazy.loading:in-viewport");
+            if (images.size() > 0)
+                app.loadBrowserImages();
+
+        },
+
         onSearchFieldChange: function(event) {
 
 
@@ -168,6 +199,7 @@ $(function() {
 
             search_dict[name] = value;
 
+
             $("#search-form select :selected").each(function() {
                 var fieldid = $(this).parent().attr("id");
                 var fieldname = fieldid.replace("id_", "");
@@ -177,6 +209,27 @@ $(function() {
                 search_dict[fieldname] = search_dict[fieldname] == undefined ? val : search_dict[fieldname] += ";" + val;
 
             });
+            this.collection.state.set(search_dict);
+        },
+        onAudienceCheckboxFieldChange: function(event) {
+            var id = event.target.id;
+            var value = event.target.checked ? 1 : 0;
+            var search_dict = {};
+
+            switch (id) {
+                case 'id_intended_audience_1':
+                    search_dict['family'] = value
+                    break;
+
+                case 'id_intended_audience_2':
+                    search_dict['teen'] = value
+                    break;
+
+                case 'id_intended_audience_3':
+                    search_dict['plus17'] = value
+                    break;
+            }
+            search_dict['page'] = 1;
             this.collection.state.set(search_dict);
         },
 
@@ -211,11 +264,20 @@ $(function() {
 
             appView.$("#search-results").html(fragment);
 
-            $("#search-results div.lazy").lazyload({
-                threshold: 9000,
-                effect: 'fadeIn'
-            });
+            if (this.collection.pagination != undefined) {
+                // changing the "showing xx - yy of zzzz films"
+                this.$('#pagination_start_index').html(this.collection.pagination.page_start_index);
+                this.$('#pagination_end_index').html(this.collection.pagination.page_end_index);
+                var pagination_count = 'many';
+                if (this.collection.pagination.count < 500) {
+                    pagination_count = this.collection.pagination.count;
+                }
+                this.$('#pagination_count').html(pagination_count);
 
+
+            }
+
+            this.loadBrowserImages();
 
 
             this.updateUIToState();
@@ -225,6 +287,17 @@ $(function() {
         updateUIToState: function() {
             var state = this.collection.state;
             // set intended audience checkboxes
+
+
+            if (this.collection.state.get('list_style') == 'grid') {
+                $('#movie-grid').addClass("grid-view").removeClass("list-view");
+                $('.toggle-g').addClass("active");
+                $('.toggle-l').removeClass("active");
+            } else {
+                $('#movie-grid').addClass("list-view").removeClass("grid-view");
+                $('.toggle-l').addClass("active");
+                $('.toggle-g').removeClass("ˇve");
+            }
 
 
             if (this.collection.state.get('family') == 1) {
@@ -258,10 +331,14 @@ $(function() {
             }
 
             // selects
-
             this.$('#id_genre option[value="' + state.get('genre') + '"]').attr('selected', 'selected');
+            this.$('#id_subgenre option[value="' + state.get('subgenre') + '"]').attr('selected', 'selected');
             this.$('#id_period option[value="' + state.get('period') + '"]').attr('selected', 'selected');
             this.$('#id_duration option[value="' + state.get('duration') + '"]').attr('selected', 'selected');
+
+
+            // year
+            this.$('#id_period').val(state.get('period'));
 
             // sorting buttons
             this.$('.sort-options a.active').removeClass('active').removeClass('sort-dir-asc').removeClass('sort-dir-desc');
@@ -277,6 +354,17 @@ $(function() {
             }
             this.$(sort_button).addClass('active').addClass(sort_dir_class);
 
+            /* Set the values for the slider */
+
+
+            var end_time = this.collection.state.get('end_time');
+            var start_time = this.collection.state.get('start_time');
+
+
+            this.$('#id_end_time').val(end_time);
+            this.$('#id_start_time').val(start_time);
+            this.$('#noUi-slider-mins .lower-mins').text(start_time);
+            this.$('#noUi-slider-mins .upper-mins').text(end_time);
 
             // main search text box
             var query = this.collection.state.get('q');
@@ -288,14 +376,11 @@ $(function() {
 
             var changed_keys = _.keys(state.changedAttributes());
             var genre_is_changed = _.contains(changed_keys, 'genre');
-            var period_is_changed = _.contains(changed_keys, 'period');
-            var duration_is_changed = _.contains(changed_keys, 'duration');
 
-            if (this.options.redirect_on_genre_change && (genre_is_changed || duration_is_changed)) {
+            if (this.options.redirect_on_genre_change && (genre_is_changed)) {
                 return this.redirectToBaseURL();
 
             }
-
             //Update the url of the browser using the router navigate method
             router.navigate('search/' + this.collection.state.getHash());
 
@@ -472,7 +557,7 @@ $(function() {
             genres: genres,
             user_is_authenticated: user_is_authenticated,
             queue: queue,
-       
+
             redirect_on_genre_change: initial_search_json.redirect_on_genre_change,
             redirect_on_duration_change: initial_search_json.redirect_on_duration_change,
             redirect_on_period_change: initial_search_json.redirect_on_period_change,
@@ -497,11 +582,11 @@ $(function() {
         // if there's no hash, let's render the results
         // ( if there's a hash , the router will take care of this when it sets state from hash)
         if (window.location.hash.indexOf('#search') == -1) {
+            Vifi.Event.trigger("page:change", "home");
             app.renderResults();
         }
-        setTimeout(function() {
-            Vifi.Event.trigger("app:ready");
-        }, 500);
+
+
 
     }
 
@@ -513,5 +598,6 @@ $(function() {
 
             initApp(initial_search_json);
         }
+
     });
 });

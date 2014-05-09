@@ -17,7 +17,7 @@ Vifi = {
     Event: {},
     Settings: {
         // properties   
-        version: "0.98.0105",
+        version: "0.98.0905",
         debug: true,
         api_url: 'http://backend.vifi.ee/api/',
         api_key: '12345',
@@ -78,7 +78,7 @@ Vifi.Engine = {
             if (_.isFunction(m.init)) m.init();
             $log("<<< END INIT MODULE >>>");
         });
-        $("<<< END TVEngine Start >>>");
+        $("<<< END Vifi Engine Start >>>");
         var _this = this;
         Vifi.KeyHandler.bind("keyhandler:onExit", function() {
             $log(" GOT EXIT FROM KEYHANDLER ")

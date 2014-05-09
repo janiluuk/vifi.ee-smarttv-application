@@ -19,7 +19,7 @@ Vifi.User.Profile = Vifi.Utils.ApiModel.extend({
     },
     initialize: function() {
         this.on("change", this.updateParams);
-        this.on("user:logout", this.signout, this);
+        Vifi.Event.on("user:logout", this.signout, this);
     },
     signout: function() {
         this.set("id", "");
@@ -32,7 +32,6 @@ Vifi.User.Profile = Vifi.Utils.ApiModel.extend({
 
     purchase: function(item) {
         $log("Purchasing item");
-        $log(item);
 
         return true;
     }
@@ -74,6 +73,8 @@ Vifi.User.Session = Backbone.Model.extend({
         this.set("step2text", code);
         this.on('poll:enable', this.enable, this);
         this.on('poll:disable', this.disable, this);
+
+
         Vifi.Event.on('user:login', this.onUserAuthenticate, this);
         Vifi.Event.on('user:logout', this.onUserSignout, this);
         this.on('change:sessionId', this.setCookie, this);
@@ -96,7 +97,8 @@ Vifi.User.Session = Backbone.Model.extend({
     onUserSignout: function() {
         this.set('logged_in', false);
         this.disable();
-        this.get("profile").trigger("user:logout");
+        Vifi.Event.trigger("user:logout");
+        this.trigger('poll:disable');
 
         return false;
     },
@@ -293,7 +295,6 @@ Vifi.User.ActivationView = Backbone.View.extend({
         this.listenTo(this.model, 'user:login', this.hide);
         Vifi.Event.trigger("page:change", "activation");
         Vifi.Event.trigger("page:focus");
-        this.model.trigger("poll:enable");
     },
     hide: function() {
         if (this.$el.hasClass("active")) {

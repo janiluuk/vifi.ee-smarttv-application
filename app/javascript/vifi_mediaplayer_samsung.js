@@ -53,6 +53,7 @@ Vifi.MediaPlayer = {
         try {
             webapis.avplay.getAVPlay(function(avplay) {
                 avplayObj = avplay;
+                Vifi.MediaPlayer.plugin = avplayObj;
             }, function(error) {
                 alert(error.message);
 
@@ -68,43 +69,10 @@ Vifi.MediaPlayer = {
         this.state = this.STOPPED;
         this.initialized = true;
 
-        avplayObj.init({
-
-            zIndex: 14,
-            displayRect: {
-                width: 960,
-                height: 540,
-                top: 0,
-                left: 0,
-            },
-            bufferingCallback: bufferingCB,
-            playCallback: playCB,
-            autoratio: true
-        });
 
 
-        avplayObj.OnRenderError = 'Vifi.MediaPlayer.videoError';
-        avplayObj.OnConnectionFailed = 'Vifi.MediaPlayer.videoError';
-
-        var tvWindowObject = null;
-
-        try {
-            tvWindowObject = webapis.tv.window;
-            tvWindowObject.setSource({
-                type: webapis.tv.window.SOURCE_MODE_TV,
-                number: 0
-            }, succCB, errCB);
-        } catch (error) {
-            $log(error.name);
-        }
 
 
-        // Reset Platform to default sets.
-        if (Vifi.Settings.debug === true) {
-            Vifi.Event.on("all", function(thing) {
-                $log(thing);
-            });
-        }
         $log("<<< END SAMSUNG NATIVE PLAYER INIT >>>");
         return true;
     },
@@ -112,20 +80,13 @@ Vifi.MediaPlayer = {
 
 
         this.content = content;
-        var videos = content.get("videos");
+        this.currentStream = content[0];
+        var url = this.getUrl();
 
-        this.currentStream = videos[0];
-        this.trigger("mediaplayer:oncontentchange", content);
-
-
-        this.play();
+        this.trigger("mediaplayer:oncontentchange", url);
 
     },
 
-    getUrl: function() {
-
-        return url;
-    },
 
     getCurrentTime: function() {
 
@@ -147,14 +108,32 @@ Vifi.MediaPlayer = {
 
     play: function() {
 
+
+        avplayObj.init({
+
+            zIndex: 14,
+            displayRect: {
+                width: 1280,
+                height: 720,
+                top: 0,
+                left: 0,
+            },
+            bufferingCallback: bufferingCB,
+            playCallback: playCB,
+            autoratio: true
+        });
+
+
+        avplayObj.onerror = 'Vifi.MediaPlayer.videoError';
+
+
         $log("Playing Media");
-        this.show();
 
         if (!this.currentStream || this.currentStream.mp4 == "") {
             $log("NO VIDEO URL SET");
             return false;
         }
-        this.active();
+
         $log("SAMSUNG PLAYER URL SET TO: " + this.currentStream.mp4);
         if (this.state == this.PLAYING) {
             $log("Pausing ...");
@@ -221,7 +200,7 @@ Vifi.MediaPlayer = {
             this._playVideo();
         } else {
             $log(" NO NEXT VIDEO, CALLING PLAYLIST END ")
-            this.plugin.Stop();
+            this.plugin.stop();
             this.state = this.STOPPED;
             this.trigger("mediaplayer:onplaylistend");
         }
@@ -347,7 +326,7 @@ Vifi.MediaPlayer = {
         this.trigger.apply(this, args)
     },
     bufferingStart: function() {
-        this.trigger("mediaplayer:bufferingstart ");
+        this.trigger("mediaplayer:bufferingstart");
     },
     bufferingProgress: function(progress) {
         this.trigger("mediaplayer:bufferingprogress", progress)
