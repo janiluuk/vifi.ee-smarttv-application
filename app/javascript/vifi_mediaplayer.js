@@ -67,3 +67,96 @@ Vifi.MediaPlayerCore = {
     }
 
 }
+
+Vifi.Playlist = function() {
+    this.files = [];
+    this.currentIndex = 0;
+    this.looping = false;
+
+    /*
+    A Playlist Format, an Array of Arrays of Hashes
+    
+    [
+        {
+            // First Video
+            renditions: [
+                {
+                    url: "http://testvids.adifferentengine.com/MyTest-400.mp4",
+                    bitrate: 400,
+                },
+                {
+                    url: "http://testvids.adifferentengine.com/MyTest-1500.mp4",
+                    bitrate: 1500
+                },
+                {
+                    url: "http://testvids.adifferentengine.com/MyTest-3000.mp4",
+                    bitrate: 3000
+                }
+            ]
+        }
+    ]
+    
+    */
+    this.resetIndex = function() {
+        this.currentIndex = 0;
+    },
+    this.currentItemIndex = function() {
+        return this.currentIndex - 1;
+    }
+
+
+    this.nextFile = function() {
+        var bitrate = Vifi.MediaPlayer.userBitrate || 10000; // Should be the largest bitrate
+        if(this.currentIndex == this.files.length) {
+            $log(" REACHED THE END OF PLAYLIST");
+            this.resetIndex();
+            if (!this.looping) return null;
+        }
+        var profiles = this.files[this.currentIndex++].videos;
+        var file = profiles.shift();
+        _.each(profiles, function(profile) {
+            $log(" TESTING file.bitrate: " + file.bitrate + " rendition.bitrate: " + file.bitrate + " my bitrate: " + Vifi.MediaPlayer.userBitrate)
+            if( profile.bitrate > file.bitrate && profile.bitrate < Vifi.MediaPlayer.userBitrate ) {
+                file = profile;
+            }
+        });
+        return file;
+    }
+
+
+    this.addFiles = function(files) {
+        this.files = files;
+    }
+    this.addPreroll = function(renditions, isAd) {
+        var isAd = _.isNull(isAd) ? true : isAd; // We default to it being an ad.
+        if(!_.isArray(videos)) videos = [videos];
+        this.files.unshift({
+            isAd: isAd, videos: videos
+        });
+    }
+
+    this.addItem = function(renditions, isAd) {
+        var isAd = _.isNull(isAd) ? false : isAd;
+        if(!_.isArray(renditions)) renditions = [renditions];
+        this.files.push({
+            isAd: isAd, renditions: renditions
+        });
+    }
+
+    this.setUserBitrate = function( bitrate ) {
+        this.userBitrate = bitrate;
+    }
+    this.setCurrentIndex = function(index) {
+        $log("Playlist index set to: " + index)
+        this.currentIndex = index;
+    }
+    this.addUrl = function(url) {
+        this.files.push([{
+            profile: null, mp4: url, bitrate: 0, code: 0,
+        }]);
+    }
+    this.loop = function(toLoop) {
+        this.looping = !!toLoop; // force a boolean
+    };
+    return this;
+};

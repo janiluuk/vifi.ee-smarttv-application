@@ -43,16 +43,6 @@ $(function() {
             // TODO: seems like this is not quite right... be nicer if django would handle this
             // with the form upload.
 
-            if (this.collection.state.get('family') == 1) {
-                this.$('#id_intended_audience_1').attr('checked', true);
-            }
-            if (this.collection.state.get('teen') == 1) {
-                this.$('#id_intended_audience_2').attr('checked', true);
-            }
-            if (this.collection.state.get('plus17') == 1) {
-                this.$('#id_intended_audience_3').attr('checked', true);
-            }
-
 
 
         },
@@ -138,40 +128,10 @@ $(function() {
         handleSearchFormSubmit: function(event) {
             event.preventDefault();
         },
-        onClickSort: function(event) {
-            event.preventDefault();
-
-            var node = event.target;
-            var id = node.id;
-            while (!id) {
-                node = node.parentNode;
-                id = node.id;
-            }
-
-            var new_order_by = id.replace('order_by_', '');
-
-            var current_order_by = this.collection.state.get('order_by');
-            if (current_order_by && (current_order_by.indexOf(new_order_by) != -1) && current_order_by.substring(0, 1) != '-') {
-                new_order_by = '-' + new_order_by;
-            }
-
-            var reverseOrderSortButtons = ['starrating', 'release_date', 'view_count'];
-
-            _.each(reverseOrderSortButtons, function(sort_button_title) {
-                if (current_order_by && new_order_by == sort_button_title && (current_order_by.indexOf(sort_button_title) == -1)) {
-                    new_order_by = "-" + sort_button_title;
-                }
-            });
-
-            this.collection.state.set({
-                'order_by': new_order_by,
-                'page': 1
-            });
-        },
 
         loadBrowserImages: function() {
             $("#search-results div.lazy").lazyload({
-                threshold: 9000,
+                threshold: 4000,
                 effect: 'fadeIn',
                 effectspeed: 1200
             });
@@ -263,19 +223,6 @@ $(function() {
             });
 
             appView.$("#search-results").html(fragment);
-
-            if (this.collection.pagination != undefined) {
-                // changing the "showing xx - yy of zzzz films"
-                this.$('#pagination_start_index').html(this.collection.pagination.page_start_index);
-                this.$('#pagination_end_index').html(this.collection.pagination.page_end_index);
-                var pagination_count = 'many';
-                if (this.collection.pagination.count < 500) {
-                    pagination_count = this.collection.pagination.count;
-                }
-                this.$('#pagination_count').html(pagination_count);
-
-
-            }
 
             this.loadBrowserImages();
 

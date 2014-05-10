@@ -229,7 +229,7 @@ Vifi.Platform.prototype.proxy = function() {
                 $W.sendReturnEvent();
             }
         } catch (e) {
-            $error("Error with full exit on samung: " + e);
+            $log("Error with full exit on samung: " + e);
         }
     }
 

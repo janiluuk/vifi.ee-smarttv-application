@@ -49,22 +49,25 @@ Vifi.MediaPlayer = {
 
 
     init: function() {
-        if (this.initialized) return true;
+        $log(" ___  SAMSUNG PLAYER INIT ___ ");
+
+        if (this.initialized) return false;
+        var _this = this;
+        var success = true;
         try {
             webapis.avplay.getAVPlay(function(avplay) {
-                avplayObj = avplay;
-                Vifi.MediaPlayer.plugin = avplayObj;
+                _this.plugin = avplay;
+                
             }, function(error) {
                 alert(error.message);
 
             });
         } catch (error) {
-            console.log("Samsung platform not supported");
-            //  console.log(error.name);
+            success = false;
+            $log(error.name);
             return false;
         }
 
-        $log(" ___  SAMSUNG PLAYER INIT ___ ")
         var success = true;
         this.state = this.STOPPED;
         this.initialized = true;
@@ -108,13 +111,19 @@ Vifi.MediaPlayer = {
 
     play: function() {
 
+        $log("Playing Media");
 
-        avplayObj.init({
+        var height = Vifi.Engine.getPlatform().resolution.height;
+        var width = Vifi.Engine.getPlatform().resolution.width;
+        
+   
+
+        Vifi.MediaPlayer.plugin.init({
 
             zIndex: 14,
-            displayRect: {
-                width: 1280,
-                height: 720,
+            displayRect: {  
+                width: width,
+                height: height,
                 top: 0,
                 left: 0,
             },
@@ -127,7 +136,7 @@ Vifi.MediaPlayer = {
         avplayObj.onerror = 'Vifi.MediaPlayer.videoError';
 
 
-        $log("Playing Media");
+       
 
         if (!this.currentStream || this.currentStream.mp4 == "") {
             $log("NO VIDEO URL SET");
@@ -150,7 +159,6 @@ Vifi.MediaPlayer = {
                 return true;
             }
         } else {
-            $log("Playing video");
 
             this._playVideo();
         };

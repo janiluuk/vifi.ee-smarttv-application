@@ -16,7 +16,7 @@ Vifi.PageManager = {
     focusedElement: false,
     needsredraw: true,
     drawing: false,
-
+    activeItem: false,
     lastActivePage: false,
     activePage: this.homePage,
 
@@ -32,7 +32,7 @@ Vifi.PageManager = {
         Vifi.Event.on('page:back', this.switchToPrevious, this);
 
         this.decorateHandler = new tv.ui.DecorateHandler;
-
+        _.bindAll(this, 'redraw', 'focusFirst', 'setFocus', 'setFocusByClass', 'switchToPage');
         var el = "application";
 
         if (!this.appComponent) {
@@ -64,6 +64,7 @@ Vifi.PageManager = {
         this.activePage = page;
         this.getActivePage().addClass("active");
         $("#statusDiv").html("Page: " + $(page).attr("id"));
+        $("body").scrollTo(page, 320);
 
         return true;
     },
@@ -74,22 +75,21 @@ Vifi.PageManager = {
         }
         return false;
     },
-
-
     focusFirst: function(ev) {
 
 
         if (this.setFocusByClass("active-item") === true) {
             this.getActivePage().find(".active-item").removeClass("active-item");
             return true;
+
         } else {
 
             if (this.setFocusByClass("tv-component-focused") === true) {
 
             } else
                 return this.setFocusByClass("tv-component");
-        }
 
+        }
         return false;
     },
 
@@ -126,15 +126,35 @@ Vifi.PageManager = {
         return false;
     },
 
-    switchToPage: function(page, cb, noredraw, element) {
+    /*
+     * Navigate to a page
+     * params:
+     * page - pagename to navigate to
+     * redraw - set to true to decorate the target page again
+     * page - pagename to navigate to
+     * page - pagename to navigate to
+     */
+
+    switchToPage: function(page, redraw, fullredraw, cb) {
+
         if (page != "") var pageid = '#' + page + "Page";
         else return false;
-
         if (this.changing) return false;
-        if (noredraw) this.needsredraw = false;
+        var el = "#application";
 
 
-        this.callback = cb;
+        if (fullredraw) this.needsredraw = true;
+        else this.needsredraw = false;
+
+        if (!cb || this.needsredraw ||  fullredraw) {
+            this.callback = function() {
+                $log("doing callback");
+
+                this.redraw(pageid);
+                Vifi.Event.trigger("page:focus");
+            }.bind(this);
+        } else this.callback = cb;
+
 
         this.changing = true;
 
@@ -143,21 +163,21 @@ Vifi.PageManager = {
     switchToPrevious: function(cb) {
         if (this.lastActivePage) {
             var pageName = this.lastActivePage.replace("Page", "").replace("#", "");
-            this.switchToPage(pageName, cb, true);
+            this.switchToPage(pageName, true, true);
         }
 
     },
 
     onBeforePageChange: function(page) {
-        $(".container.active .tv-component-focused").removeClass("tv-component-focused");
 
-        $(".container.active").removeClass("active");
 
+        this.getActivePage().removeClass("active");
         this.lastActivePage = this.activePage;
 
         Vifi.Event.trigger("page:onpagechange", page);
     },
     onPageChange: function(page) {
+
         this.setActivePage(page);
         Vifi.Event.trigger("page:afterpagechange", page);
     },
@@ -167,43 +187,50 @@ Vifi.PageManager = {
     onAfterPageChange: function(page) {
 
 
-        Vifi.Event.trigger("page:ready", page);
 
-        $("body").scrollTo(page, 230, {
-            onAfter: function() {}
-        });
+
+
         if (this.callback) this.callback();
-
+        this.callback = false;
         this.changing = false;
     },
-    redraw: function() {
+    redraw: function(el, redraw, fullredraw) {
 
 
         if (!this.drawing) {
             this.drawing = true;
+            var str = "";
+            if (undefined != el && undefined != el.selector) {
+                var str = el.selector.substr(1);
+            } else {
+                if (undefined != el) str = el;
+            }
+            var page = "#application";
+            if (str != "") page = str;
+
+
+
+            var appComponent = this.appComponent;
 
             if (this.needsredraw && appComponent) {
-                appComponent.removeChildren();
-                if (appElement) tv.ui.decorateChildren(appElement, this.decorateHandler.getHandler(), appComponent);
 
+                tv.ui.getComponentByElement(goog.dom.getElement("application")).removeChildren();
+                tv.ui.decorateChildren(goog.dom.getElement("application"), this.decorateHandler.getHandler(), appComponent);
+                $log("Full redraw for " + page);
+                tv.ui.decorate(goog.dom.getElement("application"));
 
             }
-
 
             if (!this.needsredraw) {
-                tv.ui.decorate(document.body);
-                var page = this.activePage.substr(1);
-                tv.ui.decorateChildren(goog.dom.getElement(page), this.decorateHandler.getHandler(), appComponent);
+                $log("Redrawing " + page);
+                tv.ui.decorateChildren(goog.dom.getElement(page.substr(1)), this.decorateHandler.getHandler(), appComponent);
             }
 
-            this.focusFirst();
             this.drawing = false;
         }
         return this;
 
     }
-
-
 
 }
 
@@ -371,24 +398,6 @@ Vifi.Browser.Page = Backbone.View.extend({
         });
     },
 
-    onDecorateCloseButton: function(component) {
-        var browser = this;
-
-        goog.events.listen(component, tv.ui.Component.EventType.KEY, function(event) {
-            var keyCode = event.keyCode;
-            event.preventDefault();
-            if (keyCode == 13 /*Enter*/ ) {
-                var item = event.target.element_;
-                var link = item.firstChild;
-                $(link).trigger("click");
-            }
-
-
-            event.stopPropagation();
-        });
-
-    },
-
     /** Handle buttons on the onscreen keyboard  */
     handleKeyboardEvent: function(event) {
         var keyCode = event.keyCode;
@@ -413,7 +422,7 @@ Vifi.Browser.Page = Backbone.View.extend({
         var keyCode = event.keyCode;
         event.preventDefault();
         if (keyCode == 38 /*Up*/ ) {
-            if ($("#moviePage:visible").size() > 0) Vifi.Event.trigger("page:change", "movie");
+            if ($("#moviePage:visible").size() > 0) Vifi.Event.trigger("page:change", "movie", true, true);
             else Vifi.Event.trigger("page:change", "home");
         }
         if (keyCode == 40 /*Down*/ ) {
@@ -523,17 +532,26 @@ Vifi.Browser.Page = Backbone.View.extend({
 
     /* Handle focusing on the frontpage */
     handleFeaturedFocus: function(event) {
+
         var item = event.target.element_;
-        $(".featured-movie.active-item").removeClass("active-item");
-        $(item).addClass("active-item");
         var link = item.firstChild;
+        app.pagemanager.activeItem = item;
         $(link).trigger("showdetails");
+
     },
     /* Handle clicking on film at homepage */
     handleFeaturedKey: function(event) {
-        event.preventDefault();
         var keyCode = event.keyCode;
+        event.preventDefault();
+        var item = event.target.element_;
 
+
+
+        if (keyCode == 13 /*Enter*/ ) {
+            var link = item.firstChild;
+            $(link).trigger("click");
+
+        }
         if (keyCode == 40 /*Down*/ ) {
             var page = "browser";
             if ($("#moviePage:visible").length > 0) {
@@ -545,14 +563,8 @@ Vifi.Browser.Page = Backbone.View.extend({
         }
         if (keyCode == 38 /*Up*/ ) {
             Vifi.Event.trigger("page:change", "account");
-        }
-        if (keyCode == 13 /*Enter*/ ) {
+            event.stopPropagation();
 
-            $(item).addClass("active-item");
-
-            var item = event.target.element_;
-            var link = item.firstChild;
-            $(link).trigger("click");
         }
 
         return false;
@@ -563,17 +575,18 @@ Vifi.Browser.Page = Backbone.View.extend({
         if (keyCode == 13 /*Enter*/ ) {
             var item = event.target.element_;
             var link = item.firstChild;
-            $(link).trigger("click");
+            $(item).addClass("active-item");
 
+            $(link).trigger("click");
+            event.stopPropagation();
         }
         if (keyCode == 38 /*Up*/ ) {
             var el = tv.ui.getComponentByElement(goog.dom.getElement("search-options-bar"));
             el.tryFocus(true);
             event.stopPropagation();
+
         }
         if (keyCode == 39 /*Right */ ) {
-
-
             var item = event.target;
             app.trigger("browser:pagination", item);
         }
@@ -750,12 +763,12 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
             }, 500, function() {
                 $("#moviePage").removeAttr("style");
 
-                Vifi.Event.trigger("page:change", "movie", false, true);
+                Vifi.Event.trigger("page:change", "movie");
             }).show();
 
         } else {
             $("#moviePage").show();
-            Vifi.Event.trigger("page:change", "movie", false, true);
+            Vifi.Event.trigger("page:change", "movie");
 
 
         }
@@ -797,9 +810,9 @@ Vifi.Films.FilmView = Backbone.View.extend({
         event.preventDefault();
         var view = this;
         var model = this.model;
-        this.$el.find(".active-item").removeClass("active-item");
         Vifi.Event.trigger("film:show", model.id);
-        this.$el.addClass("active-item");
+        event.stopPropagation();
+
     },
     onClickRemoveQueue: function(event) {
         event.preventDefault();
@@ -869,16 +882,21 @@ Vifi.Films.FeaturedFilmView = Vifi.Films.FilmView.extend({
         event.preventDefault();
         var view = this;
         var model = this.model;
-
         Vifi.Event.trigger("film:show", model.id);
+
     },
     updateDetails: function(ev, model) {
+        $("#homePage .active-item").removeClass("active-item");
+
         ev.preventDefault();
         var model = this;
         Vifi.Event.trigger("featured:focus", this.model);
-        $("#home-background div.visible").removeClass("visible")
+        this.$el.addClass("active-item");
+
+        $("#home-background div.visible").removeClass("visible");
+
         $("#home-background div#film-" + this.model.get("film").id).addClass("visible");
-        ev.stopPropagation();
+
     },
     render: function() {
         var model = this.model;
@@ -960,7 +978,6 @@ Vifi.Films.FeaturedFilmCollectionView = Backbone.View.extend({
 
         var filmView = new Vifi.Films.FeaturedFilmView({
             model: model,
-            queue: app.queue
         });
 
         return filmView.el;
@@ -1018,7 +1035,6 @@ Vifi.Films.TrailerView = Backbone.View.extend({
 Vifi.Films.FeaturedFilmDetailView = Backbone.View.extend({
     tagName: 'div',
     el: $("#featured-description"),
-    model: new Vifi.Films.FilmModel(),
     events: {},
 
     bgimages: [],
