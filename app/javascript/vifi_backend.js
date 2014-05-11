@@ -146,7 +146,7 @@ Vifi.PageManager = {
 
         if (redraw) {
             this.callback = function() {
-                $log("doing callback");
+                //    $log("doing callback");
 
                 this.redraw(pageid, redraw, fullredraw);
                 Vifi.Event.trigger("page:focus");
@@ -211,7 +211,7 @@ Vifi.PageManager = {
             if (fullredraw) page = "#application";
 
             if (fullredraw) {
-                $log("Full redraw for " + page);
+                //$log("Full redraw for " + page);
                 tv.ui.decorate(document.body);
                 var appElement = tv.ui.getComponentByElement(goog.dom.getElement(page.substr(1)));
                 if (undefined != appElement)
@@ -222,7 +222,7 @@ Vifi.PageManager = {
             }
 
             if (redraw) {
-                $log("Redrawing " + page);
+                // $log("Redrawing " + page);
                 tv.ui.decorateChildren(goog.dom.getElement(page.substr(1)), this.decorateHandler.getHandler(), appComponent);
             }
 

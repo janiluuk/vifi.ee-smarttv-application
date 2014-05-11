@@ -29,7 +29,7 @@ Vifi.MediaPlayer = {
     init: function() {
 
         var path = "app/javascript/flowplayer/flowplayer.js?" + new Date().getTime();
-        $log("Adding flowplayer path: " + path);
+        // $log("Adding flowplayer path: " + path);
         $("<script />", {
             src: path,
             type: 'text/javascript'
@@ -39,7 +39,7 @@ Vifi.MediaPlayer = {
         if (!this._videoElement) {
             $("<div>").attr("id", this.playerId).appendTo("body");
         } else {
-            this._trackEvents();
+            //  this._trackEvents();
         }
         this.speedtest();
 

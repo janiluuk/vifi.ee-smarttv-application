@@ -178,7 +178,7 @@ Vifi.Platform.prototype.proxy = function() {
     var browser = new Vifi.Platform('browser');
     // browser.needsProxy = true;
     // We want this to fail, and get added as default
-    browser.setResolution(1920, 1080);
+    browser.setResolution(window.screen.width, window.screen.height);
     browser.defaultPlatform = true;
     Vifi.Platforms.addSupportedPlatform(browser);
 }());
@@ -189,7 +189,7 @@ Vifi.Platform.prototype.proxy = function() {
     var browser = new Vifi.Platform('flash');
     // browser.needsProxy = true;
     // We want this to fail, and get added as default
-    browser.setResolution(1920, 1080);
+    browser.setResolution(window.screen.width, window.screen.height);
 
     browser.defaultPlatform = true;
     Vifi.Platforms.addSupportedPlatform(browser);
