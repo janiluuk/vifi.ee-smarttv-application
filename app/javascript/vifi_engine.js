@@ -12,6 +12,7 @@ Vifi = {
     Utils: {},
     Films: {},
     Browser: {},
+    Pages: {},    
     Player: {},
     User: {},
     Event: {},

@@ -1,13 +1,12 @@
 $(function() {
 
     var AppView = Vifi.Films.BaseAppView.extend({
-
         initialize: function(options) {
             this.options = options || {};
             this.pagemanager = this.options.pagemanager;
-            this.page = this.options.page;
             this.genres = this.options.genres;
             this.queue = this.options.queue;
+            this.browser = this.options.browser;
             this.account = this.options.account;
             this.session = this.options.session;
             this.logger = this.options.logger;
@@ -22,31 +21,27 @@ $(function() {
             this.collection.state.bind('change:year', this.onChangeYear, this);
             this.collection.state.bind('change:search', this.onChangeText, this);
             this.on("browser:pagination", this.onBrowserPaginationEvent, this);
+            this.pagemanager.initialize();
 
             this.session.enable();
 
         },
         initializeUI: function() {
             //app and router now exist in the scope
-            this.setGenreDropDown();
-
-
-
-            var view = this;
 
             // Add featured list to the front page
-            // 
-            var featuredCollection = this.collection.featured();
+            var featuredview = new Vifi.Films.FeaturedFilmCollectionView(this.collection.featured());
+            var browserPage = new Vifi.Pages.Browser({
+                    model: this.genres
+               });
+            var filmdetailview = new Vifi.Films.FilmDetailView();
 
-            var featuredview = new Vifi.Films.FeaturedFilmCollectionView(featuredCollection);
-            // make sure that the original checkboxes are checked if necessary.
-            // TODO: seems like this is not quite right... be nicer if django would handle this
-            // with the form upload.
+            this.setGenreDropDown();
+
+            },
 
 
-
-        },
-        events: {
+            events: {
             'submit #search-form': 'handleSearchFormSubmit',
             'change #search-form select': 'onSearchFieldChange',
             'change #search-form input[type="text"]': 'onSearchFieldChange',
@@ -57,6 +52,7 @@ $(function() {
 
 
         },
+  
 
         onClickToggleGrid: function(event) {
             this.collection.state.set('list_style', 'grid');
@@ -133,14 +129,14 @@ $(function() {
             $("#search-results div.lazy").lazyload({
                 threshold: 4000,
                 effect: 'fadeIn',
-                effectspeed: 1200
+                effectspeed: 900
             });
         },
         // Handle preloading imags on browser
         onBrowserPaginationEvent: function(e) {
 
-            var images = $("#search-results .lazy.loading:in-viewport");
-            if (images.size() > 0)
+            var images = $("#search-results div.lazy.loading:in-viewport");
+            if (images.length > 0)
                 app.loadBrowserImages();
 
         },
@@ -356,7 +352,7 @@ $(function() {
             //https://github.com/documentcloud/backbone/pull/1156
             app.setSearchStateFromHash(unescape(searchStateHash));
             app.collection.update();
-
+            Vifi.Event.trigger("page:change", "browser");
         },
         showFilm: function(id) {
 
@@ -442,6 +438,8 @@ $(function() {
         } else {
             // set the state to avoid an additional call to the server as we have
             // data to bootstrap the app. 
+//            var state = new Vifi.Utils.State();
+            
             var state = new Vifi.Utils.State(initial_search_json.search);
         }
 
@@ -460,8 +458,6 @@ $(function() {
 
         var genres = new Vifi.Films.GenreCollection(genredata);
         var queue = new Vifi.Films.QueueCollection(initial_search_json.queue);
-        var page = new Vifi.Browser.Page;
-        var pagemanager = Vifi.PageManager;
 
         var profile = new Vifi.User.Profile();
 
@@ -487,7 +483,10 @@ $(function() {
         var toolbar = new Vifi.User.ToolbarView({
             model: profile
         });
+        var pagemanager = Vifi.PageManager;
 
+      
+        
         Vifi.Platforms.init();
 
         var logger = Vifi.Utils.Logger;
@@ -495,7 +494,6 @@ $(function() {
             el: $('#application'),
             collection: collection,
             featured: collection.featured(),
-            page: page,
             profile: profile,
             session: session,
             toolbar: toolbar,
@@ -504,7 +502,6 @@ $(function() {
             genres: genres,
             user_is_authenticated: user_is_authenticated,
             queue: queue,
-
             redirect_on_genre_change: initial_search_json.redirect_on_genre_change,
             redirect_on_duration_change: initial_search_json.redirect_on_duration_change,
             redirect_on_period_change: initial_search_json.redirect_on_period_change,
@@ -531,7 +528,13 @@ $(function() {
         if (window.location.hash.indexOf('#search') == -1) {
             Vifi.Event.trigger("page:change", "home");
             app.renderResults();
+
+        }else {
+            Vifi.Event.trigger("page:change", "browser");
+            app.renderResults();
+
         }
+
 
 
 

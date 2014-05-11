@@ -1,5 +1,5 @@
 Vifi.Event = _.extend({}, Backbone.Events);
-
+Vifi.PageView = Backbone.View.extend({});
 
 Vifi.PageManager = {
     moviePage: $("#" + Vifi.Settings.moviepageId),
@@ -32,7 +32,7 @@ Vifi.PageManager = {
         Vifi.Event.on('page:back', this.switchToPrevious, this);
 
         this.decorateHandler = new tv.ui.DecorateHandler;
-        _.bindAll(this, 'redraw', 'focusFirst', 'setFocus', 'setFocusByClass', 'switchToPage');
+        _.bindAll(this, 'redraw', 'focusFirst', 'setFocus', 'setFocusByClass', 'switchToPage', 'setHandlers');
         var el = "application";
 
         if (!this.appComponent) {
@@ -40,6 +40,9 @@ Vifi.PageManager = {
             tv.ui.decorate(document.body);
             this.appComponent = tv.ui.getComponentByElement(this.appElement);
         }
+
+        this.setHandlers();
+
     },
 
     init: function() {
@@ -184,11 +187,6 @@ Vifi.PageManager = {
 
 
     onAfterPageChange: function(page) {
-
-
-
-
-
         if (this.callback) this.callback();
         this.callback = false;
         this.changing = false;
@@ -230,46 +228,67 @@ Vifi.PageManager = {
         }
         return this;
 
-    }
-
-}
-
-
-
-
-Vifi.Browser.Page = Backbone.View.extend({
-    viewType: 'grid',
-    tagName: 'div',
-    defaults: {},
-    application: false,
-    pageManager: false,
-    // Currently active page in the app
-    historyManager: false,
-    historyHandlers: [],
-    // Selected item in browser
-    debug: false,
-    initialize: function() {
-        this.pageManager = Vifi.PageManager;
-        this.filmDetailPage = new Vifi.Films.FilmDetailView();
-        this.featuredFilmDetails = new Vifi.Films.FeaturedFilmDetailView();
-        this.render();
-        this.pageManager.initialize();
-        this.setHandlers();
     },
 
 
-
-    render: function() {
-
-
+ // Setup initial handlers for the keyboard navigation
+    setHandlers: function() {
 
 
-        return this;
+        var _this = this;
+        // Film view buttons
+        Vifi.PageManager.decorateHandler.addClassHandler('movie-button', function(component) {
+            component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, _this.onMovieButtonEvent, false, _this)
+        });
+        // Film view buttons
+        Vifi.PageManager.decorateHandler.addClassHandler('action-button', function(component) {
+            component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, _this.onActionEvent, false, _this)
+        });
+        // Film view buttons
+        Vifi.PageManager.decorateHandler.addClassHandler('account-button', function(component) {
+            component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, _this.onAccountEvent, false, _this)
+        });
+        // Toggle o
+        Vifi.PageManager.decorateHandler.addClassHandler('tv-toggle-button', function(component) {
+            component.getEventHandler().listen(component, tv.ui.Button.EventType.ACTION, _this.handleToggleEvent, false, _this);
+        });
+        // Keyboard
+        Vifi.PageManager.decorateHandler.addClassHandler('key', function(component) {
+            component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, _this.handleKeyboardEvent);
+        });
+        // Clear
+        Vifi.PageManager.decorateHandler.addClassHandler('cleartext', function(component) {
+            component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, _this.handleClearEvent);
+        });
+
+        // List item in the movie
+        Vifi.PageManager.decorateHandler.addClassHandler('film-result', function(component) {
+            component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, _this.handleMovieEvent, false, _this);
+        });
+        Vifi.PageManager.decorateHandler.addIdHandler("search-options-bar", function(button) {
+            button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, _this.handleBrowserOptionKeys, false, _this);
+        });
+        Vifi.PageManager.decorateHandler.addIdHandler("searchbar", function(button) {
+            button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, _this.handleBrowserKeys, false, _this);
+        });
+        Vifi.PageManager.decorateHandler.addClassHandler("featured-movie", function(button) {
+            button.getEventHandler().listen(button, tv.ui.Component.EventType.FOCUS, _this.handleFeaturedFocus, false, _this);
+            button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, _this.handleFeaturedKey, false, _this);
+        });
+        Vifi.PageManager.decorateHandler.addClassHandler("no-left", function(button) {
+            button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, _this.handleBorderKeyLeft, false, _this);
+        });
+        Vifi.PageManager.decorateHandler.addClassHandler("no-right", function(button) {
+            button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, _this.handleBorderKeyRight, false, _this);
+        });
+        Vifi.PageManager.decorateHandler.addClassHandler("no-up", function(button) {
+            button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, _this.handleBorderKeyUp, false, _this);
+        });
+        Vifi.PageManager.decorateHandler.addIdHandler("clear-search-options", function(button) {
+            button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, _this.onClearSearchEvent, false, _this);
+        });
     },
-
-
-
-    // Handle pushing account-buttons
+     // Handle pushing account-buttons
     onAccountEvent: function(event) {
         var keyCode = event.keyCode;
         if (keyCode == 40 /*Down*/ ) {
@@ -340,64 +359,7 @@ Vifi.Browser.Page = Backbone.View.extend({
     },
 
 
-    // Setup initial handlers for the keyboard navigation
-    setHandlers: function() {
-
-
-        var browser = this;
-        // Film view buttons
-        Vifi.PageManager.decorateHandler.addClassHandler('movie-button', function(component) {
-            component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, browser.onMovieButtonEvent, false, browser)
-        });
-        // Film view buttons
-        Vifi.PageManager.decorateHandler.addClassHandler('action-button', function(component) {
-            component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, browser.onActionEvent, false, browser)
-        });
-        // Film view buttons
-        Vifi.PageManager.decorateHandler.addClassHandler('account-button', function(component) {
-            component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, browser.onAccountEvent, false, browser)
-        });
-        // Toggle o
-        Vifi.PageManager.decorateHandler.addClassHandler('tv-toggle-button', function(component) {
-            component.getEventHandler().listen(component, tv.ui.Button.EventType.ACTION, browser.handleToggleEvent, false, browser);
-        });
-        // Keyboard
-        Vifi.PageManager.decorateHandler.addClassHandler('key', function(component) {
-            component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, browser.handleKeyboardEvent);
-        });
-        // Clear
-        Vifi.PageManager.decorateHandler.addClassHandler('cleartext', function(component) {
-            component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, browser.handleClearEvent);
-        });
-
-        // List item in the movie
-        Vifi.PageManager.decorateHandler.addClassHandler('film-result', function(component) {
-            component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, browser.handleMovieEvent, false, browser);
-        });
-        Vifi.PageManager.decorateHandler.addIdHandler("search-options-bar", function(button) {
-            button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, browser.handleBrowserOptionKeys, false, browser);
-        });
-        Vifi.PageManager.decorateHandler.addIdHandler("searchbar", function(button) {
-            button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, browser.handleBrowserKeys, false, browser);
-        });
-        Vifi.PageManager.decorateHandler.addClassHandler("featured-movie", function(button) {
-            button.getEventHandler().listen(button, tv.ui.Component.EventType.FOCUS, browser.handleFeaturedFocus, false, browser);
-            button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, browser.handleFeaturedKey, false, browser);
-        });
-        Vifi.PageManager.decorateHandler.addClassHandler("no-left", function(button) {
-            button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, browser.handleBorderKeyLeft, false, browser);
-        });
-        Vifi.PageManager.decorateHandler.addClassHandler("no-right", function(button) {
-            button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, browser.handleBorderKeyRight, false, browser);
-        });
-        Vifi.PageManager.decorateHandler.addClassHandler("no-up", function(button) {
-            button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, browser.handleBorderKeyUp, false, browser);
-        });
-        Vifi.PageManager.decorateHandler.addIdHandler("clear-search-options", function(button) {
-            button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, browser.onClearSearchEvent, false, browser);
-        });
-    },
-
+   
     /** Handle buttons on the onscreen keyboard  */
     handleKeyboardEvent: function(event) {
         var keyCode = event.keyCode;
@@ -458,7 +420,7 @@ Vifi.Browser.Page = Backbone.View.extend({
         }
         if (keyCode == 38 /*Up*/ ) {
 
-            this.pageManager.setFocus(goog.dom.getElement("searchbar"));
+            this.setFocus(goog.dom.getElement("searchbar"));
             event.stopPropagation();
 
         }
@@ -476,7 +438,7 @@ Vifi.Browser.Page = Backbone.View.extend({
         var selected = false;
         var category = element.attr("data-category");
         if (undefined != category) Vifi.Event.trigger("button:" + category, val, this);
-        if (undefined != type && type == "radio") {
+            if (undefined != type && type == "radio") {
 
             var butvalue = element.attr("data-value");
             element.parent().find(".tv-toggle-button").each(function() {
@@ -537,7 +499,6 @@ Vifi.Browser.Page = Backbone.View.extend({
 
         var item = event.target.element_;
         var link = item.firstChild;
-        app.pagemanager.activeItem = item;
         $(link).trigger("showdetails");
 
     },
@@ -553,15 +514,19 @@ Vifi.Browser.Page = Backbone.View.extend({
             var link = item.firstChild;
             $(link).trigger("click");
 
+          
         }
         if (keyCode == 40 /*Down*/ ) {
             var page = "browser";
             if ($("#moviePage:visible").length > 0) {
                 page = "movie";
             } else {
-                this.pageManager.setFocus("filter-toolbar");
+                this.setFocus("filter-toolbar");
             }
             Vifi.Event.trigger("page:change", page);
+
+            event.stopPropagation();
+
         }
         if (keyCode == 38 /*Up*/ ) {
             Vifi.Event.trigger("page:change", "account");
@@ -598,8 +563,16 @@ Vifi.Browser.Page = Backbone.View.extend({
         }
 
         return false;
-    },
-});
+    }
+
+}
+
+
+_.extend(Vifi.PageManager, Backbone.Events);
+
+
+
+
 
 
 Vifi.Utils.ApiModel = Backbone.Model.extend({
@@ -986,6 +959,23 @@ Vifi.Films.FeaturedFilmCollectionView = Backbone.View.extend({
     }
 });
 
+Vifi.Pages.Browser = Vifi.PageView.extend({
+    el: $("#browserPage"),
+    model: new Vifi.Films.GenreCollection(),
+
+    initialize: function() {
+        this.context = {"genres": this.model.toJSON() };
+
+        this.render();
+    },
+
+    render: function() {
+            this.$el.html(ich.browserPageTemplate(this.context));
+           return this;
+
+    }
+
+});
 
 Vifi.Films.TrailerView = Backbone.View.extend({
     tagName: 'div',
@@ -1084,3 +1074,4 @@ Vifi.Films.BaseAppView = Backbone.View.extend({
         this.trigger('featuredFilmsLoaded', model);
     }
 });
+
