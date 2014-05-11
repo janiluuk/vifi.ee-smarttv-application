@@ -527,14 +527,20 @@ $(function() {
         app.initializeUI();
         // if there's no hash, let's render the results
         // ( if there's a hash , the router will take care of this when it sets state from hash)
-        if (window.location.hash.indexOf('#search') == -1) {
+        if (window.location.hash.indexOf('#search') == -1 && window.location.hash.indexOf('#film') == -1) {
+
             Vifi.Event.trigger("page:change", "home");
 
 
-        } else {
+        } else if (window.location.hash.indexOf('#search') == 0) {
+
             Vifi.Event.trigger("page:change", "browser");
 
+        } else {
+
+            Vifi.Event.trigger("film:show", window.location.hash.substr(6));
         }
+
         app.renderResults();
 
 

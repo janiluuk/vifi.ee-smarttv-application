@@ -69,6 +69,7 @@ Vifi.Player.PlayerView = Backbone.View.extend({
         _.bindAll(this, 'render', 'onPlayerPageExit', 'onPlayerPageEnter', 'closeDetails', 'showDetails', 'showNavigation', 'hideNavigation', "clearAllTimeouts", "touchVideoNavigationTimeout", "onBufferingStart");
         Vifi.MediaPlayer.on("mediaplayer:bufferingstart", this.onBufferingStart, this);
         Vifi.MediaPlayer.on("mediaplayer:bufferingend", this.onBufferingStop, this);
+
         this.on("player:show", this.onPlayerPageEnter, this);
         this.on("player:exit", this.onPlayerPageExit, this);
         this.render();
@@ -201,14 +202,10 @@ Vifi.Player.Player = Backbone.Model.extend({
             this.setSession(options.session);
         }
 
-
-
         this.subtitles = new Vifi.Player.Subtitles();
 
         this.on('player:load', this.onLoadFilm, this);
         this.on('subtitles:ready', this.onSubtitlesReady, this);
-
-
 
     },
 

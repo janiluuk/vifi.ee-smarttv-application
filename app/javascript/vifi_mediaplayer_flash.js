@@ -343,5 +343,8 @@ Vifi.MediaPlayer = {
 }
 _.extend(Vifi.MediaPlayer, Backbone.Events);
 _.extend(Vifi.MediaPlayer, Vifi.MediaPlayerCore);
+Vifi.MediaPlayer.bind("mediaplayer:stop", function() { 
+    Vifi.MediaPlayer.stop(true);
+});
 
 Vifi.Engine.addModule("Flash", Vifi.MediaPlayer);
