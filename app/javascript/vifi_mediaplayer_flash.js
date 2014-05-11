@@ -12,6 +12,7 @@ Vifi.MediaPlayer = {
     content: null,
     currentStream: null,
     playerId: "player",
+    plugin: false,
 
     active: function() {
         this._active = true
@@ -33,6 +34,7 @@ Vifi.MediaPlayer = {
             this._trackEvents();
         }
         this.speedtest();
+
     },
     setContent: function(content) {
 
@@ -41,14 +43,14 @@ Vifi.MediaPlayer = {
         if (content) {
 
             this.currentStream = content[0];
-            this._createPlayer();
         }
     },
     _createPlayer: function() {
+        if (!this.currentStream) return false;
         var url = this.currentStream.mp4;
 
 
-        flowplayer(this.playerId, {
+        this.plugin = flowplayer(this.playerId, {
             src: 'http://app.vifi.ee/app/swf/flowplayer.commercial.swf',
             wmode: 'opaque'
         }, {
@@ -69,6 +71,7 @@ Vifi.MediaPlayer = {
             clip: {
                 baseUrl: 'rtmpe://media.vifi.ee/vod/',
                 autoBuffering: true,
+                autoplay: false,
                 scaling: 'fit',
                 provider: 'rtmp',
                 connectionProvider: 'secure',
@@ -159,14 +162,20 @@ Vifi.MediaPlayer = {
     },
 
     play: function() {
-        $log("Playing Media");
-        if (!this.playlist) {
-            $log(" Can't press play on a mediaplayer without a playlist")
+
+        if (!this.currentStream) {
+            $log(" Can't press play on a mediaplayer without a content")
             return;
         }
-        this.active();
-        return false;
-        if (this._videoElement && !this._videoElement.paused && (typeof(this._videoElement.playbackRate) != 'undefined' && this._videoElement.playbackRate != 1)) {
+
+        $log("Playing Media");
+        if (undefined == $f()) {
+            this._createPlayer();
+            this.active();
+
+            return false;
+        }
+        if ($f() && !$f().paused && (typeof(this._videoElement.playbackRate) != 'undefined' && this._videoElement.playbackRate != 1)) {
             $log(" Restting Playback Rate")
             this._videoElement.playbackRate = 1;
         } else if (this._videoElement && this.currentStream == null) {
@@ -175,12 +184,12 @@ Vifi.MediaPlayer = {
             this.currentStream = this.playlist.nextFile();
             this._playVideo();
         } else if (this._videoElement) {
-            if (this._videoElement.paused) {
+            if (!$f().isPaused) {
                 $log(" Calling Video Element Play")
-                this._videoElement.play();
+                $f().play();
             } else {
                 $log(" Calling Video Element Pause ")
-                this._videoElement.pause();
+                $f().pause();
             }
         }
     },
@@ -206,12 +215,9 @@ Vifi.MediaPlayer = {
     },
 
     stop: function(forced) {
-        if (this._videoElement) {
+        if (this.plugin) {
             try {
-                this._videoElement.playbackRate = 1;
-                this._videoElement.currentTime = 0;
-                this.currentStream = null;
-                this._videoElement.pause();
+                this.plugin.pause();
                 if (!forced) this.trigger("mediaplayer:onstop");
             } catch (e) {} // If this doesn't succeed, it doesn't matter, just die gracefully
 
@@ -221,8 +227,9 @@ Vifi.MediaPlayer = {
     pause: function() {
         // May get called without the correct initialization, so wrapping in block.
         // This should always fail gracefully.
+
         try {
-            this._videoElement.pause();
+            this.plugin.pause();
             this.trigger("mediaplayer:onpause");
         } catch (e) {
             $log(" FAILED TO PAUSE VIDEO: " + e);
@@ -230,28 +237,19 @@ Vifi.MediaPlayer = {
     },
 
     fastforward: function() {
-        if (!this.allowFastFoward) return;
-        if (!this._videoElement.paused && this._videoElement.playbackRate != 1) {
-            this._videoElement.playbackRate = 1;
-        } else {
-            this._videoElement.play();
-            this._videoElement.playbackRate = 3;
-        }
+
+        var currentTime = this.plugin.getTime();
+        this.plugin.seek(currentTime + 10);
         this.trigger("mediaplayer:onfastforward");
     },
     rewind: function() {
-        if (!this._videoElement.paused && this._videoElement.playbackRate != 1) {
-            this._videoElement.playbackRate = 1;
-            this.trigger("mediaplayer:onrewind", 1);
-        } else {
-            this._videoElement.play();
-            this._videoElement.playbackRate = -3;
-            this.trigger("mediaplayer:onrewind", -3);
-        }
+        var currentTime = this.plugin.getTime();
+        this.plugin.seek(currentTime - 10);
+        this.trigger("mediaplayer:onrewind", 1);
     },
 
     mute: function(muted) {
-        if (this._videoElement) {
+        if (this.plugin) {
             // need to hold on to this so we know when we've switched state in our onvolumechange handler.
             this.wasMuted = this._videoElement.muted;
             if (typeof(muted) == 'undefined') muted = !this._videoElement.muted;
@@ -271,15 +269,15 @@ Vifi.MediaPlayer = {
 
 
     playing: function() {
-        var test = (this._videoElement.paused) ? false : true;
+        var test = (this.plugin.isPlaying()) ? true : false;
         return test
     },
 
     duration: function() {
-        if (_.isNaN(this._videoElement.duration)) {
+        if (_.isNaN(this.plugin.getClip().duration)) {
             return null;
         } else {
-            return Math.floor(this._videoElement.duration * 1000);
+            return Math.floor(this.plugin.getClip().duration * 1000);
         }
     },
 

@@ -14,9 +14,9 @@ Vifi.Player.FilmContent = Vifi.Utils.ApiModel.extend({
             'poster': ''
         },
         'subtitles': [{
-            'filename': '/cloud_atlas_ee.srt',
-            'code': 'ee',
-            'language': 'Estonian'
+            'filename': '',
+            'code': '',
+            'language': ''
         }]
     },
 
@@ -24,28 +24,32 @@ Vifi.Player.FilmContent = Vifi.Utils.ApiModel.extend({
         this.refresh();
 
         this.on("change:id", this.refresh, this);
-        this.on("change:videos", this.loadFilm, this);
-        this.on("change:subtitles", this.loadSubtitles, this);
+        this.on("change:videos", this.onLoadContent, this);
+        this.on("change:subtitles", this.onLoadSubtitles, this);
 
 
     },
 
 
-    loadFilm: function(event) {
+    onLoadContent: function(event) {
         if (this.get("videos").length > 0)
             this.trigger("content:ready", this.get("videos"));
+        $log("Loaded videos");
 
     },
 
-    loadSubtitles: function(event) {
+    onLoadSubtitles: function(event) {
         if (this.get("subtitles").length > 0)
             this.trigger("subtitles:ready", this.get("subtitles"));
+        $log("Loaded new subtitles");
+
     },
 
 
 
     refresh: function() {
         this.path = "content/" + this.get("id");
+        $log("Initializing new content with " + this.path);
     }
 });
 
@@ -65,7 +69,6 @@ Vifi.Player.PlayerView = Backbone.View.extend({
         _.bindAll(this, 'render', 'onPlayerPageExit', 'onPlayerPageEnter', 'closeDetails', 'showDetails', 'showNavigation', 'hideNavigation', "clearAllTimeouts", "touchVideoNavigationTimeout", "onBufferingStart");
         Vifi.MediaPlayer.on("mediaplayer:bufferingstart", this.onBufferingStart, this);
         Vifi.MediaPlayer.on("mediaplayer:bufferingend", this.onBufferingStop, this);
-        Vifi.MediaPlayer.on("mediaplayer:content", this.onPlayerPageEnter, this);
         this.on("player:show", this.onPlayerPageEnter, this);
         this.on("player:exit", this.onPlayerPageExit, this);
         this.render();
@@ -137,6 +140,7 @@ Vifi.Player.PlayerView = Backbone.View.extend({
         $.scrollTo(0);
         $(".container:visible:not(#playerPage)").addClass("container-hidden").fadeOut();
         this.$el.fadeIn();
+        this.showNavigation();
 
         setTimeout(function() {
             Vifi.PageManager.decorateHandler.addClassHandler('action-button', function(component) {
@@ -144,10 +148,9 @@ Vifi.Player.PlayerView = Backbone.View.extend({
             });
             tv.ui.decorateChildren(goog.dom.getElement("playerPage"), app.page.pageManager.decorateHandler.getHandler());
             var focus = tv.ui.getComponentByElement(goog.dom.getElement("player-options")).tryFocus();
-
+            Vifi.MediaPlayer.play();
         }, 1200);
 
-        this.showNavigation();
 
     },
     onPlayerPageExit: function() {
@@ -203,18 +206,12 @@ Vifi.Player.Player = Backbone.Model.extend({
         this.subtitles = new Vifi.Player.Subtitles();
 
         this.on('player:load', this.onLoadFilm, this);
-        this.on('content:ready', this.onPlayerReady, this);
         this.on('subtitles:ready', this.onSubtitlesReady, this);
-        Vifi.MediaPlayer.on('mediaplayer:oncontentchange', this.onPlayerReady);
 
 
 
     },
 
-    onPlayerReady: function(event) {
-        Vifi.MediaPlayer.play();
-
-    },
 
 
     onSubtitlesReady: function(subtitles) {

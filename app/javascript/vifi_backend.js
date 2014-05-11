@@ -131,8 +131,8 @@ Vifi.PageManager = {
      * params:
      * page - pagename to navigate to
      * redraw - set to true to decorate the target page again
-     * page - pagename to navigate to
-     * page - pagename to navigate to
+     * fullredraw - set to true to decorate whole app again
+     * cb - callback to run after to
      */
 
     switchToPage: function(page, redraw, fullredraw, cb) {
@@ -142,18 +142,17 @@ Vifi.PageManager = {
         if (this.changing) return false;
         var el = "#application";
 
+        if (this.needsredraw) redraw = true;
 
-        if (fullredraw) this.needsredraw = true;
-        else this.needsredraw = false;
-
-        if (!cb || this.needsredraw ||  fullredraw) {
+        if (redraw) {
             this.callback = function() {
                 $log("doing callback");
 
-                this.redraw(pageid);
+                this.redraw(pageid, redraw, fullredraw);
                 Vifi.Event.trigger("page:focus");
+                if (cb) cb();
             }.bind(this);
-        } else this.callback = cb;
+        }
 
 
         this.changing = true;
@@ -208,20 +207,21 @@ Vifi.PageManager = {
             var page = "#application";
             if (str != "") page = str;
 
-
-
             var appComponent = this.appComponent;
+            if (fullredraw) page = "#application";
 
-            if (this.needsredraw && appComponent) {
-
-                tv.ui.getComponentByElement(goog.dom.getElement("application")).removeChildren();
-                tv.ui.decorateChildren(goog.dom.getElement("application"), this.decorateHandler.getHandler(), appComponent);
+            if (fullredraw) {
                 $log("Full redraw for " + page);
-                tv.ui.decorate(goog.dom.getElement("application"));
+                tv.ui.decorate(document.body);
+                var appElement = tv.ui.getComponentByElement(goog.dom.getElement(page.substr(1)));
+                if (undefined != appElement)
+                    tv.ui.getComponentByElement(goog.dom.getElement(page.substr(1))).removeChildren();
+                tv.ui.decorateChildren(goog.dom.getElement(page.substr(1)), this.decorateHandler.getHandler(), appComponent);
+                tv.ui.decorate(goog.dom.getElement(page.substr(1)));
 
             }
 
-            if (!this.needsredraw) {
+            if (redraw) {
                 $log("Redrawing " + page);
                 tv.ui.decorateChildren(goog.dom.getElement(page.substr(1)), this.decorateHandler.getHandler(), appComponent);
             }
@@ -422,8 +422,10 @@ Vifi.Browser.Page = Backbone.View.extend({
         var keyCode = event.keyCode;
         event.preventDefault();
         if (keyCode == 38 /*Up*/ ) {
-            if ($("#moviePage:visible").size() > 0) Vifi.Event.trigger("page:change", "movie", true, true);
+            if ($("#moviePage:visible").size() > 0) Vifi.Event.trigger("page:change", "movie");
             else Vifi.Event.trigger("page:change", "home");
+            event.stopPropagation();
+
         }
         if (keyCode == 40 /*Down*/ ) {
             var el = tv.ui.getComponentByElement(goog.dom.getElement("search-options-bar"));
@@ -712,7 +714,7 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
         trailerView.play();
 
         $("#trailer").html(trailerView.el);
-        app.pagemanager.redraw();
+        app.pagemanager.redraw("#moviePage", true);
 
         var el = tv.ui.getComponentByElement(goog.dom.getElement("trailer-options-selection"));
         tv.ui.decorateChildren(el.getElement(), function(component) {
