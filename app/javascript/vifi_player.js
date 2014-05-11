@@ -144,9 +144,9 @@ Vifi.Player.PlayerView = Backbone.View.extend({
 
         setTimeout(function() {
             Vifi.PageManager.decorateHandler.addClassHandler('action-button', function(component) {
-                component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, app.page.onActionEvent, false, app.page)
+                component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, app.pagemanager.onActionEvent, false, app.pagemanager)
             });
-            tv.ui.decorateChildren(goog.dom.getElement("playerPage"), app.page.pageManager.decorateHandler.getHandler());
+            tv.ui.decorateChildren(goog.dom.getElement("playerPage"), app.pagemanager.decorateHandler.getHandler());
             var focus = tv.ui.getComponentByElement(goog.dom.getElement("player-options")).tryFocus();
             Vifi.MediaPlayer.play();
         }, 1200);

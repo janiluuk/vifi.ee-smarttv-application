@@ -107,7 +107,7 @@ Vifi.Playlist = function() {
 
     this.nextFile = function() {
         var bitrate = Vifi.MediaPlayer.userBitrate || 10000; // Should be the largest bitrate
-        if(this.currentIndex == this.files.length) {
+        if (this.currentIndex == this.files.length) {
             $log(" REACHED THE END OF PLAYLIST");
             this.resetIndex();
             if (!this.looping) return null;
@@ -115,8 +115,8 @@ Vifi.Playlist = function() {
         var profiles = this.files[this.currentIndex++].videos;
         var file = profiles.shift();
         _.each(profiles, function(profile) {
-            $log(" TESTING file.bitrate: " + file.bitrate + " rendition.bitrate: " + file.bitrate + " my bitrate: " + Vifi.MediaPlayer.userBitrate)
-            if( profile.bitrate > file.bitrate && profile.bitrate < Vifi.MediaPlayer.userBitrate ) {
+            $log(" TESTING file.bitrate: " + file.bitrate + " file.bitrate: " + file.bitrate + " my bitrate: " + Vifi.MediaPlayer.userBitrate)
+            if (profile.bitrate > file.bitrate && profile.bitrate < Vifi.MediaPlayer.userBitrate) {
                 file = profile;
             }
         });
@@ -129,21 +129,23 @@ Vifi.Playlist = function() {
     }
     this.addPreroll = function(renditions, isAd) {
         var isAd = _.isNull(isAd) ? true : isAd; // We default to it being an ad.
-        if(!_.isArray(videos)) videos = [videos];
+        if (!_.isArray(videos)) videos = [videos];
         this.files.unshift({
-            isAd: isAd, videos: videos
+            isAd: isAd,
+            videos: videos
         });
     }
 
-    this.addItem = function(renditions, isAd) {
+    this.addItem = function(videos, isAd) {
         var isAd = _.isNull(isAd) ? false : isAd;
-        if(!_.isArray(renditions)) renditions = [renditions];
+        if (!_.isArray(videos)) videos = [videos];
         this.files.push({
-            isAd: isAd, renditions: renditions
+            isAd: isAd,
+            videos: videos
         });
     }
 
-    this.setUserBitrate = function( bitrate ) {
+    this.setUserBitrate = function(bitrate) {
         this.userBitrate = bitrate;
     }
     this.setCurrentIndex = function(index) {
@@ -152,11 +154,14 @@ Vifi.Playlist = function() {
     }
     this.addUrl = function(url) {
         this.files.push([{
-            profile: null, mp4: url, bitrate: 0, code: 0,
+            profile: null,
+            mp4: url,
+            bitrate: 0,
+            code: 0,
         }]);
     }
     this.loop = function(toLoop) {
-        this.looping = !!toLoop; // force a boolean
+        this.looping = !! toLoop; // force a boolean
     };
     return this;
 };

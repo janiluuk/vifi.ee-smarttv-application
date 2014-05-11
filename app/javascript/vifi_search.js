@@ -30,18 +30,18 @@ $(function() {
             //app and router now exist in the scope
 
             // Add featured list to the front page
-            var featuredview = new Vifi.Films.FeaturedFilmCollectionView(this.collection.featured());
             var browserPage = new Vifi.Pages.Browser({
-                    model: this.genres
-               });
+                model: this.genres
+            });
             var filmdetailview = new Vifi.Films.FilmDetailView();
 
             this.setGenreDropDown();
+            this.featuredview = new Vifi.Films.FeaturedFilmCollectionView(this.collection.featured());
 
-            },
+        },
 
 
-            events: {
+        events: {
             'submit #search-form': 'handleSearchFormSubmit',
             'change #search-form select': 'onSearchFieldChange',
             'change #search-form input[type="text"]': 'onSearchFieldChange',
@@ -52,7 +52,7 @@ $(function() {
 
 
         },
-  
+
 
         onClickToggleGrid: function(event) {
             this.collection.state.set('list_style', 'grid');
@@ -147,11 +147,12 @@ $(function() {
             var name = "q";
             var value = $("#q").val();
             var search_array = {
-                genre: [],
-                duration: [],
-                period: []
+                genre: undefined,
+                duration: undefined,
+                period: undefined
             }
-            var search_dict = {}
+            var search_dict = _.extend({}, search_array);
+
 
             search_dict[name] = value;
 
@@ -163,8 +164,9 @@ $(function() {
 
 
                 search_dict[fieldname] = search_dict[fieldname] == undefined ? val : search_dict[fieldname] += ";" + val;
-
             });
+
+
             this.collection.state.set(search_dict);
         },
         onAudienceCheckboxFieldChange: function(event) {
@@ -438,8 +440,8 @@ $(function() {
         } else {
             // set the state to avoid an additional call to the server as we have
             // data to bootstrap the app. 
-//            var state = new Vifi.Utils.State();
-            
+            //            var state = new Vifi.Utils.State();
+
             var state = new Vifi.Utils.State(initial_search_json.search);
         }
 
@@ -485,8 +487,8 @@ $(function() {
         });
         var pagemanager = Vifi.PageManager;
 
-      
-        
+
+
         Vifi.Platforms.init();
 
         var logger = Vifi.Utils.Logger;
@@ -527,14 +529,13 @@ $(function() {
         // ( if there's a hash , the router will take care of this when it sets state from hash)
         if (window.location.hash.indexOf('#search') == -1) {
             Vifi.Event.trigger("page:change", "home");
-            app.renderResults();
 
-        }else {
+
+        } else {
             Vifi.Event.trigger("page:change", "browser");
-            app.renderResults();
 
         }
-
+        app.renderResults();
 
 
 

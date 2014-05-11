@@ -80,7 +80,6 @@ Vifi.PageManager = {
     },
     focusFirst: function(ev) {
 
-
         if (this.setFocusByClass("active-item") === true) {
             this.getActivePage().find(".active-item").removeClass("active-item");
             return true;
@@ -88,7 +87,7 @@ Vifi.PageManager = {
         } else {
 
             if (this.setFocusByClass("tv-component-focused") === true) {
-
+                return true;
             } else
                 return this.setFocusByClass("tv-component");
 
@@ -147,15 +146,13 @@ Vifi.PageManager = {
 
         if (this.needsredraw) redraw = true;
 
-        if (redraw) {
-            this.callback = function() {
-                //    $log("doing callback");
+        this.callback = function() {
+            //    $log("doing callback");
 
-                this.redraw(pageid, redraw, fullredraw);
-                Vifi.Event.trigger("page:focus");
-                if (cb) cb();
-            }.bind(this);
-        }
+            this.redraw(pageid, redraw, fullredraw);
+
+            if (cb) cb();
+        }.bind(this);
 
 
         this.changing = true;
@@ -209,7 +206,7 @@ Vifi.PageManager = {
             if (fullredraw) page = "#application";
 
             if (fullredraw) {
-                //$log("Full redraw for " + page);
+                // $log("Full redraw for " + page);
                 tv.ui.decorate(document.body);
                 var appElement = tv.ui.getComponentByElement(goog.dom.getElement(page.substr(1)));
                 if (undefined != appElement)
@@ -224,6 +221,11 @@ Vifi.PageManager = {
                 tv.ui.decorateChildren(goog.dom.getElement(page.substr(1)), this.decorateHandler.getHandler(), appComponent);
             }
 
+
+            this.focusFirst();
+
+
+
             this.drawing = false;
         }
         return this;
@@ -231,7 +233,7 @@ Vifi.PageManager = {
     },
 
 
- // Setup initial handlers for the keyboard navigation
+    // Setup initial handlers for the keyboard navigation
     setHandlers: function() {
 
 
@@ -288,7 +290,7 @@ Vifi.PageManager = {
             button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, _this.onClearSearchEvent, false, _this);
         });
     },
-     // Handle pushing account-buttons
+    // Handle pushing account-buttons
     onAccountEvent: function(event) {
         var keyCode = event.keyCode;
         if (keyCode == 40 /*Down*/ ) {
@@ -336,11 +338,14 @@ Vifi.PageManager = {
     },
     // Handle pushing action-buttons
     onActionEvent: function(event) {
+
         event.preventDefault();
         var keyCode = event.keyCode;
         if (keyCode == 13 /*Enter*/ ) {
+
             var item = event.target.element_;
             var link = item.firstChild;
+
             $(link).trigger("click");
             event.stopPropagation();
 
@@ -359,7 +364,7 @@ Vifi.PageManager = {
     },
 
 
-   
+
     /** Handle buttons on the onscreen keyboard  */
     handleKeyboardEvent: function(event) {
         var keyCode = event.keyCode;
@@ -438,7 +443,7 @@ Vifi.PageManager = {
         var selected = false;
         var category = element.attr("data-category");
         if (undefined != category) Vifi.Event.trigger("button:" + category, val, this);
-            if (undefined != type && type == "radio") {
+        if (undefined != type && type == "radio") {
 
             var butvalue = element.attr("data-value");
             element.parent().find(".tv-toggle-button").each(function() {
@@ -470,27 +475,37 @@ Vifi.PageManager = {
             });
         } else {
             //    Mute Reset choices exist
+            if (element.parent().find(".tv-toggle-button-on").length == 0) {
+                var reset = true;
+            }
             element.parent().find(".tv-toggle-button:first").addClass("reset-toggle");
             var resetbutton = goog.dom.getElementByClass("reset-toggle");
             var tvbutton = tv.ui.getComponentByElement(resetbutton);
             if (tvbutton != false && tvbutton != "undefined") {
-                tvbutton.setOn(false);
+
+                element.parent().find(".tv-toggle-button").each(function() {
+                    $(this).addClass("reset-toggle");
+                });
+
+                tvbutton.setOn(reset);
                 $("#id_" + coll + " option:first").attr("selected", false);
             }
         }
+
         $(".reset-toggle").removeClass("reset-toggle");
         if (button.isOn() == true) selected = true;
         if (val != undefined && coll != undefined) {
             $("#id_" + coll + " option").each(function() {
                 if (reset) {
-                    if (this.value > 0) $(this).attr("selected", false);
+                    if (this.value > 0 || this.value != "") $(this).attr("selected", false);
                     else $(this).attr("selected", "selected")
                 }
-                if (this.value == val) {
+                if (this.value == val && reset != true) {
                     $(this).attr("selected", selected);
                 }
             });
         }
+
         app.onSearchFieldChange(event);
     },
 
@@ -514,7 +529,7 @@ Vifi.PageManager = {
             var link = item.firstChild;
             $(link).trigger("click");
 
-          
+
         }
         if (keyCode == 40 /*Down*/ ) {
             var page = "browser";
@@ -719,7 +734,9 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
             router.navigate('film/' + id);
             this.model = film;
             this.render().showPage();
+
         }
+
     },
     showPage: function() {
         if (this.$el.is(":hidden") === true && $("#browserPage").hasClass("active")) {
@@ -877,6 +894,7 @@ Vifi.Films.FeaturedFilmView = Vifi.Films.FilmView.extend({
         var model = this.model;
         this.$el.addClass("tv-component tv-button movie featured-movie");
         this.$el.html(ich.featuredFilmTemplate(model.toJSON()));
+
         return this;
     }
 });
@@ -922,10 +940,11 @@ Vifi.Films.FeaturedFilmCollectionView = Backbone.View.extend({
     initialize: function(models) {
         this.models = models;
         this.render();
+        Vifi.Event.trigger("app:ready");
+
     },
     render: function() {
         this.renderFilmViews();
-        Vifi.Event.trigger("app:ready");
 
         return this;
     },
@@ -935,6 +954,7 @@ Vifi.Films.FeaturedFilmCollectionView = Backbone.View.extend({
         var bg = this.bg;
         this.$el.html('');
         this.models.each(function(model) {
+
             fragment.appendChild(this.addChildView(model));
             var img = $("<div>").css("background", "url('" + model.get("film").backdrop_url + "')").attr("id", "film-" + model.get("film").id).addClass("featured_film_background");
             bg.push(img[0]);
@@ -947,6 +967,7 @@ Vifi.Films.FeaturedFilmCollectionView = Backbone.View.extend({
 
         $("#home-background").html(bgfragment);
         this.$el.append(fragment);
+
 
     },
     addChildView: function(model) {
@@ -964,14 +985,16 @@ Vifi.Pages.Browser = Vifi.PageView.extend({
     model: new Vifi.Films.GenreCollection(),
 
     initialize: function() {
-        this.context = {"genres": this.model.toJSON() };
+        this.context = {
+            "genres": this.model.toJSON()
+        };
 
         this.render();
     },
 
     render: function() {
-            this.$el.html(ich.browserPageTemplate(this.context));
-           return this;
+        this.$el.html(ich.browserPageTemplate(this.context));
+        return this;
 
     }
 
@@ -1074,4 +1097,3 @@ Vifi.Films.BaseAppView = Backbone.View.extend({
         this.trigger('featuredFilmsLoaded', model);
     }
 });
-

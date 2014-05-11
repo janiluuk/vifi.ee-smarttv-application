@@ -49,6 +49,8 @@ Vifi.MediaPlayer = {
         if (content) {
 
             this.currentStream = content[0];
+
+            if (this.plugin) this.plugin.setClip(this.currentStream.mp4)
         }
     },
     _createPlayer: function() {
@@ -166,7 +168,7 @@ Vifi.MediaPlayer = {
             return;
         }
 
-        if (undefined == $f()) {
+        if (!this._active) {
             this._createPlayer();
             this.active();
 
@@ -178,21 +180,21 @@ Vifi.MediaPlayer = {
         } else if (this._videoElement && this.currentStream == null) {
             this._trackEvents();
             $log(" Playing NExt File ")
-            this.currentStream = this.playlist.nextFile();
-            this._playVideo();
+            //this.currentStream = this.playlist.nextFile();
+            //this._playVideo();
         } else if (this._videoElement) {
-            if (!$f().isPaused()) {
+            if (!$f().isPlaying()) {
                 $log(" Calling Video Element Play")
-                $f().play();
+                this.plugin.play();
             } else {
                 $log(" Calling Video Element Pause ")
-                $f().pause();
+                this.pause();
             }
         }
     },
 
     _playVideo: function() {
-        $log(" SETTING CURRENT STREAM TO: " + this.currentStream.url);
+        $log(" SETTING CURRENT STREAM TO: " + this.currentStream.mp4);
         this.plugin.setClip({
             url: "mp4:" + this.currentStream.mp4
         });
@@ -215,7 +217,11 @@ Vifi.MediaPlayer = {
         if (this.plugin) {
             try {
                 this.plugin.pause();
+                this.deactive();
+
                 if (!forced) this.trigger("mediaplayer:onstop");
+                else $f().unload();
+
             } catch (e) {} // If this doesn't succeed, it doesn't matter, just die gracefully
 
         }
