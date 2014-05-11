@@ -27,6 +27,14 @@ Vifi.MediaPlayer = {
     _videoElement: null,
     allowFastFoward: true,
     init: function() {
+
+        var path = "app/javascript/flowplayer/flowplayer.js?" + new Date().getTime();
+        $log("Adding flowplayer path: " + path);
+        $("<script />", {
+            src: path,
+            type: 'text/javascript'
+        }).appendTo("head");
+
         this._videoElement = $("#" + this.playerId);
         if (!this._videoElement) {
             $("<div>").attr("id", this.playerId).appendTo("body");
@@ -37,8 +45,6 @@ Vifi.MediaPlayer = {
 
     },
     setContent: function(content) {
-
-
         this.content = content;
         if (content) {
 
@@ -133,15 +139,6 @@ Vifi.MediaPlayer = {
         }).controls("player-controls");
 
     },
-    _createVideoTag: function() {
-        $log(" ___ CREATING VIDEO TAG ___ ")
-        this.eventsBound = false;
-        var obj = $("<video></video>");
-        $("body").append(obj);
-        this._videoElement = $("video:first")[0];
-        this._trackEvents();
-        return obj;
-    },
 
     setPlaylist: function(playlist) {
         $log(" Setting new Playlist ");
@@ -162,13 +159,13 @@ Vifi.MediaPlayer = {
     },
 
     play: function() {
+        $log("Playing Media");
 
         if (!this.currentStream) {
             $log(" Can't press play on a mediaplayer without a content")
             return;
         }
 
-        $log("Playing Media");
         if (undefined == $f()) {
             this._createPlayer();
             this.active();
@@ -184,7 +181,7 @@ Vifi.MediaPlayer = {
             this.currentStream = this.playlist.nextFile();
             this._playVideo();
         } else if (this._videoElement) {
-            if (!$f().isPaused) {
+            if (!$f().isPaused()) {
                 $log(" Calling Video Element Play")
                 $f().play();
             } else {
@@ -196,11 +193,11 @@ Vifi.MediaPlayer = {
 
     _playVideo: function() {
         $log(" SETTING CURRENT STREAM TO: " + this.currentStream.url);
-        $(this._videoElement).attr('autoplay', 'play');
-        $(this._videoElement).attr('src', this.currentStream.url);
-        this._videoElement.load();
+        this.plugin.setClip({
+            url: "mp4:" + this.currentStream.mp4
+        });
         // this._videoElement.play();
-        this.wasMuted = this._videoElement.muted;
+        this.wasMuted = $f().getStatus().muted;
 
     },
 
@@ -251,9 +248,9 @@ Vifi.MediaPlayer = {
     mute: function(muted) {
         if (this.plugin) {
             // need to hold on to this so we know when we've switched state in our onvolumechange handler.
-            this.wasMuted = this._videoElement.muted;
-            if (typeof(muted) == 'undefined') muted = !this._videoElement.muted;
-            this._videoElement.muted = muted;
+            this.wasMuted = this.plugin.getStatus().muted;
+            if (!this.wasMuted) this.plugin.mute();
+            else this.plugin.unmute();
         }
     },
 
@@ -320,7 +317,7 @@ Vifi.MediaPlayer = {
                 break;
             case 'error':
                 $(this._videoElement).remove();
-                this._createVideoTag();
+                this._createPlayer();
                 this.trigger("mediaplayer:videoerror");
                 break;
             case 'volumechange':
@@ -334,8 +331,7 @@ Vifi.MediaPlayer = {
     },
 
     _stopTrackingEvents: function() {
-        $log(" UNBINDING MEDIA EVENTS TO HTML5 VIDEO PLAYER ")
-        $(this._videoElement).unbind(this.eventsToTrack, this._eventHandler);
+        $log(" UNBINDING MEDIA EVENTS TO FLASH VIDEO PLAYER ")
         this.eventsBound = false;
     },
 }
