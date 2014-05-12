@@ -242,37 +242,6 @@ $(function() {
                 $('.toggle-g').removeClass("ˇve");
             }
 
-
-            if (this.collection.state.get('family') == 1) {
-                this.$('#id_intended_audience_1').attr('checked', true);
-            } else {
-                this.$('#id_intended_audience_1').attr('checked', false);
-            }
-
-            if (this.collection.state.get('teen') == 1) {
-                this.$('#id_intended_audience_2').attr('checked', true);
-            } else {
-                this.$('#id_intended_audience_2').attr('checked', false);
-            }
-
-            if (this.collection.state.get('plus17') == 1) {
-                this.$('#id_intended_audience_3').attr('checked', true);
-            } else {
-                this.$('#id_intended_audience_3').attr('checked', false);
-            }
-
-            if (this.collection.state.get('hide_web_series') == 1) {
-                this.$('#id_hide_web_series').attr('checked', true);
-            } else {
-                this.$('#id_hide_web_series').attr('checked', false);
-            }
-
-            if (this.collection.state.get('hide_coming_soon') == 1) {
-                this.$('#id_hide_coming_soon').attr('checked', true);
-            } else {
-                this.$('#id_hide_coming_soon').attr('checked', false);
-            }
-
             // selects
             this.$('#id_genre option[value="' + state.get('genre') + '"]').attr('selected', 'selected');
             this.$('#id_subgenre option[value="' + state.get('subgenre') + '"]').attr('selected', 'selected');
@@ -283,31 +252,7 @@ $(function() {
             // year
             this.$('#id_period').val(state.get('period'));
 
-            // sorting buttons
-            this.$('.sort-options a.active').removeClass('active').removeClass('sort-dir-asc').removeClass('sort-dir-desc');
-            if (state.get('order_by') == undefined) var sort_button = '#order_by_id';
-            else {
-
-                var sort_button = '#order_by_' + state.get('order_by').replace('-', '');
-                if (state.get('order_by').indexOf('-') == 0) {
-                    var sort_dir_class = 'sort-dir-desc';
-                } else {
-                    var sort_dir_class = 'sort-dir-asc';
-                }
-            }
-            this.$(sort_button).addClass('active').addClass(sort_dir_class);
-
-            /* Set the values for the slider */
-
-
-            var end_time = this.collection.state.get('end_time');
-            var start_time = this.collection.state.get('start_time');
-
-
-            this.$('#id_end_time').val(end_time);
-            this.$('#id_start_time').val(start_time);
-            this.$('#noUi-slider-mins .lower-mins').text(start_time);
-            this.$('#noUi-slider-mins .upper-mins').text(end_time);
+          
 
             // main search text box
             var query = this.collection.state.get('q');
@@ -488,7 +433,14 @@ $(function() {
         });
         var featuredview = new Vifi.Films.FeaturedFilmDetailView();
 
+        // Bind keys
 
+        Vifi.KeyHandler.bind("keyhandler:onRed", function() {
+            if (!Vifi.Utils.Logger.visible) {
+                Vifi.Utils.Logger.show();
+            } else
+                Vifi.Utils.Logger.hide();
+        });
 
 
         var logger = Vifi.Utils.Logger;

@@ -191,6 +191,25 @@ Vifi.Platform.prototype.proxy = function() {
     // We want this to fail, and get added as default
     browser.setResolution(window.screen.width, window.screen.height);
 
+    browser.detectPlatform = function() {
+        try {
+            if (navigator.plugins != null && navigator.plugins.length > 0) {
+                return navigator.plugins["Shockwave Flash"] && true;
+            }
+            if (~navigator.userAgent.toLowerCase().indexOf("webtv")) {
+                return true;
+            }
+            if (~navigator.appVersion.indexOf("MSIE") && !~navigator.userAgent.indexOf("Opera")) {
+                try {
+                    return new ActiveXObject("ShockwaveFlash.ShockwaveFlash") && true;
+                } catch (e) {}
+            }
+            return false;
+        } catch (error) {
+
+        }
+    }
+
     browser.defaultPlatform = true;
     Vifi.Platforms.addSupportedPlatform(browser);
     browser.setMediaPlayer("flash");

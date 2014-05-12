@@ -5,9 +5,9 @@
 //       log()          : print a blank line
 function log(msg) {
     if (arguments.length == 0)
-        Vifi.Logger.print(""); // print a blank line
+        Vifi.Utils.Logger.print(""); // print a blank line
     else
-        Vifi.Logger.print(msg);
+        Vifi.Utils.Logger.print(msg);
 };
 
 
@@ -451,7 +451,7 @@ function getRequestAnimationFrameFunction() {
         };
     else
         return function(callback) {
-            return setTimeout(callback, 16);
+            return setTimeout(callback, 32);
         };
 }
 window.$log = Vifi.Utils.Logger.log;
