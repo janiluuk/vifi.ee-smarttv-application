@@ -22,7 +22,6 @@ $(function() {
             this.collection.state.bind('change:search', this.onChangeText, this);
             this.on("browser:pagination", this.onBrowserPaginationEvent, this);
 
-            this.session.enable();
 
         },
         initializeUI: function() {
@@ -444,6 +443,7 @@ $(function() {
             var state = new Vifi.Utils.State(initial_search_json.search);
         }
 
+        var pagemanager = Vifi.PageManager;
 
         // Create Film Collection with state from hash (or not) 
         // and search which is the initial state values 
@@ -467,8 +467,9 @@ $(function() {
             activationCode: activationCode,
 
         });
-
         Vifi.Platforms.init();
+
+
         Vifi.Engine.start(Vifi.Settings);
 
 
@@ -485,9 +486,6 @@ $(function() {
         var toolbar = new Vifi.User.ToolbarView({
             model: profile
         });
-        var pagemanager = Vifi.PageManager;
-
-
 
 
 

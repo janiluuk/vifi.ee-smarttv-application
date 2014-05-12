@@ -75,8 +75,8 @@ Vifi.User.Session = Backbone.Model.extend({
     initialize: function() {
         var code = this.get("step2text").replace("CODE", this.get("activationCode"));
         this.set("step2text", code);
-        this.on('poll:enable', this.enable, this);
-        this.on('poll:disable', this.disable, this);
+        Vifi.Event.on('poll:enable', this.enable, this);
+        Vifi.Event.on('poll:disable', this.disable, this);
 
 
         Vifi.Event.on('user:login', this.onUserAuthenticate, this);
@@ -230,7 +230,6 @@ Vifi.User.ProfileView = Backbone.View.extend({
         }
         this.renderEmail();
         this.renderBalance();
-        Vifi.PageManager.redraw("#accountPage", true);
 
     },
     render: function() {
@@ -242,16 +241,14 @@ Vifi.User.ProfileView = Backbone.View.extend({
 });
 Vifi.User.ToolbarView = Backbone.View.extend({
     el: $("#" + Vifi.Settings.toolbarId),
-    model: Vifi.User.Profile,
-    events: {
-        'click a': 'hide'
-    },
+
     tagName: 'div',
     initialize: function() {
         this.template = _.template($("#toolbarTemplate").html());
         this.notificationTemplate = _.template($("#notificationTemplate").html());
         this.listenTo(this.model, 'change:email', this.slideRender);
         this.render();
+
     },
     render: function() {
         this.$el.html(this.template(this.model.toJSON()));
@@ -263,15 +260,10 @@ Vifi.User.ToolbarView = Backbone.View.extend({
         return this;
     },
     slideRender: function() {
+
         this.$("#username-text").fadeOut("slow");
         this.render();
         this.$("#username-text").fadeIn("slow");
-    },
-    show: function() {
-        this.$el.slideDown("slow");
-    },
-    hide: function() {
-        this.$el.slideUp("hide");
     }
 });
 Vifi.User.ActivationView = Backbone.View.extend({
@@ -284,7 +276,9 @@ Vifi.User.ActivationView = Backbone.View.extend({
         this.template = _.template($("#activationTemplate").html());
         Vifi.Event.on('activation:show', this.show, this);
         this.model.on('change:activationCode', this.renderCode, this);
-        Vifi.Event.on('user:login', this.hide);
+        _.bindAll(this, 'hide');
+
+        Vifi.Event.on('user:login', this.hide, this);
 
         this.render();
     },
@@ -304,7 +298,7 @@ Vifi.User.ActivationView = Backbone.View.extend({
         this.$el.find("#hideActivation").addClass("tv-component");
         $(".hidden-container .tv-component").removeClass("tv-component").addClass("tv-component-hidden");
         this.$el.fadeIn().show();
-        app.session.trigger("poll:enable");
+        Vifi.Event.trigger("poll:enable");
 
         Vifi.Event.trigger("page:change", "activation");
         Vifi.Event.trigger("page:focus");
