@@ -15,6 +15,7 @@ Vifi.PageManager = {
     activationPage: $("#" + Vifi.Settings.activationPageId),
     alertPage: $("#" + Vifi.Settings.activationPageId),
 
+    name: "Pagemanager",
     decorateHandler: false,
     appElement: false,
     appComponent: false,

@@ -11,6 +11,7 @@ Vifi.MediaPlayerCore = {
     _testUrl: null, // "http://assets.adifferentengine.com/SizedDownloads/512KB.json",
     _testSize: 512000,
     _active: false,
+    name: "MediaPlayer",
     userBitrate: 10000,
     speedtest: function(callback) {
         // $log(" ___ PERFORMING SPEEDTEST ___ ");
