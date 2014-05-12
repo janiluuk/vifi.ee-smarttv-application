@@ -24,6 +24,7 @@ Vifi.PageManager = {
     drawing: false,
     activeItem: false,
     lastActivePage: false,
+    lastAnimation: 0,
     activePage: this.homePage,
 
     init: function() {
@@ -41,7 +42,7 @@ Vifi.PageManager = {
         _.bindAll(this, 'redraw', 'focusFirst', 'setFocus', 'setFocusByClass', 'switchToPage', 'setHandlers');
 
 
-
+        this.initTouch();
 
         this.setHandlers();
         if (!this.appComponent) {
@@ -52,11 +53,69 @@ Vifi.PageManager = {
 
     },
 
+    initTouch: function() {
+        $("#application").swipeEvents().bind("swipeDown", function(event) {
+            event.preventDefault();
+            app.pagemanager.moveDown();
+        }).bind("swipeUp", function(event) {
+            app.pagemanager.moveUp();
+            event.preventDefault();
+
+        });
+
+        $(document).bind('mousewheel DOMMouseScroll', function(event) {
+            event.preventDefault();
+            var delta = event.originalEvent.wheelDelta || -event.originalEvent.detail;
+            app.pagemanager.initScroll(event, delta);
+        });
+
+
+    },
+
+    initScroll: function(event, delta) {
+        var deltaOfInterest = delta;
+        timeNow = new Date().getTime();
+        // Cancel scroll if currently animating or within quiet period
+        if (timeNow - this.lastAnimation < (320 + 1000)) {
+            event.preventDefault();
+            return;
+        }
+
+        if (deltaOfInterest < 0) {
+            this.moveDown()
+        } else {
+            this.moveUp()
+        }
+        this.lastAnimation = timeNow;
+    },
+
     start: function() {
         $("#application").animate({
             "opacity": 1
         }, 2000);
     },
+    moveUp: function() {
+
+        var active = this.getActivePage().prevAll("div:visible:first");
+        if (active != "") {
+            var name = $(active).attr("id").replace("Page", "");
+            Vifi.Event.trigger("page:change", name);
+
+        }
+
+    },
+    moveDown: function() {
+
+        var active = this.getActivePage().nextAll("div:visible:first");
+        if (active != "") {
+            var name = $(active).attr("id").replace("Page", "");
+
+            Vifi.Event.trigger("page:change", name);
+
+        }
+
+    },
+
     getPage: function(name) {
         if (name == "alert") return $(this.alertPage);
         if (name == "activation") return $(this.activationPage);
@@ -74,7 +133,21 @@ Vifi.PageManager = {
         this.activePage = page;
         this.getActivePage().addClass("active");
         $("#statusDiv").html("Page: " + $(page).attr("id"));
-        $("body").scrollTo(page, 320);
+
+        var pageHeight = (this.getActivePage().offset().top - $("#application > .animation").offset().top + $("#application > .animation").scrollTop()) * -1
+
+        $("#application > .animation").css({
+            "-webkit-transform": "translate3d(0," + pageHeight + "px,0)",
+            "-webkit-transition": "-webkit-transform 1600ms ease-in-out",
+            "-moz-transform": "translate3d(0," + pageHeight + "px, 0)",
+            "-moz-transition": "-moz-transform 1600ms ease-in-out",
+            "-ms-transform": "translate3d(0, " + pageHeight + "px, 0)",
+            "-ms-transition": "-ms-transform 600ms ease-in-out",
+            "transform": "translate3d(0, " + pageHeight + "px, 0)",
+            "transition": "transform 1600ms ease-in-out"
+        });
+
+        //$("body").scrollTo(page, 320);
 
         return true;
     },
@@ -1071,7 +1144,6 @@ Vifi.Films.FeaturedFilmDetailView = Backbone.View.extend({
     bgimages: [],
     initialize: function() {
         Vifi.Event.on("featured:focus", this.setBackground, this);
-
 
         this.template = _.template($("#featuredFilmDetailsTemplate").html());
     },

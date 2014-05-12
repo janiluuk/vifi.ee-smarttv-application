@@ -35,6 +35,7 @@ $(function() {
 
             this.setGenreDropDown();
             this.featuredview = new Vifi.Films.FeaturedFilmCollectionView(this.collection.featured());
+            this.featuredview = new Vifi.Films.FeaturedFilmDetailView();
 
         },
 
@@ -483,9 +484,8 @@ $(function() {
             model: session
         });
 
-        var toolbar = new Vifi.User.ToolbarView({
-            model: profile
-        });
+
+
 
 
 

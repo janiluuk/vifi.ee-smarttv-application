@@ -12,13 +12,13 @@ Vifi = {
     Utils: {},
     Films: {},
     Browser: {},
-    Pages: {},    
     Player: {},
+    Pages: {},
     User: {},
     Event: {},
     Settings: {
         // properties   
-        version: "0.98.0905",
+        version: "0.99.1205",
         debug: true,
         api_url: 'http://backend.vifi.ee/api/',
         api_key: '12345',
