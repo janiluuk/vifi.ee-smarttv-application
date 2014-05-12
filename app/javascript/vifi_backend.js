@@ -1,5 +1,10 @@
 Vifi.Event = _.extend({}, Backbone.Events);
-Vifi.PageView = Backbone.View.extend({});
+Vifi.PageView = Backbone.View.extend({
+    events: {
+        'render': 'onAfterRender'
+    }
+
+});
 
 Vifi.PageManager = {
     moviePage: $("#" + Vifi.Settings.moviepageId),
@@ -14,13 +19,13 @@ Vifi.PageManager = {
     appElement: false,
     appComponent: false,
     focusedElement: false,
-    needsredraw: true,
+    needsredraw: false,
     drawing: false,
     activeItem: false,
     lastActivePage: false,
     activePage: this.homePage,
 
-    initialize: function() {
+    init: function() {
 
         Vifi.Event.on("page:beforepagechange", this.onBeforePageChange, this);
         Vifi.Event.on("page:onpagechange", this.onPageChange, this);
@@ -28,24 +33,25 @@ Vifi.PageManager = {
         Vifi.Event.on('page:ready', this.redraw, this);
         Vifi.Event.on('page:focus', this.focusFirst, this);
         Vifi.Event.on('page:change', this.switchToPage, this);
-        Vifi.Event.on('app:ready', this.init, this);
+        Vifi.Event.on('app:ready', this.start, this);
         Vifi.Event.on('page:back', this.switchToPrevious, this);
 
         this.decorateHandler = new tv.ui.DecorateHandler;
         _.bindAll(this, 'redraw', 'focusFirst', 'setFocus', 'setFocusByClass', 'switchToPage', 'setHandlers');
-        var el = "application";
 
+
+
+
+        this.setHandlers();
         if (!this.appComponent) {
-            this.appElement = goog.dom.getElement(el);
+            this.appElement = goog.dom.getElement("application");
             tv.ui.decorate(document.body);
             this.appComponent = tv.ui.getComponentByElement(this.appElement);
         }
 
-        this.setHandlers();
-
     },
 
-    init: function() {
+    start: function() {
         $("#application").animate({
             "opacity": 1
         }, 2000);
@@ -584,7 +590,7 @@ Vifi.PageManager = {
 
 
 _.extend(Vifi.PageManager, Backbone.Events);
-
+Vifi.Engine.addModule("PageManager", Vifi.PageManager);
 
 
 
@@ -756,12 +762,14 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
                 $("#moviePage").removeAttr("style");
 
                 Vifi.Event.trigger("page:change", "movie");
+                app.pagemanager.redraw("#moviePage", true);
+
             }).show();
 
         } else {
             $("#moviePage").show();
             Vifi.Event.trigger("page:change", "movie");
-
+            app.pagemanager.redraw("#moviePage", true);
 
         }
 
@@ -945,6 +953,7 @@ Vifi.Films.FeaturedFilmCollectionView = Backbone.View.extend({
     },
     render: function() {
         this.renderFilmViews();
+        app.pagemanager.redraw("#homePage", true);
 
         return this;
     },
@@ -984,6 +993,10 @@ Vifi.Pages.Browser = Vifi.PageView.extend({
     el: $("#browserPage"),
     model: new Vifi.Films.GenreCollection(),
 
+    onAfterRender: function() {
+
+
+    },
     initialize: function() {
         this.context = {
             "genres": this.model.toJSON()
@@ -994,6 +1007,8 @@ Vifi.Pages.Browser = Vifi.PageView.extend({
 
     render: function() {
         this.$el.html(ich.browserPageTemplate(this.context));
+        app.pagemanager.redraw("#browserPage", true);
+
         return this;
 
     }

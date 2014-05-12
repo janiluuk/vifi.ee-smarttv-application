@@ -20,6 +20,10 @@ Vifi.User.Profile = Vifi.Utils.ApiModel.extend({
     initialize: function() {
         this.on("change", this.updateParams);
         Vifi.Event.on("user:logout", this.signout, this);
+        this.on("user:logout", function() {
+            Vifi.Event.trigger("user:logout");
+        });
+
     },
     signout: function() {
         this.set("id", "");
@@ -98,7 +102,6 @@ Vifi.User.Session = Backbone.Model.extend({
         this.set('logged_in', false);
         this.disable();
         Vifi.Event.trigger("user:logout");
-        this.trigger('poll:disable');
 
         return false;
     },
@@ -196,6 +199,7 @@ Vifi.User.ProfileView = Backbone.View.extend({
         this.listenTo(this.model, "change", this.renderBalance, this);
         this.template = _.template($("#accountTemplate").html());
         this.render();
+
     },
     renderBalance: function() {
         var text = "";
@@ -226,9 +230,13 @@ Vifi.User.ProfileView = Backbone.View.extend({
         }
         this.renderEmail();
         this.renderBalance();
+        Vifi.PageManager.redraw("#accountPage", true);
+
     },
     render: function() {
         this.$el.html(this.template(this.model.toJSON()));
+        Vifi.PageManager.redraw("#accountPage", true);
+
         return this;
     }
 });
@@ -275,12 +283,16 @@ Vifi.User.ActivationView = Backbone.View.extend({
     initialize: function() {
         this.template = _.template($("#activationTemplate").html());
         Vifi.Event.on('activation:show', this.show, this);
-        this.model.on('change:activationCode', this.renderCode, this)
+        this.model.on('change:activationCode', this.renderCode, this);
+        Vifi.Event.on('user:login', this.hide);
+
         this.render();
     },
     render: function() {
         this.$el.html(this.template(this.model.toJSON()));
         Vifi.Event.trigger("page:ready", "#" + this.$el.attr("id"));
+        Vifi.PageManager.redraw("#activationPage", true);
+
         return this;
     },
     renderCode: function() {
@@ -292,7 +304,8 @@ Vifi.User.ActivationView = Backbone.View.extend({
         this.$el.find("#hideActivation").addClass("tv-component");
         $(".hidden-container .tv-component").removeClass("tv-component").addClass("tv-component-hidden");
         this.$el.fadeIn().show();
-        this.listenTo(this.model, 'user:login', this.hide);
+        app.session.trigger("poll:enable");
+
         Vifi.Event.trigger("page:change", "activation");
         Vifi.Event.trigger("page:focus");
     },
@@ -333,8 +346,9 @@ Vifi.User.AlertView = Backbone.View.extend({
         this.$el.find("#hideAlert").addClass("tv-component");
         $(".hidden-container .tv-component").removeClass("tv-component").addClass("tv-component-hidden");
         this.$el.fadeIn().show();
-        Vifi.Event.trigger("page:change", "alert");
+        Vifi.Event.trigger("page:change", "alert", true);
         Vifi.Event.trigger("page:focus");
+
     },
     hide: function() {
         if (this.$el.hasClass("active")) {

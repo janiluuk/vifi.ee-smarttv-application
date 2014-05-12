@@ -21,7 +21,6 @@ $(function() {
             this.collection.state.bind('change:year', this.onChangeYear, this);
             this.collection.state.bind('change:search', this.onChangeText, this);
             this.on("browser:pagination", this.onBrowserPaginationEvent, this);
-            this.pagemanager.initialize();
 
             this.session.enable();
 
@@ -469,7 +468,8 @@ $(function() {
 
         });
 
-
+        Vifi.Platforms.init();
+        Vifi.Engine.start(Vifi.Settings);
 
 
         var accountPage = new Vifi.User.ProfileView({
@@ -489,7 +489,7 @@ $(function() {
 
 
 
-        Vifi.Platforms.init();
+
 
         var logger = Vifi.Utils.Logger;
         window.app = new AppView({
@@ -512,7 +512,6 @@ $(function() {
 
 
 
-        Vifi.Engine.start(Vifi.Settings);
 
 
         // make the app globally available.
