@@ -762,14 +762,12 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
                 $("#moviePage").removeAttr("style");
 
                 Vifi.Event.trigger("page:change", "movie");
-                app.pagemanager.redraw("#moviePage", true);
 
             }).show();
 
         } else {
             $("#moviePage").show();
             Vifi.Event.trigger("page:change", "movie");
-            app.pagemanager.redraw("#moviePage", true);
 
         }
 
@@ -786,6 +784,8 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
             this.$("#preview").attr("class", "");
             this.$("#button-trailer").addClass("no-trailer").html("Treilerit pole");
         }
+        app.pagemanager.redraw("#moviePage", true);
+
         return this;
     }
 });
