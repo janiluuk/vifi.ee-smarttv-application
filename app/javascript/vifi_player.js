@@ -136,12 +136,11 @@ Vifi.Player.PlayerView = Backbone.View.extend({
     },
 
     onPlayerPageEnter: function() {
-        Vifi.Event.trigger("page:change", "player");
 
-        $.scrollTo(0);
         $(".container:visible:not(#playerPage)").addClass("container-hidden").fadeOut();
         this.$el.fadeIn();
         this.showNavigation();
+        $("body").scrollTo("#playerPage");
 
         setTimeout(function() {
             Vifi.PageManager.decorateHandler.addClassHandler('action-button', function(component) {
@@ -164,7 +163,7 @@ Vifi.Player.PlayerView = Backbone.View.extend({
         $(".container-hidden").fadeIn();
         $(".container-hidden").removeClass("container-hidden");
 
-        tv.ui.decorateChildren(goog.dom.getElement("application"));
+        tv.ui.decorateChildren(goog.dom.getElement("application"), app.pagemanager.decorateHandler.getHandler(), tv.ui.getComponentByElement(goog.dom.getElement("application")));
 
         Vifi.Event.trigger("page:change", "movie");
         this.hideNavigation();

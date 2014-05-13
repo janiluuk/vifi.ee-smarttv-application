@@ -30,12 +30,6 @@ Vifi.MediaPlayer = {
     REWIND: 14,
     userBitrate: null,
     _active: false,
-    active: function() {
-        this._active = true
-    },
-    deactive: function() {
-        this._active = false
-    },
     loop: false,
 
     currentInfoDefaults: {
@@ -56,8 +50,8 @@ Vifi.MediaPlayer = {
         var success = true;
         try {
             webapis.avplay.getAVPlay(function(avplay) {
-                _this.plugin = avplay;
-                
+                avplayObj = _this.plugin = avplay;
+
             }, function(error) {
                 alert(error.message);
 
@@ -115,13 +109,13 @@ Vifi.MediaPlayer = {
 
         var height = Vifi.Engine.getPlatform().resolution.height;
         var width = Vifi.Engine.getPlatform().resolution.width;
-        
-   
 
-        Vifi.MediaPlayer.plugin.init({
+
+
+        avplayObj.init({
 
             zIndex: 14,
-            displayRect: {  
+            displayRect: {
                 width: width,
                 height: height,
                 top: 0,
@@ -135,8 +129,9 @@ Vifi.MediaPlayer = {
 
         avplayObj.onerror = 'Vifi.MediaPlayer.videoError';
 
+        this.active();
 
-       
+
 
         if (!this.currentStream || this.currentStream.mp4 == "") {
             $log("NO VIDEO URL SET");
@@ -149,7 +144,7 @@ Vifi.MediaPlayer = {
 
             this.pause();
         } else if (this.state == this.PAUSED) {
-            if (!this.plugin.resume()) {
+            if (!avplayObj.resume()) {
                 this.videoError("FAILED TO RESUME STREAM");
                 this.state = this.PLAYING;
                 return false;
@@ -215,7 +210,7 @@ Vifi.MediaPlayer = {
     },
     show: function() {
 
-        $.scrollTo(0);
+        $("body") scrollTo(0);
         avplayObj.show();
         $("#_pluginObjectPlayerContainer_1").css("visibility", "visible");
         this.visible = true;
@@ -234,10 +229,12 @@ Vifi.MediaPlayer = {
         this.state = this.STOPPED;
         if (this.visible) this.hide();
 
-        if (this.plugin) {
+        if (avplayObj) {
             $log(" Calling MediaPlayer Stop ")
-            this.plugin.stop();
-            this.plugin.clear();
+            avplayObj.stop();
+            avplayObj.clear();
+            this.deactive();
+
             this.currentStream = null;
             this.trigger('mediaplayer:onstop');
         }
@@ -247,20 +244,20 @@ Vifi.MediaPlayer = {
 
     pause: function() {
         this.trigger("mediaplayer:onpause");
-        if (this.plugin) this.plugin.pause();
+        avplayObj.pause();
         this.state = this.PAUSED;
     },
 
     fastforward: function() {
         if (this.allowFastForward) {
             this.trigger("mediaplayer:onfastforward");
-            this.plugin.jumpForward(10);
+            avplayObj.jumpForward(10);
         }
     },
 
     rewind: function() {
         this.trigger("mediaplayer:onrewind");
-        this.plugin.jumpBackward(10);
+        avplayObj.jumpBackward(10);
     },
 
     mute: function() {
@@ -298,7 +295,7 @@ Vifi.MediaPlayer = {
 
     duration: function() {
         if (this.streamready) {
-            return this.plugin.duration;
+            return avplayObj.duration;
         } else {
             return null;
         }

@@ -38,14 +38,13 @@
       }
     };
 
-    var pusher = new Pusher('06d77d7aeda73293be8f');
-    var channel = pusher.subscribe('test_channel');
-    channel.bind('my_event', function(data) {
-    Vifi.Event.trigger("page:change", data);
+    var pusher = new Pusher('06d77d7aeda73293be8f',{ authEndpoint: '/auth/' });
 
+   
+    var channel = pusher.subscribe('private-channel');
+    
+  
 
-
-    });
   </script>
 
     <body class="device-tv" onload="window.launch(); ">
@@ -638,6 +637,7 @@
 <!-- The id has to be exactly 'pluginObjectNNavi' -->
 <object id="pluginObjectNNavi" border="0" style="opacity:0.0; background-color:#000000;" classid="clsid:SAMSUNG-INFOLINK-NNAVI"></object>
 <script type="text/javascript" src="app/javascript/vifi_engine.js"></script>
+<script type="text/javascript" src="app/javascript/vifi_navigation.js"></script>
 <script type="text/javascript" src="app/javascript/vifi_logger.js"></script>
 <script type="text/javascript" src="app/javascript/vifi_dataloader.js"></script>
 <script type="text/javascript" src="app/javascript/vifi_backend.js"></script>

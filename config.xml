@@ -11,7 +11,7 @@
 	<cpauthjs>N</cpauthjs>
 	<login>n</login>
 
-	<ver>0.98</ver>
+	<ver>0.99</ver>
 	<mgrver>2.250</mgrver>
 	
 	<fullwidget>y</fullwidget>
@@ -19,7 +19,7 @@
 	<ticker>n</ticker>
 	<childlock>n</childlock>
 
-
+	<srcctl>y</srcctl>
 	<dcont>n</dcont>
 	<movie>y</movie>
 	<widgetname>Vifi</widgetname>

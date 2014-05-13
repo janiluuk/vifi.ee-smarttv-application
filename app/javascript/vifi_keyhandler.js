@@ -51,8 +51,9 @@ Vifi.KeyHandler = {
         $(document).bind("keydown", function(event) {
 
             var action = _this.keyActions[_this.keyMap[event.keyCode]];
-            // $log("<<< GOT KEY ACTION: " + action + " (" + event.keyCode + ")    >>>");
+            //    $log("<<< GOT KEY ACTION: " + action + " (" + event.keyCode + ")    >>>");
             if (action && _this.enabled) _this.trigger("keyhandler:" + action);
+
             return true;
         });
         $(document).bind("keyup", function(event) {

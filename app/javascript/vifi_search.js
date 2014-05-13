@@ -34,6 +34,8 @@ $(function() {
             var filmdetailview = new Vifi.Films.FilmDetailView();
 
             this.setGenreDropDown();
+            Vifi.Navigation.start();
+
             this.featuredview = new Vifi.Films.FeaturedFilmCollectionView(this.collection.featured());
 
         },
@@ -252,7 +254,7 @@ $(function() {
             // year
             this.$('#id_period').val(state.get('period'));
 
-          
+
 
             // main search text box
             var query = this.collection.state.get('q');
