@@ -114,7 +114,7 @@ Vifi.PageManager = {
         //     "transform": "translate3d(0, " + pageHeight + "px, 0)",
         //     "transition": "transform 600ms ease-in-out"
         // });
-        $("body").scrollTo(page, 320);
+        $("body").scrollTo(page, 250);
 
         return true;
     },
@@ -209,7 +209,7 @@ Vifi.PageManager = {
     switchToPrevious: function(cb) {
         if (this.lastActivePage) {
             var pageName = this.lastActivePage.replace("Page", "").replace("#", "");
-            this.switchToPage(pageName, true, true);
+            this.switchToPage(pageName, true, false);
         }
 
     },
@@ -251,7 +251,7 @@ Vifi.PageManager = {
             if (fullredraw) page = "#application";
 
             if (fullredraw) {
-                // $log("Full redraw for " + page);
+                //$log("Full redraw for " + page);
                 tv.ui.decorate(document.body);
                 var appElement = tv.ui.getComponentByElement(goog.dom.getElement(page.substr(1)));
                 if (undefined != appElement)
@@ -328,6 +328,9 @@ Vifi.PageManager = {
         Vifi.PageManager.decorateHandler.addClassHandler("no-up", function(button) {
             button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, _this.handleBorderKeyUp, false, _this);
         });
+        Vifi.PageManager.decorateHandler.addClassHandler("no-down", function(button) {
+            button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, _this.handleBorderKeyDown, false, _this);
+        });
         Vifi.PageManager.decorateHandler.addIdHandler("clear-search-options", function(button) {
             button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, _this.onClearSearchEvent, false, _this);
         });
@@ -340,7 +343,7 @@ Vifi.PageManager = {
             event.stopPropagation();
         }
     },
-    // Handle pushing movie-button
+    // Handle blocking right arrow
     handleBorderKeyRight: function(event) {
         event.preventDefault();
         var keyCode = event.keyCode;
@@ -348,7 +351,9 @@ Vifi.PageManager = {
             event.stopPropagation();
         }
     },
-    // Handle pushing movie-button
+
+    // Handle blocking left arrow
+
     handleBorderKeyLeft: function(event) {
         event.preventDefault();
         var keyCode = event.keyCode;
@@ -356,11 +361,19 @@ Vifi.PageManager = {
             event.stopPropagation();
         }
     },
-    // Handle pushing movie-button
+    // Handle blocking up arrow
     handleBorderKeyUp: function(event) {
         event.preventDefault();
         var keyCode = event.keyCode;
         if (keyCode == 38 /*Up*/ ) {
+            event.stopPropagation();
+        }
+    },
+    // Handle blocking down arrow
+    handleBorderKeyDown: function(event) {
+        event.preventDefault();
+        var keyCode = event.keyCode;
+        if (keyCode == 40 /*Down*/ ) {
             event.stopPropagation();
         }
     },

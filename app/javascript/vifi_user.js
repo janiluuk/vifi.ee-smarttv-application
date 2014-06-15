@@ -306,7 +306,6 @@ Vifi.User.ActivationView = Backbone.View.extend({
         Vifi.Event.trigger("poll:enable");
 
         Vifi.Event.trigger("page:change", "activation");
-        Vifi.Event.trigger("page:focus");
     },
     hide: function() {
         if (this.$el.hasClass("active")) {
@@ -314,7 +313,6 @@ Vifi.User.ActivationView = Backbone.View.extend({
             $(".hidden-container").removeClass("hidden-container").fadeIn();
             this.$el.fadeOut().hide();
             Vifi.Event.trigger("page:back");
-            Vifi.Event.trigger("page:focus");
         }
     }
 });
