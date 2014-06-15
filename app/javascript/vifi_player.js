@@ -161,9 +161,10 @@ Vifi.Player.PlayerView = Backbone.View.extend({
 
         $(".container-hidden").fadeIn();
         $(".container-hidden").removeClass("container-hidden");
-        tv.ui.getComponentByElement(goog.dom.getElement("application")).removeChildren();
+        tv.ui.getComponentByElement(goog.dom.getElement("playerPage")).removeChildren();
         tv.ui.decorate(document.body);
         tv.ui.decorateChildren(goog.dom.getElement("application"), app.pagemanager.decorateHandler.getHandler(), tv.ui.getComponentByElement(goog.dom.getElement("application")));
+        $("#film-results .tv-container-selected-child").removeClass("tv-container-selected-child");
 
         Vifi.Event.trigger("page:change", "movie");
 

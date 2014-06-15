@@ -56,10 +56,11 @@ Vifi.PageManager = {
 
 
     start: function() {
+        $("#loadingWrapper").fadeOut();
+
         $("#application").animate({
             "opacity": 1
         }, 2000);
-        $("#loadingWrapper").fadeOut();
 
     },
     moveUp: function() {
@@ -102,7 +103,6 @@ Vifi.PageManager = {
         this.getActivePage().addClass("active");
         $("#statusDiv").html("Page: " + $(page).attr("id"));
 
-        var pageHeight = (this.getActivePage().offset().top - $("#application > .animation").offset().top + $("#application > .animation").scrollTop()) * -1
 
         // $("#application > .animation").css({
         //     "-webkit-transform": "translate3d(0," + pageHeight + "px,0)",
@@ -466,8 +466,8 @@ Vifi.PageManager = {
                 var jee = el.getElement().getElementsByClassName("tv-container-selected-child")[0];
 
                 if (jee) tv.ui.getComponentByElement(jee).tryFocus();
-
                 else {
+
                     el.removeChildren();
                     tv.ui.decorateChildren(el.getElement(), function(component) {
                         goog.events.listen(component, tv.ui.Component.EventType.KEY, this.handleMovieEvent);
