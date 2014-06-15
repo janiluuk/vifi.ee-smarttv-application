@@ -10,7 +10,7 @@
 */
 Vifi.Navigation = {
     enabled: true,
-    _eventsIHandle: ['onright', 'onleft', 'onup', 'ondown', 'onselect', 'onred', 'onblue', 'onyellow', 'onback'],
+    _eventsIHandle: ['onright', 'onleft', 'onup', 'ondown', 'onselect', 'onred', 'onblue', 'onyellow', 'onback', 'onreturn'],
     enable: function() {
         this.enabled = true;
         this.initTouch();

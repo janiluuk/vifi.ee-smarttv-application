@@ -15,6 +15,7 @@ Vifi.MediaPlayer = {
     initialized: false,
     state: -1,
     skipState: -1,
+    playerContainer: false,
     stopCallback: null,
     /* Callback function to be set by client */
     originalSource: null,
@@ -62,13 +63,8 @@ Vifi.MediaPlayer = {
             return false;
         }
 
-        var success = true;
         this.state = this.STOPPED;
-        this.initialized = true;
-
-
-
-
+        this.initialized = success;
 
         $log("<<< END SAMSUNG NATIVE PLAYER INIT >>>");
         return true;
@@ -111,27 +107,29 @@ Vifi.MediaPlayer = {
         var width = Vifi.Engine.getPlatform().resolution.width;
 
 
+        if (!this.playerContainer) {
+            avplayObj.init({
 
-        avplayObj.init({
+                zIndex: 14,
+                displayRect: {
+                    width: width,
+                    height: height,
+                    top: 0,
+                    left: 0,
+                },
+                bufferingCallback: bufferingCB,
+                playCallback: playCB,
+                autoratio: true
+            });
+            this.playerContainer = true;
+        } else {
+            avplayObj.show();
 
-            zIndex: 14,
-            displayRect: {
-                width: width,
-                height: height,
-                top: 0,
-                left: 0,
-            },
-            bufferingCallback: bufferingCB,
-            playCallback: playCB,
-            autoratio: true
-        });
-
+        }
 
         avplayObj.onerror = 'Vifi.MediaPlayer.videoError';
 
         this.active();
-
-
 
         if (!this.currentStream || this.currentStream.mp4 == "") {
             $log("NO VIDEO URL SET");
@@ -233,6 +231,7 @@ Vifi.MediaPlayer = {
             $log(" Calling MediaPlayer Stop ")
             avplayObj.stop();
             avplayObj.clear();
+            avplayObj.hide();
             this.deactive();
 
             this.currentStream = null;
@@ -251,13 +250,13 @@ Vifi.MediaPlayer = {
     fastforward: function() {
         if (this.allowFastForward) {
             this.trigger("mediaplayer:onfastforward");
-            avplayObj.jumpForward(10);
+            avplayObj.jumpForward(30);
         }
     },
 
     rewind: function() {
         this.trigger("mediaplayer:onrewind");
-        avplayObj.jumpBackward(10);
+        avplayObj.jumpBackward(30);
     },
 
     mute: function() {
@@ -375,7 +374,10 @@ Vifi.MediaPlayer.bind("mediaplayer:timeupdate", function(time) {
     $("#player-current-time").text(Vifi.MediaPlayer.currentTime.toString());
 });
 
+Vifi.MediaPlayer.bind("mediaplayer:stop", function() {
 
+
+});
 /*
 
 avplayObj.onerror = '';
@@ -442,19 +444,3 @@ var playCB = {
 };
 
 Vifi.Engine.addModule("MediaPlayer", Vifi.MediaPlayer);
-
-
-function paymentCallback(response) {
-    if (undefined != response && response.success) {
-        $log("Billing process successfully ended");
-        //replace this line with the code that should run upon successful billing 
-    } else {
-        $log(response);
-
-    }
-}
-
-function initializePayment() {
-
-    	SmartpayGateway.init('﻿52e802db-553c-4ed2-95bc-44c10a38c199', paymentCallback, "Userid:janiluuk@gmail.com");
-}

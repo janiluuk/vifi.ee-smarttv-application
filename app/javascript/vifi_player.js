@@ -155,18 +155,17 @@ Vifi.Player.PlayerView = Backbone.View.extend({
     },
     onPlayerPageExit: function() {
 
-        Vifi.MediaPlayer.trigger("mediaplayer:stop");
-        tv.ui.getComponentByElement(goog.dom.getElement("application")).removeChildren();
-        tv.ui.decorate(document.body);
+        Vifi.MediaPlayer.stop();
+
         $("#playerPage").empty().fadeOut();
 
         $(".container-hidden").fadeIn();
         $(".container-hidden").removeClass("container-hidden");
-
+        tv.ui.getComponentByElement(goog.dom.getElement("application")).removeChildren();
+        tv.ui.decorate(document.body);
         tv.ui.decorateChildren(goog.dom.getElement("application"), app.pagemanager.decorateHandler.getHandler(), tv.ui.getComponentByElement(goog.dom.getElement("application")));
 
         Vifi.Event.trigger("page:change", "movie");
-        this.hideNavigation();
 
     },
 
@@ -208,8 +207,6 @@ Vifi.Player.Player = Backbone.Model.extend({
 
     },
 
-
-
     onSubtitlesReady: function(subtitles) {
 
         app.player.subtitles.load(subtitles);
@@ -229,7 +226,7 @@ Vifi.Player.Player = Backbone.Model.extend({
         Vifi.MediaPlayer.setContent(content);
 
         Vifi.KeyHandler.unbind("keyhandler:onReturn");
-        Vifi.KeyHandler.bind("keyhandler:onReturn", app.player.playerPage.onPlayerPageExit, this);
+        Vifi.KeyHandler.bind("keyhandler:onReturn", app.player.playerPage.onPlayerPageExit);
 
         app.player.playerPage.trigger("player:show");
     },
@@ -307,14 +304,11 @@ Vifi.Player.Player = Backbone.Model.extend({
             return false;
         }
 
-
-
         var profile = this.session.get("profile");
 
         if (profile.purchase(movie) == true) {
             return true;
         }
-
 
         return false;
     },
@@ -323,9 +317,6 @@ Vifi.Player.Player = Backbone.Model.extend({
         this.session = session;
         return true;
     },
-
-
-
 
 });
 

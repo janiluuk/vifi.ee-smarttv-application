@@ -1,8 +1,8 @@
 var Main = {};
+window.widgetAPI = false;
 
 if (typeof Common != 'undefined') {
 
-    var WIDGET = new Common.API.Widget(); // For sendReadyEvent() var TVKEY = new Common.API.TVKeyValue();	// Remote controller key value object var PLUGIN = new Common.API.Plugin();	 // Plugin common module
 
     // Initialize the Samsung widget API.
     window.widgetAPI = new Common.API.Widget();

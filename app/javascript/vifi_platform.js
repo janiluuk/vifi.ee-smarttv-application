@@ -149,15 +149,16 @@ Vifi.Platform.prototype.matrix = function() {
 
 Vifi.Platform.prototype.addPlatformCSS = function() {
     // $log(" ADDING PLATFORM CSS FOR PLATFORM: " + this.name  + " path: css/platforms/"+this.name.toLowerCase()+".css and resolution: css/resolutions/"+this.matrix()+".css" );
-    $("<link/>", {
-        rel: "stylesheet",
-        type: "text/css",
-        href: "app/stylesheets/platforms/" + this.name.toLowerCase() + ".css"
-    }).appendTo("head");
+
     $("<link/>", {
         rel: "stylesheet",
         type: "text/css",
         href: "app/stylesheets/resolutions/" + this.matrix() + ".css"
+    }).appendTo("head");
+    $("<link/>", {
+        rel: "stylesheet",
+        type: "text/css",
+        href: "app/stylesheets/platforms/" + this.name.toLowerCase() + ".css"
     }).appendTo("head");
 }
 
@@ -218,7 +219,7 @@ Vifi.Platform.prototype.proxy = function() {
 
 (function() {
     var platform = new Vifi.Platform('Samsung');
-    platform.setResolution(1280, 720);
+    platform.setResolution(1280, 800);
     platform.detectPlatform = function() {
         var supported = false;
         try {
@@ -243,9 +244,9 @@ Vifi.Platform.prototype.proxy = function() {
         try {
             if (fullexit) {
                 $log(" CALLING EXIT EVENT ")
-                $W.sendExitEvent();
+                widgetAPI.sendExitEvent();
             } else {
-                $W.sendReturnEvent();
+                widgetAPI.sendReturnEvent();
             }
         } catch (e) {
             $log("Error with full exit on samung: " + e);

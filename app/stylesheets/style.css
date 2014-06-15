@@ -46,21 +46,7 @@
 
 }
 
-#app {
-    width: 100%;
-    /*height: 100%;*/
-    position: relative;
-    /*background-image: url('img/blur_background1.jpg');
-    background-attachment:fixed;
-    background-size: cover;*/
-    z-index:9;
-}
 
-#main {
-    width:100%;
-    height:100%;
-    float:left;
-}
 #browserPage {
     width:100%;
     /*height: 100%;*/
@@ -160,15 +146,15 @@ span.stars.r1 {
     width: 15%;
     text-align: center;
 }
-#browserPage .domtabs > .normal-item.tv-container-selected-child {
+.domtabs > .normal-item.tv-container-selected-child {
     background-image: url('img/background_dark_42.png');
 }
 
-#browserPage .domtabs > .normal-item.tv-component-focused.tv-container-selected-child {
+.domtabs > .normal-item.tv-component-focused.tv-container-selected-child {
     box-shadow: 0 4px 0 #63D116;
 }
 
-#browserPage .domtabs div a {
+.domtabs div a {
     font-weight: 700;
     font-size: 1.7em;
     color: #E0E0E0;
@@ -178,13 +164,13 @@ span.stars.r1 {
     text-transform: uppercase;
     letter-spacing: 1pt;
 }
-#browserPage .domtabs .icon {
+.domtabs .icon {
     display:block !important;
     width:20px;
     height:20px;
     margin:auto auto 0.6em auto;
 }
-#browserPage .domtabs .icon .icon16 {
+.domtabs .icon .icon16 {
     background-image: url('img/icon16.png');
     transition: background-image 0.2s;
     background-repeat:no-repeat;
@@ -192,7 +178,7 @@ span.stars.r1 {
     height: 20px;
     float: left;
 }
-#browserPage .domtabs > div a:hover > .icon .icon16, .domtabs > div.tv-container-selected-child .icon .icon16 {
+.domtabs > div a:hover > .icon .icon16, .domtabs > div.tv-container-selected-child .icon .icon16 {
     background-image: url('img/icon16_hover.png') !important;
 }
 .icon16.year {
@@ -204,7 +190,7 @@ span.stars.r1 {
 .icon16.refresh {
     background-position: -79px -20px;
 }  
-#browserPage .secondary_domtabs {
+.secondary_domtabs {
     width: 100%;
     float: left;
     margin:0;
@@ -243,27 +229,27 @@ span.stars.r1 {
     border-color: #63D116;
 }
 
-#browserPage .domtabs div a:hover, .domtabs div.tv-container-selected-child a, .domtabs div.tv-component-focused a {
+.domtabs div a:hover, .domtabs div.tv-container-selected-child a, .domtabs div.tv-component-focused a {
     color:#63D116;
     text-shadow: 0 0 0.2em #36442C, 0 0 0.4em #63D116, 0 0 0.5em #B6FF83;
 }
-#browserPage .secondary_domtabs .keyboard {
+.secondary_domtabs .keyboard {
     padding: 4.2pt 0 0 1.5%;
     width: 105%;
 }
 
-#browserPage .secondary_domtabs .selection {
+.secondary_domtabs .selection {
     padding: 6pt 0 0 3%;
     width: 97%;
 }
 
-#browserPage .secondary_domtabs .keyboard, .secondary_domtabs .selection {
+.secondary_domtabs .keyboard, .secondary_domtabs .selection {
      white-space: nowrap;
     overflow: hidden;
     min-height:6em;
 }
 
-#browserPage .secondary_domtabs .keyboard .key {
+.secondary_domtabs .keyboard .key {
     font-weight: 900;
     color:#63D116;
     cursor:pointer;
@@ -279,13 +265,13 @@ span.stars.r1 {
 .key.first {
     margin-left: 0.5em;
 }
-#browserPage .secondary_domtabs .keyboard div.key:hover, .secondary_domtabs .keyboard div.key.tv-component-focused {
+.secondary_domtabs .keyboard div.key:hover, .secondary_domtabs .keyboard div.key.tv-component-focused {
     font-size: 4em;
     line-height: 1.2em;
     text-shadow: 0 1px 2px rgb(128, 82, 0), 0 2px 7px rgb(255, 255, 236);
     color: rgb(235, 235, 83);
 }
-#browserPage .secondary_domtabs .keyboard .keyboard_switcher {
+.secondary_domtabs .keyboard .keyboard_switcher {
     background: #63D116;
     margin: 0.3em 1.5% 0 0;
     font-size: 1.5em;
@@ -298,7 +284,7 @@ span.stars.r1 {
     float: left;
     margin-top: 0.2em;
 }
-#browserPage .secondary_domtabs .keyboard .cleartext {
+.secondary_domtabs .keyboard .cleartext {
     background: #DA3333;
     font-size: 1.7em;
     font-weight: 900;
@@ -314,7 +300,7 @@ span.stars.r1 {
     color:white !important;
     text-shadow: 0 0 2px rgb(79, 143, 50), 0 0 5px white, 0 0 7px white;
 }
-#browserPage .secondary_domtabs .selection .nav-item.tv-component {
+.secondary_domtabs .selection .nav-item.tv-component {
     font-size: 2.3em;
     line-height: 1.7em;
     transition: background-color 0.2s, color 0.2s;
@@ -333,12 +319,12 @@ span.stars.r1 {
     display:none;
 }
 
-#browserPage .secondary_domtabs .selection .nav-item.tv-component:hover, .secondary_domtabs .selection .nav-item.tv-component.tv-component-focused {
+.secondary_domtabs .selection .nav-item.tv-component:hover, .secondary_domtabs .selection .nav-item.tv-component.tv-component-focused {
     background-color: #63D116;
     color: black;
     box-shadow: 0 0 0.1em rgb(11, 75, 11), 0 0 0.15em rgb(117, 211, 16), 0 0 0.2em rgb(109, 255, 63), 0 0 0.3em rgb(161, 255, 124);
 }
-#browserPage .secondary_domtabs .selection .nav-item.tv-component.tv-toggle-button-on {
+.secondary_domtabs .selection .nav-item.tv-component.tv-toggle-button-on {
     background-color: #63D116;
     background-image: url('img/checkmark-20.png');
     text-indent: 0.7em;

@@ -19,11 +19,14 @@ html,body {
 #featured .tv-component.tv-button.movie.tv-component-focused {
 	min-width: 22em;
 	min-height: 32em;
+	height:32em;
+	width:22em;
 	margin: 1em 2em;
 }
 
 #featured .tv-component.tv-button.movie.tv-component-focused .thumbWrap {
-	min-height: 32em
+	min-height: 32em;
+	height:32em;
 }
 
 .movie_description .summary {

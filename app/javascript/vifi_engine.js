@@ -18,8 +18,8 @@ Vifi = {
     Event: {},
     Settings: {
         // properties   
-        version: "0.99.1205",
-        debug: true,
+        version: "0.99.1206",
+        debug: false,
         api_url: 'http://backend.vifi.ee/api/',
         api_key: '12345',
         browserpageId: 'browserPage',
