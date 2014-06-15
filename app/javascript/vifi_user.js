@@ -128,7 +128,7 @@ Vifi.User.Session = Backbone.Model.extend({
         }.bind(this), "jsonp");
     },
     setCookie: function(cookie) {
-        if (cookie != "" && cookie) { 
+        if (cookie != "" && cookie) {
             $.cookie("vifi_session", cookie, {});
         }
         return this;
@@ -188,7 +188,7 @@ Vifi.User.ProfileView = Backbone.View.extend({
     defaults: {},
     events: {
         "click #pairButton": "showPairScreen",
-        "click #reloadButton": "showAlertScreen"
+        "click #reloadButton": "showPaymentScreen"
     },
     el: $("#" + Vifi.Settings.accountpageId),
     initialize: function() {
@@ -219,7 +219,12 @@ Vifi.User.ProfileView = Backbone.View.extend({
         else this.model.trigger("user:logout");
     },
     showAlertScreen: function() {
-        Vifi.Event.trigger("alert:show");
+        Vifi.User.Alertscreen.show();
+    },
+    showPaymentScreen: function() {
+
+        app.payment.trigger("payment:initialize");
+
     },
     toggleSignedIn: function() {
         var email = this.model.get("email");

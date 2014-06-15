@@ -1,11 +1,11 @@
-/**
+﻿/**
  *
  *  Vifi Media Player for samsung
  *
  *  author: Jani Luukkanen
  *  janiluuk@gmail.com
  *
- */
+ **/
 
 var avplayObj;
 
@@ -210,7 +210,7 @@ Vifi.MediaPlayer = {
     },
     show: function() {
 
-        $("body") scrollTo(0);
+        $("body").scrollTo(0);
         avplayObj.show();
         $("#_pluginObjectPlayerContainer_1").css("visibility", "visible");
         this.visible = true;
@@ -392,6 +392,7 @@ avplayObj.OnStreamInfoReady = 'Vifi.MediaPlayer._streamInfoReady';
 avplayObj.OnStreamNotFound = 'Vifi.MediaPlayer.streamNotFound';
 */
 
+
 function playSuccessCB() {
 
     $log("playing the video is successfully.");
@@ -441,3 +442,19 @@ var playCB = {
 };
 
 Vifi.Engine.addModule("MediaPlayer", Vifi.MediaPlayer);
+
+
+function paymentCallback(response) {
+    if (undefined != response && response.success) {
+        $log("Billing process successfully ended");
+        //replace this line with the code that should run upon successful billing 
+    } else {
+        $log(response);
+
+    }
+}
+
+function initializePayment() {
+
+    	SmartpayGateway.init('﻿52e802db-553c-4ed2-95bc-44c10a38c199', paymentCallback, "Userid:janiluuk@gmail.com");
+}

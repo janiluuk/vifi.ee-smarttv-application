@@ -308,6 +308,7 @@ Vifi.PageManager = {
             component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, _this.handleClearEvent);
         });
 
+
         Vifi.PageManager.decorateHandler.addIdHandler("search-options-bar", function(button) {
             button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, _this.handleBrowserOptionKeys, false, _this);
         });

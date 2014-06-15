@@ -29,7 +29,7 @@ Vifi.Platforms = {
 
     init: function() {
         // $.each(['appCodeName','appName','appVersion','userAgent','platform'], function(index, item) {
-        // 	$log(" ___ NAVIGATOR."+item + ": " + navigator[item] + " ___");
+        //  $log(" ___ NAVIGATOR."+item + ": " + navigator[item] + " ___");
         // });
 
         _.each(this.supportedPlatforms, function(platform) {
@@ -118,7 +118,7 @@ Vifi.Platform.prototype.setMediaPlayer = function(mediaplayer) {
 }
 Vifi.Platform.prototype.fetchMediaPlayer = function() {
     if (this._mediaPlayer) {
-        //	$log("Adding media player path");
+        //  $log("Adding media player path");
         var path = "app/javascript/vifi_mediaplayer_" + this._mediaPlayer.toLowerCase() + ".js?" + new Date().getTime();
         $log("Adding media player path: " + path);
         $("<script />", {

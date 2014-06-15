@@ -1,0 +1,75 @@
+html,body {
+        font-size: 7px;
+}
+
+#homePage .featuredlist {
+	bottom: 25em;
+}
+
+.secondary_domtabs {
+	height: 7em;
+}
+
+#featured .tv-component.movie {
+	width: 19em;
+	height: 28em;
+	margin: 1em 2em;
+}
+
+#featured .tv-component.tv-button.movie.tv-component-focused {
+	min-width: 22em;
+	min-height: 32em;
+	margin: 1em 2em;
+}
+
+#featured .tv-component.tv-button.movie.tv-component-focused .thumbWrap {
+	min-height: 32em
+}
+
+.movie_description .summary {
+	font-size: 2.9em;
+}
+
+.secondary_domtabs .keyboard .key {
+	font-size: 3em;
+	line-height: 2.9em;
+}
+
+.secondary_domtabs .keyboard div.key:hover, .secondary_domtabs .keyboard div.key.tv-component-focused {
+	font-size: 4.7em;
+	line-height: 1.5em;
+}
+
+#browserPage .movie-grid .movie {
+	width: 27em;
+}
+
+.secondary_domtabs .selection .nav-item.tv-component {
+	font-size: 2.7em;
+	line-height: 2.5em;
+}
+
+#browserPage .thumb {
+	height: 34em;
+}
+
+#player-info {
+	height: 10em;
+}
+
+.activation-container {
+	margin: 15em 10% 0 10%;
+}
+
+#browserPage .movie-grid .movie {
+	margin-bottom: 4em;
+}
+
+.search-item #q {
+	font-size: 1.2em;
+	padding: 0.4em 5%;
+}
+
+.secondary_domtabs .selection .nav-item.tv-component:hover, .secondary_domtabs .selection .nav-item.tv-component.tv-component-focused {
+	line-height: 1.7em;
+}

@@ -1,11 +1,4 @@
-﻿html {
-    font-size: 62.5%;
-}
-body {
-    font-size: 1em;
-
-}
-@media (max-width: 300px) {
+﻿@media (max-width: 300px) {
     html {
         font-size: 10%;
     }
@@ -17,19 +10,22 @@ body {
 }
 @media (min-width: 1200px) {
     html {
-        font-size: 60%;
+        font-size: 9px;
     }
 }
 @media (min-width: 1900px) {
     html {
-        font-size: 80%;
+        font-size: 9px; 
     }
 }
+
 @media (min-width: 3600px) {
+
     html {
         font-size: 140%;
     }
 }
+
 /*BODY */
  html, body {
     height:100%;
@@ -340,7 +336,7 @@ span.stars.r1 {
 .secondary_domtabs .selection .nav-item.tv-component:hover, .secondary_domtabs .selection .nav-item.tv-component.tv-component-focused {
     background-color: #63D116;
     color: black;
-    box-shadow: 0 0 2px rgb(11, 75, 11), 0 0 5px rgb(117, 211, 16), 0 0 10px rgb(109, 255, 63), 0 0 15px rgb(161, 255, 124);
+    box-shadow: 0 0 0.1em rgb(11, 75, 11), 0 0 0.15em rgb(117, 211, 16), 0 0 0.2em rgb(109, 255, 63), 0 0 0.3em rgb(161, 255, 124);
 }
 .secondary_domtabs .selection .nav-item.tv-component.tv-toggle-button-on {
     background-color: #63D116;
@@ -1670,3 +1666,4 @@ opacity:0.1}
     padding: 0 0.7em;
     text-transform: none;
 }
+

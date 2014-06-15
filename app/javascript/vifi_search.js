@@ -7,6 +7,7 @@ $(function() {
             this.genres = this.options.genres;
             this.queue = this.options.queue;
             this.browser = this.options.browser;
+            this.payment = this.options.payment;
             this.account = this.options.account;
             this.session = this.options.session;
             this.logger = this.options.logger;
@@ -430,6 +431,10 @@ $(function() {
             model: session
         });
 
+        var payment = new Vifi.Payment({
+            session: session
+        });
+
         var toolbar = new Vifi.User.ToolbarView({
             model: profile
         });
@@ -452,6 +457,7 @@ $(function() {
             featured: collection.featured(),
             profile: profile,
             session: session,
+            payment: payment,
             toolbar: toolbar,
             logger: logger,
             pagemanager: pagemanager,
@@ -501,7 +507,7 @@ $(function() {
     }
 
     $(window).load(function() {
-        if (initial_search_json == "")  {
+        if (initial_search_json == "") {
             $.getJSON("http://backend.vifi.ee/api/?api_key=12345&jsoncallback=?",
                 initApp, "jsonp");
         } else {
