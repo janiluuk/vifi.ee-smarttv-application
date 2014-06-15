@@ -59,6 +59,8 @@ Vifi.PageManager = {
         $("#application").animate({
             "opacity": 1
         }, 2000);
+        $("#loadingWrapper").fadeOut();
+
     },
     moveUp: function() {
 
@@ -225,8 +227,6 @@ Vifi.PageManager = {
         this.setActivePage(page);
         Vifi.Event.trigger("page:afterpagechange", page);
     },
-
-
 
     onAfterPageChange: function(page) {
         if (this.callback) this.callback();

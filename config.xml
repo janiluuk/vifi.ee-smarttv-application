@@ -5,13 +5,13 @@
 	<ListIcon>icon/logo.png</ListIcon>
     <BigListIcon>icon/logo.png</BigListIcon>
 
-	<category>movies</category>
+	<category>Movies</category>
 	<autoUpdate>y</autoUpdate>
 	<cpname>Vifi</cpname>
 	<cpauthjs>N</cpauthjs>
 	<login>n</login>
 
-	<ver>0.99</ver>
+	<ver>0.999</ver>
 	<mgrver>2.250</mgrver>
 	
 	<fullwidget>y</fullwidget>
