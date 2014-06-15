@@ -5,6 +5,8 @@
         <title>Smart TV</title>
         <link rel="stylesheet" href="app/stylesheets/style.css" type="text/css" />
         <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&subset=latin,cyrillic-ext,greek-ext,greek,vietnamese,latin-ext,cyrillic' rel='stylesheet' type='text/css' />
+        <link rel="stylesheet" href="app/stylesheets/player.css" type="text/css" />
+
         <script type="text/javascript" src="app/javascript/jquery-2.1.0.min.js"></script>
         <script type="text/javascript" src="app/javascript/jquery-cookie.min.js"></script>
         <script type="text/javascript" src="app/javascript/tv-ui-compiled.js"  charset="utf-8"></script>
@@ -20,7 +22,6 @@
         <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/API/TVKeyValue.js'></script>
         <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/webapi/1.0/webapis.js'></script>
         <!-- msg javascript -->
-        <link rel="stylesheet" href="app/stylesheets/player.css" type="text/css" />
         <script type="text/javascript" src="app/javascript/jquery.scrollTo.min.js"></script>
         <script type="text/javascript" src="https://www.smartpay.tv/Devices/Smart_TV/SmartpayGateway.class.js"></script>
 
@@ -51,13 +52,13 @@
 
     <body class="device-tv" onload="window.launch(); ">
         ﻿<object id="pluginNetwork" border=0 style="opacity:0" classid="clsid:SAMSUNG-INFOLINK-NETWORK"></object>
-        <object id='pluginObjectNNavi' border=0 style="opacity:0" classid='clsid:SAMSUNG-INFOLINK-NNAVI'></object>
+        <object id="pluginObjectNNavi" border=0 style="opacity:0" classid="clsid:SAMSUNG-INFOLINK-NNAVI"></object>
 			
         <div id="console"></div>
 
         <div id="loadingWrapper">
             <div id="loadingPage">
-                <div id="loadingPage_1" class="loadingPage">l
+                <div id="loadingPage_1" class="loadingPage">L
                 </div>
                 <div id="loadingPage_2" class="loadingPage">O
                 </div>
@@ -71,7 +72,7 @@
                 </div>
                 <div id="loadingPage_7" class="loadingPage">G
                 </div>
-                <div id="loadingPage_8" class="loadingPage">g
+                <div id="loadingPage_8" class="loadingPage">!
                 </div>
             </div>
         </div>

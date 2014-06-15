@@ -27,7 +27,7 @@ Vifi.Payment = Backbone.Model.extend({
 
     initializePayment: function() {
 
-        SmartpayGateway.init('﻿52e802db-553c-4ed2-95bc-44c10a38c199', app.payment.paymentCallback, "Userid:janiluuk@gmail.com");
+        SmartpayGateway.init('539d9026-ee90-4e94-9eb6-149b0a6b0507', app.payment.paymentCallback, "Userid:janiluuk@gmail.com");
     }
 });
 _.extend(Vifi.Payment, Backbone.Events);
