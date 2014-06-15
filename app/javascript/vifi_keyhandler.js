@@ -30,6 +30,10 @@ Vifi.KeyHandler = {
         KEY_BACK: 'onReturn',
         KEY_SKIPFFORWARD: 'onSkipForward',
         KEY_SKIPBACK: 'onSkipBack',
+        KEY_VOL_UP: 'onVolumeUp',
+        KEY_VOL_DOWN: 'onVolumeDown',
+        KEY_MUTE: 'onMute'
+
     },
     enabled: true,
     keyMap: {},
