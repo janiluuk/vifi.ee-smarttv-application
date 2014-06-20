@@ -11,6 +11,7 @@ Vifi.PageManager = {
     accountPage: $("#" + Vifi.Settings.accountpageId),
     activationPage: $("#" + Vifi.Settings.activationPageId),
     alertPage: $("#" + Vifi.Settings.activationPageId),
+    purchasePage: $("#" + Vifi.Settings.purchasePageId),
 
     name: "Pagemanager",
     decorateHandler: false,
@@ -63,6 +64,19 @@ Vifi.PageManager = {
         }, 2000);
 
     },
+    enableNavigation: function() {
+
+        this.redraw("#application", true);
+
+    },
+    disableNavigation: function() {
+
+        tv.ui.getComponentByElement(goog.dom.getElement("application")).removeChildren();
+
+
+    },
+
+
     moveUp: function() {
 
         var active = this.getActivePage().prevAll("div:visible:first");
@@ -664,7 +678,8 @@ Vifi.Utils.ApiModel = Backbone.Model.extend({
         this.params = "api_key=" + Vifi.Settings.api_key;
         var session = this.get("session");
         if (session) {
-            this.params += "&sessionId=" + session.get("sessionId") + "&authId=" + session.get("hash");
+            this.params += "&sessionId=" + session.get("sessionId");
+            if (session.get("hash") != null && session.get("hash") != "") this.params += "&authId=" + session.get("hash");
         }
         var params = _.extend({
             type: 'GET',

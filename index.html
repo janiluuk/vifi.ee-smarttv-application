@@ -81,6 +81,7 @@
             <div class="animation">
                 <div id="alertPage" class="container" style="display:none;"></div>
                 <div id="activationPage" class="container" style="display:none;"></div>
+                <div id="purchasePage" class="container" style="display:none;"></div>
                 <div id="accountPage" class="container"></div>
                 <!--  Home page -->
                 <div id="homePage" class="container">
@@ -386,6 +387,21 @@
                 <div id="activation-picture-description">Enter "<%- activationCode %>" here</div>
                     <img id="pairing-screenshot" src="app/stylesheets/img/pairing-screenshot.png" />
                 </div>
+</script>
+<script type="text/template" id="purchaseTemplate">
+            <div class="activation-container">
+                <p class="header">You are purchasing <span id="activation-code"><%- film.title %></span></p>
+                <p class="activation-description" id="step1"><span class="step">1</span> asd</p>
+                <p class="activation-description" id="step2"><span class="step">2</span>asd</p>
+                        <div class="buttonsrow tv-container-horizontal">
+                                <div class="tv-component action-button no-down no-up" id="purchase"><a href="#" class="float_left button">Purchase (<%- film.price %>) </a>
+                                </div>
+                                <div class="tv-component action-button no-down no-up" id="hideActivation"><a href="#" class="float_left button">Use my subscription</a>
+                                </div>
+                               
+                        </div>
+            </div>
+          
 </script>
 
 <script type="text/html" id="browserPageTemplate">

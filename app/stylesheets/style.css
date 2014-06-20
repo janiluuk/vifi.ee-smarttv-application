@@ -984,13 +984,9 @@ span.stars.r1 {
         right: 0;
 }
 
-/*#app .tv-container-start-scroll {
-    height: 100%;
-}*/
-
 /* ACTIVATION PAGE & ALERT PAGE */
 
-#activationPage, #alertPage {
+#activationPage, #alertPage, #purchasePage {
     position: absolute;
     background-image: url('img/background_dark_90.png');
     background-repeat: repeat;
@@ -1001,7 +997,7 @@ span.stars.r1 {
 
 .activation-container, .alert-container {
     width:80%;
-    position: relative;;
+    position: relative;
 }
 
 .activation-container {
@@ -1105,7 +1101,7 @@ span.stars.r1 {
     padding-left: 12%;
 }
 
-.activation-container .buttonsrow .button {
+#activationPage .activation-container .buttonsrow .button {
     margin-left:12%;
 }
 

@@ -6,8 +6,10 @@ $(function() {
             this.pagemanager = this.options.pagemanager;
             this.genres = this.options.genres;
             this.queue = this.options.queue;
+            this.usercollection = this.options.usercollection;
             this.browser = this.options.browser;
             this.payment = this.options.payment;
+            this.purchasePage = this.options.purchasePage;
             this.account = this.options.account;
             this.session = this.options.session;
             this.logger = this.options.logger;
@@ -407,6 +409,7 @@ $(function() {
 
         var genres = new Vifi.Films.GenreCollection(genredata);
         var queue = new Vifi.Films.QueueCollection(initial_search_json.queue);
+        var usercollection = new Vifi.Films.UserCollection(initial_search_json.queue);
 
         var profile = new Vifi.User.Profile();
 
@@ -417,10 +420,11 @@ $(function() {
         });
         Vifi.Platforms.init();
 
-
         Vifi.Engine.start(Vifi.Settings);
+        
+        var purchasePage = new Vifi.PurchaseView({
 
-
+        });
         var accountPage = new Vifi.User.ProfileView({
             model: profile
         });
@@ -460,10 +464,12 @@ $(function() {
             payment: payment,
             toolbar: toolbar,
             logger: logger,
+            purchasePage: purchasePage,
             pagemanager: pagemanager,
             genres: genres,
             user_is_authenticated: user_is_authenticated,
             queue: queue,
+            usercollection: usercollection,
             redirect_on_genre_change: initial_search_json.redirect_on_genre_change,
             redirect_on_duration_change: initial_search_json.redirect_on_duration_change,
             redirect_on_period_change: initial_search_json.redirect_on_period_change,
@@ -503,6 +509,7 @@ $(function() {
         app.renderResults();
 
 
+        alert("Started engine");
 
     }
 

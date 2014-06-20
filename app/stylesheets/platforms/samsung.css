@@ -76,3 +76,8 @@ html,body {
 .secondary_domtabs .selection .nav-item.tv-component:hover, .secondary_domtabs .selection .nav-item.tv-component.tv-component-focused {
 	line-height: 1.7em;
 }
+
+#homePage .featuredlist {
+    bottom: 12em;
+}
+

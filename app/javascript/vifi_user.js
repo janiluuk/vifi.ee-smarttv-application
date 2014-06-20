@@ -34,11 +34,22 @@ Vifi.User.Profile = Vifi.Utils.ApiModel.extend({
         this.set("email", "Visitor");
     },
 
-    purchase: function(item) {
-        $log("Purchasing item");
+
+    purchase: function(movie) {
+        app.usercollection.add(movie);
+
 
         return true;
-    }
+    },
+    hasMovie: function(movie) {
+        var id = movie.get("film").id;
+        var movies = app.usercollection.where({
+            id: id
+        });
+        if (movies.length > 0) return true;
+        return false;
+    },
+
 });
 Vifi.User.Session = Backbone.Model.extend({
     model: false,
@@ -142,7 +153,7 @@ Vifi.User.Session = Backbone.Model.extend({
         var sessionId = this.get("sessionId");
         var hash = this.get("hash");
         var user_id = this.get("user_id");
-        if (!this.isLoggedIn() && sessionId !== "" && hash !== "" && user_id != "") {
+        if (!this.isLoggedIn() && sessionId !== "" && hash !== "" && user_id != "" && hash != null) {
             var profile = this.get("profile");
             var params = this.getParams();
             profile.set("user_id", user_id);
@@ -316,6 +327,7 @@ Vifi.User.ActivationView = Backbone.View.extend({
         }
     }
 });
+
 Vifi.User.AlertView = Backbone.View.extend({
     el: $("#" + Vifi.Settings.alertPageId),
     events: {
@@ -355,5 +367,16 @@ Vifi.User.AlertView = Backbone.View.extend({
             Vifi.Event.trigger("page:back");
             Vifi.Event.trigger("page:focus");
         }
+    }
+});
+
+
+Vifi.Films.UserCollection = Backbone.Collection.extend({
+    model: Vifi.Films.FilmModel,
+    initialize: function(models, options) {
+
+    },
+    parse: function(response) {
+        return response.objects;
     }
 });

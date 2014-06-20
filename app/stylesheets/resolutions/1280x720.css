@@ -50,6 +50,7 @@
 
 #homePage .featuredlist {
 	width: 90%;
+	bottom: 6em;
 }
 
 #featured .tv-component.movie {

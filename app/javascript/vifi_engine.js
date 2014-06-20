@@ -29,7 +29,8 @@ Vifi = {
         toolbarId: 'toolbar',
         homePageId: 'homePage',
         alertPageId: 'alertPage',
-        activationPageId: 'activationPage'
+        activationPageId: 'activationPage',
+        purchasePageId: 'purchasePage'
     }
 }
 

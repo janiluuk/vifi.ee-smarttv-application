@@ -16,13 +16,13 @@ Vifi.Navigation = {
         this.initTouch();
         this.initScroll();
 
+
         if (!this.currentMenu || !this.currentFocus) return;
         this.currentMenu.fireItem(this.currentFocus.item, 'onFocus');
     },
     disable: function() {
         this.enabled = false;
-        if (!this.currentMenu || !this.currentFocus) return;
-        this.currentMenu.fireItem(this.currentFocus.item, 'onBlur');
+        Vifi.PageManager.disableNavigation();
     },
 
     start: function() {

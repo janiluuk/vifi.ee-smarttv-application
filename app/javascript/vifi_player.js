@@ -299,20 +299,19 @@ Vifi.Player.Player = Backbone.Model.extend({
     verifySession: function(movie) {
 
         // Check if user is paired at all
+        alert("verifying session");
 
-        if (!this.session || !this.session.isLoggedIn()) {
-            Vifi.Event.trigger("activation:show");
+        if ((!this.session || !this.session.isLoggedIn()) && !this.session.get("profile").hasMovie(movie)) {
+            app.purchasePage.model = movie;
+            app.purchasePage.render();
+
+            Vifi.Event.trigger("purchase:show");
             return false;
         }
 
-        var profile = this.session.get("profile");
-
-        if (profile.purchase(movie) == true) {
-            return true;
-        }
-
-        return false;
+        return true;
     },
+
     setSession: function(session) {
 
         this.session = session;
