@@ -299,7 +299,6 @@ Vifi.Player.Player = Backbone.Model.extend({
     verifySession: function(movie) {
 
         // Check if user is paired at all
-        alert("verifying session");
 
         if ((!this.session || !this.session.isLoggedIn()) && !this.session.get("profile").hasMovie(movie)) {
             app.purchasePage.model = movie;

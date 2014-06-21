@@ -71,11 +71,9 @@ Vifi.MediaPlayer = {
     },
     setContent: function(content) {
 
-
         this.content = content;
         this.currentStream = content[0];
         var url = this.getUrl();
-
         this.trigger("mediaplayer:oncontentchange", url);
 
     },
@@ -128,7 +126,8 @@ Vifi.MediaPlayer = {
         }
 
         avplayObj.onerror = 'Vifi.MediaPlayer.videoError';
-
+        avplayObj.OnStreamInfoReady = 'Vifi.MediaPlayer._streamInfoReady';
+        avplayObj.OnStreamNotFound = 'Vifi.MediaPlayer.streamNotFound';
         this.active();
 
         if (!this.currentStream || this.currentStream.mp4 == "") {
@@ -290,8 +289,6 @@ Vifi.MediaPlayer = {
         return (this.state == this.PLAYING);
     },
 
-
-
     duration: function() {
         if (this.streamready) {
             return avplayObj.duration;
@@ -299,8 +296,6 @@ Vifi.MediaPlayer = {
             return null;
         }
     },
-
-
     // Events
 
     onDone: function() {
@@ -344,6 +339,7 @@ Vifi.MediaPlayer = {
         this.trigger("mediaplayer:timeupdate", currentTime.toString());
 
     },
+
     streamEnded: function() {
         this.trigger("mediaplayer:mediaend", this.playlist.currentItemIndex());
         this.nextVideo();
@@ -374,25 +370,14 @@ Vifi.MediaPlayer.bind("mediaplayer:timeupdate", function(time) {
     $("#player-current-time").text(Vifi.MediaPlayer.currentTime.toString());
 });
 
-Vifi.MediaPlayer.bind("mediaplayer:stop", function() {
-
+Vifi.MediaPlayer.bind("mediaplayer:onplay", function() {
+    $("#player-total-time").text(Vifi.MediaPlayer.duration());
 
 });
-/*
 
-avplayObj.onerror = '';
-avplayObj.onbufferingcomplete = '';
-avplayObj.onbufferingprogress = '';
-avplayObj.onbufferingstart = '';
-avplayObj.OnConnectionFailed = 'Vifi.MediaPlayer.videoError';
-avplayObj.oncurrentplaytime = 
-avplayObj.OnNetworkDisconnected = 'Vifi.MediaPlayer.videoError';
-avplayObj.OnRenderError = 'Vifi.MediaPlayer.videoError';
-avplayObj.OnMute = "Vifi.MediaPlayer.Events.mute";
-avplayObj.onstreamcompleted = "";
-avplayObj.OnStreamInfoReady = 'Vifi.MediaPlayer._streamInfoReady';
-avplayObj.OnStreamNotFound = 'Vifi.MediaPlayer.streamNotFound';
-*/
+
+
+
 
 
 function playSuccessCB() {

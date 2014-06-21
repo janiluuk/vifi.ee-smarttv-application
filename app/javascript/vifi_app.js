@@ -1,32 +1,3 @@
-Vifi.Config = {
-    // So we try to do a 
-    speedTestUrl: null,
-}
-Vifi.Config.BackendConfig = {
-
-    // Replace these with your customer token.
-    // customerToken: ""
-    // customerToken: "Q8xYbanPaui20iXx6ZRthz9455HVGZ3XRXjxG45H16hhZoS0_DD4LA..",
-    customerToken: "y-3pyd7Twd_EE0ApO83dE8kmk1aGH4gu1QRtXwFn94mrjf65N3etoQ..", //must have read and URL Access with brightcove
-
-    // Replace with your Samsung Player ID
-    playerID: "1409917605001",
-    publisherID: "UNKNOWN",
-    // If this needs to change
-    apiURL: "http://api.brightcove.com/services/library",
-
-    //Should not need to be changed
-    playerParams: {
-        "playlist_fields": "id,name"
-    },
-    playlistParams: {
-        "media_delivery": "http",
-        // if you need more video fields you can add them here.
-        "video_fields": "id,name,shortDescription,longDescription,tags,thumbnailURL,videoStillURL,renditions",
-    },
-}
-
-
 /******************************************************************
 	DATA LOADING PIECES
 *******************************************************************/
@@ -44,14 +15,14 @@ var feeds = [];
 
 
 // Create a new data object.
-var data = new TVEngine.DataLoader.Data();
+var data = new Vifi.Engine.DataLoader.Data();
 //data.url = "http://stubby.adifferentengine.com/b.json";
-data.url = TVAppConfig.BrightcoveConfig.apiURL;
+data.url = Vifi.Settings.api_url;
 data.dataType = "jsonp";
 data.params = _.extend({
     "command": "find_playlists_for_player_id",
     "player_id": TVAppConfig.BrightcoveConfig.playerID,
-    "token": TVAppConfig.BrightcoveConfig.customerToken,
+    "token": Vifi.Settings.,
 }, TVAppConfig.BrightcoveConfig.playerParams);
 
 data.parser = function(data) {
@@ -72,8 +43,8 @@ data.parser = function(data) {
 // Add to our list of feeds.
 feeds.push(data);
 
-var data = new TVEngine.DataLoader.Data();
-data.url = TVAppConfig.BrightcoveConfig.apiURL;
+var data = new Vifi.DataLoader.Data();
+data.url = Vifi.Settings.api_url;
 data.dataType = "jsonp";
 
 data.params = _.extend({
@@ -144,7 +115,7 @@ data.parser = function(data) {
 };
 feeds.push(data);
 
-Vifi.DataLoader.addWaterfall("brightcove:playlists", feeds);
+Vifi.DataLoader.addWaterfall("vifi:usertitles", feeds);
 
 /******************************************************************
 	UI Configuration
@@ -159,70 +130,6 @@ Vifi.DataLoader.addWaterfall("brightcove:playlists", feeds);
  */
 
 window.Video = Backbone.Model.extend({});
-window.VideoView = Backbone.View.extend({
-    render: function() {
-        var img = (TVEngine.getPlatform().matrix() == "960x540") ? "thumbnail" : "full"
-        img = "thumbnail";
-        $("<img />", {
-            src: this.model.get(img)
-        }).appendTo(this.el);
-        return this;
-    }
-})
-
-
-window.VideoCategory = Backbone.Collection.extend({
-    model: Video
-})
-
-window.VideoCategoryView = Backbone.View.extend({
-    initialize: function() {
-        var _this = this;
-        this._videoViews = [];
-        this.collection.each(function(video) {
-            _this._videoViews.push(new VideoView({
-                model: video,
-                tagName: "div",
-                className: 'vidItem'
-            }))
-        })
-    },
-    render: function() {
-        var _this = this;
-        $(this.el).empty();
-        _.each(this._videoViews, function(vv) {
-            $(_this.el).append(vv.render().el);
-        });
-        if (this.options.target) {
-            $(this.options.target).append(this.el);
-        }
-    },
-
-})
-
-window.VideoCategoryTextMenuView = Backbone.View.extend({
-    initialize: function() {
-        var _this = this;
-        this._videoViews = [];
-        this.collection.each(function(video) {
-            _this._videoViews.push(new VideoView({
-                model: video,
-                tagName: "div",
-                className: 'vidItem'
-            }))
-        })
-    },
-    render: function() {
-        var _this = this;
-        $(this.el).empty();
-        _.each(this._videoViews, function(vv) {
-            $(_this.el).append(vv.render().el);
-        });
-        if (this.options.target) {
-            $(this.options.target).append(this.el);
-        }
-    },
-})
 
 
 /******************************************************************
@@ -236,7 +143,7 @@ Vifi.Engine.bind("tvengine:appready", function() {
     TVEngine.Navigation.start();
 
     // Get the data we discussed earlier out of the datastore.
-    var playlists = TVEngine.DataStore.get("brightcove:playlists");
+    var userlists = Vifi.DataStore.get("vifi:usertitles");
 
 
     var videocategories = [];
@@ -257,22 +164,6 @@ Vifi.Engine.bind("tvengine:appready", function() {
         $("#playlistsNav").append($("<li> " + playlist.categoryName + "</li>"));
     })
 
-    // We're using a jquery plugin called "waitForImages" so we don't see images 
-    // loading 
-    $("#playlists").waitForImages(function() {
-        $("#wrapper").fadeIn();
-        TVEngine.Navigation.enable();
-    })
-
-    Vifi.Engine.MediaPlayer.bind("mediaplayer:timeupdate", function(time) {
-        $("#indicator").css({
-            width: Math.floor(time / TVEngine.MediaPlayer.duration() * 100) + "%"
-        })
-        var readableCurrent = Vifi.Engine.util.convertMstoHumanReadable(time);
-        var readableDuration = Vifi.Engine.util.convertMstoHumanReadable(TVEngine.MediaPlayer.duration());
-        $("#currentProgressTime").text(readableCurrent.toString() + " / " + readableDuration.toString())
-    })
-
 
 
     // Bind to our menu's onSelect handler. Normally you'd put this code in the menu
@@ -280,47 +171,6 @@ Vifi.Engine.bind("tvengine:appready", function() {
     Vifi.Navigation.bindToMenu("brightcove:mainmenu", 'onselect', handleMenuSelection);
 
 }, Vifi.Engine);
-
-// When something is selected from our menu we will end up here.
-var handleMenuSelection = function(items) {
-    Vifi.MediaPlayer.stop();
-    playVideo(items.playlist, items.videoIndex);
-    showVideo();
-}
-
-var playVideo = function(currentPlaylist, currentIndex) {
-
-
-    Vifi.MediaPlayer.setPlaylist(currentPlaylist.playlist);
-    Vifi.MediaPlayer.setCurrentIndex(currentIndex);
-    Vifi.MediaPlayer.play();
-    Vifi.MediaPlayer.bind("mediaplayer:onnextvideo", function(index) {
-        $("#nowPlayingTitle").text(currentPlaylist.videos[index].name)
-    });
-
-    Vifi.MediaPlayer.bind("mediaplayer:onplaylistend", function() {
-        $("#backgroundImage").show();
-        showNavigation();
-    })
-
-    $("#nowPlayingTitle").text(currentPlaylist.videos[currentIndex].name);
-}
-
-}
-
-var showVideo = function(currentPlaylist, currentIndex) {
-    Vifi.KeyHandler.unbind("all", touchVideoNavTimeout);
-    clearAllTimeouts();
-    setReturnButton("video")
-    $("#backgroundImage").hide();
-    Vifi.Navigation.disable();
-
-    $("#landingPage").hide();
-    $("#videoPage").fadeIn();
-    Vifi.KeyHandler.bind("all", touchVideoInfoTimeout);
-    touchVideoInfoTimeout();
-    $log(" here? ");
-}
 
 
 var currentViewState = "menu" // Can Be menu, details or video
@@ -342,69 +192,3 @@ var setReturnButton = function(state) {
             break;
     }
 }
-
-var closeDetails = function() {
-    $("#videoInfoWrapper").hide();
-    clearAllTimeouts();
-    Vifi.Navigation.setFocus("brightcove:mainmenu");
-    hideMenuTimeout = setTimeout(hideNavigation, 7000);
-}
-
-var showDetails = function() {
-    clearAllTimeouts()
-    $("#videoInfoWrapper").show();
-    setReturnButton("details");
-    Vifi.Navigation.setFocus("brightcove:popupmenu");
-}
-
-var showNavigation = function() {
-    Vifi.KeyHandler.unbind("all", touchVideoInfoTimeout);
-    clearAllTimeouts();
-
-    if (!Vifi.MediaPlayer.playing()) {
-        $("#backgroundImage").show();
-    }
-
-    $("#landingPage").fadeIn();
-    $("#videoPage").fadeOut();
-    setReturnButton("menu")
-
-    Vifi.Navigation.enable();
-    touchVideoNavTimeout();
-    Vifi.KeyHandler.bind("all", touchVideoNavTimeout);
-}
-
-var returnToMenu = function() {
-    Vifi.Engine.exit(false);
-}
-var hideNavigation = function() {
-    if (Vifi.MediaPlayer.playing() && $("#videoInfoWrapper").is(":hidden")) {
-        clearAllTimeouts();
-        $("#landingPage").fadeOut();
-        setReturnButton("video")
-        Vifi.KeyHandler.bind("all", touchVideoInfoTimeout);
-    }
-}
-var hideVideoInfoTimeout, hideVideoNavigationTimeout;
-var clearAllTimeouts = function() {
-    clearTimeout(hideVideoInfoTimeout);
-    clearTimeout(hideVideoNavigationTimeout);
-}
-var touchVideoInfoTimeout = function() {
-    if (!$("#landingPage").is(":visible")) {
-        $("#videoPage:hidden").fadeIn();
-    }
-    clearTimeout(hideVideoInfoTimeout);
-    hideVideoInfoTimeout = setTimeout(function() {
-        $("#videoPage").fadeOut();
-    }, 7000);
-}
-
-var touchVideoNavTimeout = function() {
-    clearTimeout(hideVideoNavigationTimeout);
-    hideVideoNavigationTimeout = setTimeout(function() {
-        if (Vifi.MediaPlayer.playing()) {
-            showVideo();
-        }
-    }, 7000);
-};

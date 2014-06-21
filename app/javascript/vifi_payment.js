@@ -7,7 +7,7 @@ Vifi.Payment = Backbone.Model.extend({
         if (options && undefined != options.session) {
             this.setSession(options.session);
         }
-        this.on('payment:initialize', this.initializePayment, this);
+        this.on('payment:creditpurchase', this.creditPurchase, this);
 
     },
 
@@ -48,7 +48,23 @@ Vifi.Payment = Backbone.Model.extend({
         }, 800);
 
 
+    },
+    // Purchase with smartpay
+
+    creditPurchase: function() {
+
+        var price = "6.99";
+        SmartpayGateway.init(this.productKey, app.payment.paymentCallback, "sessionId:" + app.session.get("sessionId"), 'EN', price, 'EUR');
+
+        $("#smartpayContainer").css("top", $("#accountPage").offset().top);
+        $log("Disabling navigation");
+        setTimeout(function() {
+            app.pagemanager.disableNavigation();
+        }, 800);
+
+
     }
+
 });
 _.extend(Vifi.Payment, Backbone.Events);
 

@@ -49,35 +49,10 @@ $(function() {
             'change #search-form select': 'onSearchFieldChange',
             'change #search-form input[type="text"]': 'onSearchFieldChange',
             'change #search-form input[type="hidden"]': 'onSearchFieldChange',
-            'change #div_id_intended_audience input[type="checkbox"]': 'onAudienceCheckboxFieldChange',
-            'change #div_id_hide_coming_soon input[type="checkbox"]': 'onHideComingSoonChange',
-            'change #div_id_hide_web_series input[type="checkbox"]': 'onHideWebSeriesChange',
-
 
         },
 
 
-        onClickToggleGrid: function(event) {
-            this.collection.state.set('list_style', 'grid');
-        },
-
-        onHideComingSoonChange: function(event) {
-            var value = event.target.checked ? 1 : 0;
-            this.collection.state.set({
-                'hide_coming_soon': value
-            });
-        },
-
-        onClickToggleList: function(event) {
-            this.collection.state.set('list_style', 'list');
-        },
-
-        onHideWebSeriesChange: function(event) {
-            var value = event.target.checked ? 1 : 0;
-            this.collection.state.set({
-                'hide_web_series': value
-            });
-        },
         setGenreDropDown: function(action, subgenres_obj) {
 
             $('#div_id_genre select').empty();
@@ -143,7 +118,6 @@ $(function() {
                 app.loadBrowserImages();
 
         },
-
         onSearchFieldChange: function(event) {
 
 
@@ -170,27 +144,6 @@ $(function() {
             });
 
 
-            this.collection.state.set(search_dict);
-        },
-        onAudienceCheckboxFieldChange: function(event) {
-            var id = event.target.id;
-            var value = event.target.checked ? 1 : 0;
-            var search_dict = {};
-
-            switch (id) {
-                case 'id_intended_audience_1':
-                    search_dict['family'] = value
-                    break;
-
-                case 'id_intended_audience_2':
-                    search_dict['teen'] = value
-                    break;
-
-                case 'id_intended_audience_3':
-                    search_dict['plus17'] = value
-                    break;
-            }
-            search_dict['page'] = 1;
             this.collection.state.set(search_dict);
         },
 
@@ -235,18 +188,6 @@ $(function() {
         updateUIToState: function() {
             var state = this.collection.state;
             // set intended audience checkboxes
-
-
-            if (this.collection.state.get('list_style') == 'grid') {
-                $('#movie-grid').addClass("grid-view").removeClass("list-view");
-                $('.toggle-g').addClass("active");
-                $('.toggle-l').removeClass("active");
-            } else {
-                $('#movie-grid').addClass("list-view").removeClass("grid-view");
-                $('.toggle-l').addClass("active");
-                $('.toggle-g').removeClass("ˇve");
-            }
-
             // selects
             this.$('#id_genre option[value="' + state.get('genre') + '"]').attr('selected', 'selected');
             this.$('#id_subgenre option[value="' + state.get('subgenre') + '"]').attr('selected', 'selected');
@@ -257,12 +198,9 @@ $(function() {
             // year
             this.$('#id_period').val(state.get('period'));
 
-
-
             // main search text box
             var query = this.collection.state.get('q');
             $('#q').val(query);
-
 
         },
         onChangeCollectionState: function(state) {
@@ -307,8 +245,6 @@ $(function() {
         showFilm: function(id) {
 
             Vifi.Event.trigger('film:show', id);
-
-
         },
 
         clearSearch: function() {
@@ -421,7 +357,7 @@ $(function() {
         Vifi.Platforms.init();
 
         Vifi.Engine.start(Vifi.Settings);
-        
+
         var purchasePage = new Vifi.PurchaseView({
 
         });
@@ -470,10 +406,6 @@ $(function() {
             user_is_authenticated: user_is_authenticated,
             queue: queue,
             usercollection: usercollection,
-            redirect_on_genre_change: initial_search_json.redirect_on_genre_change,
-            redirect_on_duration_change: initial_search_json.redirect_on_duration_change,
-            redirect_on_period_change: initial_search_json.redirect_on_period_change,
-            page_type: initial_search_json.page_type
         });
 
 
@@ -509,13 +441,12 @@ $(function() {
         app.renderResults();
 
 
-        alert("Started engine");
 
     }
 
     $(window).load(function() {
         if (initial_search_json == "") {
-            $.getJSON("http://backend.vifi.ee/api/?api_key=12345&jsoncallback=?",
+            $.getJSON(Vifi.Settings.api_url + "?api_key=" + Vifi.Settings.api_key + "&jsoncallback=?",
                 initApp, "jsonp");
         } else {
 

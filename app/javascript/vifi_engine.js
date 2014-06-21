@@ -18,7 +18,7 @@ Vifi = {
     Event: {},
     Settings: {
         // properties   
-        version: "0.99.1206",
+        version: "0.99.2206",
         debug: false,
         api_url: 'http://backend.vifi.ee/api/',
         api_key: '12345',
@@ -39,6 +39,7 @@ Vifi.Engine = {
     _doneEvents: [],
     _modulesToLoad: 0,
     _defConfig: {},
+    device_id: false
 
     addModule: function(name, module, conf) {
         this.modules[name] = module;
@@ -88,6 +89,7 @@ Vifi.Engine = {
         })
     },
 
+
     exit: function(fullexit) {
         $log("********************************\n       EXIT     \n ********************************");
         this.getPlatform().exit(fullexit);
@@ -100,6 +102,7 @@ Vifi.Engine = {
             return null;
         }
     },
+
 
 
 

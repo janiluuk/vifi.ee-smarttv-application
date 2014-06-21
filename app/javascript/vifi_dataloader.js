@@ -134,7 +134,7 @@ Vifi.Engine.DataLoader.Waterfall.prototype.error = function() {
 
 
 Vifi.Engine.DataLoader.Data = function() {
-    this.method = "GET", this.dataType = "JSON";
+    this.method = "GET", this.dataType = "JSONP";
     this.key = null;
     // Can override these (make sure you return something);
     // once done we will parse the data then pass it to the data

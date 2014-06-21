@@ -37,8 +37,6 @@ Vifi.User.Profile = Vifi.Utils.ApiModel.extend({
 
     purchase: function(movie) {
         app.usercollection.add(movie);
-
-
         return true;
     },
     hasMovie: function(movie) {
@@ -112,11 +110,10 @@ Vifi.User.Session = Backbone.Model.extend({
     onUserSignout: function() {
         this.set('logged_in', false);
         this.disable();
-        Vifi.Event.trigger("user:logout");
 
         return false;
     },
-    fetch: function(opts) {
+    fetch: function() {
         if (!this.isEnabled()) return;
 
         if (!this.isLoggedIn()) this.path = this.get("activationCode");
@@ -144,6 +141,7 @@ Vifi.User.Session = Backbone.Model.extend({
         }
         return this;
     },
+
     getCookie: function() {
         var sessionId = $.cookie("vifi_session");
         return sessionId;
@@ -155,10 +153,9 @@ Vifi.User.Session = Backbone.Model.extend({
         var user_id = this.get("user_id");
         if (!this.isLoggedIn() && sessionId !== "" && hash !== "" && user_id != "" && hash != null) {
             var profile = this.get("profile");
-            var params = this.getParams();
             profile.set("user_id", user_id);
             profile.set("session", this);
-            profile.fetch(params);
+            profile.fetch();
             if (profile.get("email") != "Visitor") {
                 this.set("profile", profile);
                 $log("Logging in with user " + profile.get("email"));
@@ -167,6 +164,13 @@ Vifi.User.Session = Backbone.Model.extend({
         }
         return false;
     },
+    updateProfile: function() {
+        if (!this.isLoggedIn()) return false;
+        var profile = this.get("profile");
+        profile.fetch();
+        this.trigger();
+    },
+
     send: function() {
         if (!this.isLoggedIn() && this.isEnabled()) {
             this.fetch();
@@ -234,7 +238,7 @@ Vifi.User.ProfileView = Backbone.View.extend({
     },
     showPaymentScreen: function() {
 
-        app.payment.trigger("payment:initialize");
+        app.payment.trigger("payment:creditpurchase");
 
     },
     toggleSignedIn: function() {
@@ -314,9 +318,9 @@ Vifi.User.ActivationView = Backbone.View.extend({
         this.$el.find("#hideActivation").addClass("tv-component");
         $(".hidden-container .tv-component").removeClass("tv-component").addClass("tv-component-hidden");
         this.$el.fadeIn().show();
+        Vifi.Event.trigger("page:change", "activation");
         Vifi.Event.trigger("poll:enable");
 
-        Vifi.Event.trigger("page:change", "activation");
     },
     hide: function() {
         if (this.$el.hasClass("active")) {
@@ -356,7 +360,6 @@ Vifi.User.AlertView = Backbone.View.extend({
         $(".hidden-container .tv-component").removeClass("tv-component").addClass("tv-component-hidden");
         this.$el.fadeIn().show();
         Vifi.Event.trigger("page:change", "alert", true);
-        Vifi.Event.trigger("page:focus");
 
     },
     hide: function() {
@@ -365,7 +368,6 @@ Vifi.User.AlertView = Backbone.View.extend({
             $(".hidden-container").removeClass("hidden-container").fadeIn();
             this.$el.fadeOut().hide();
             Vifi.Event.trigger("page:back");
-            Vifi.Event.trigger("page:focus");
         }
     }
 });
