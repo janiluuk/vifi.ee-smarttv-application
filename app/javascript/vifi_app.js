@@ -1,8 +1,8 @@
-TVAppConfig = {
+Vifi.Config = {
     // So we try to do a 
     speedTestUrl: null,
 }
-TVAppConfig.BrightcoveConfig = {
+Vifi.Config.BackendConfig = {
 
     // Replace these with your customer token.
     // customerToken: ""
