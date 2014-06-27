@@ -39,7 +39,7 @@ Vifi.Engine = {
     _doneEvents: [],
     _modulesToLoad: 0,
     _defConfig: {},
-    device_id: false
+    device_id: false,
 
     addModule: function(name, module, conf) {
         this.modules[name] = module;
