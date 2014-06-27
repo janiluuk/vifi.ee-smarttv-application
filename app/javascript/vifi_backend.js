@@ -1,8 +1,5 @@
 Vifi.Event = _.extend({}, Backbone.Events);
-Vifi.PageView = Backbone.View.extend({
-
-});
-
+Vifi.PageView = Backbone.View.extend({});
 Vifi.PageManager = {
     moviePage: $("#" + Vifi.Settings.moviepageId),
     browserPage: $("#" + Vifi.Settings.browserpageId),
@@ -12,7 +9,6 @@ Vifi.PageManager = {
     activationPage: $("#" + Vifi.Settings.activationPageId),
     alertPage: $("#" + Vifi.Settings.activationPageId),
     purchasePage: $("#" + Vifi.Settings.purchasePageId),
-
     name: "Pagemanager",
     decorateHandler: false,
     appElement: false,
@@ -24,81 +20,52 @@ Vifi.PageManager = {
     lastActivePage: false,
     lastAnimation: 0,
     activePage: this.homePage,
-
     init: function() {
-
         Vifi.Event.on("page:beforepagechange", this.onBeforePageChange, this);
         Vifi.Event.on("page:onpagechange", this.onPageChange, this);
         Vifi.Event.on("page:afterpagechange", this.onAfterPageChange, this);
         Vifi.Event.on('page:ready', this.redraw, this);
         Vifi.Event.on('page:up', this.moveUp, this);
         Vifi.Event.on('page:down', this.moveDown, this);
-
         Vifi.Event.on('page:focus', this.focusFirst, this);
         Vifi.Event.on('page:change', this.switchToPage, this);
         Vifi.Event.on('app:ready', this.start, this);
         Vifi.Event.on('page:back', this.switchToPrevious, this);
-
         this.decorateHandler = new tv.ui.DecorateHandler;
         _.bindAll(this, 'redraw', 'focusFirst', 'setFocus', 'setFocusByClass', 'switchToPage', 'setHandlers');
-
-
         this.setHandlers();
         if (!this.appComponent) {
             this.appElement = goog.dom.getElement("application");
             tv.ui.decorate(document.body);
             this.appComponent = tv.ui.getComponentByElement(this.appElement);
         }
-
-
-
     },
-
-
-
     start: function() {
         $("#loadingWrapper").fadeOut();
-
         $("#application").animate({
             "opacity": 1
         }, 2000);
-
     },
     enableNavigation: function() {
-
         this.redraw("#application", true);
-
     },
     disableNavigation: function() {
-
         tv.ui.getComponentByElement(goog.dom.getElement("application")).removeChildren();
-
-
     },
-
-
     moveUp: function() {
-
         var active = this.getActivePage().prevAll("div:visible:first");
         if (active != "") {
             var name = $(active).attr("id").replace("Page", "");
             Vifi.Event.trigger("page:change", name);
-
         }
-
     },
     moveDown: function() {
-
         var active = this.getActivePage().nextAll("div:visible:first");
         if (undefined != active && active != "") {
             var name = $(active).attr("id").replace("Page", "");
-
             Vifi.Event.trigger("page:change", name);
-
         }
-
     },
-
     getPage: function(name) {
         if (name == "alert") return $(this.alertPage);
         if (name == "activation") return $(this.activationPage);
@@ -109,15 +76,12 @@ Vifi.PageManager = {
         if (name == "account" || "accountPage") return $(this.accountPage);
         return false;
     },
-
     // Bring given page to the screen after making preparations accordingly.
     // Looking at this makes ma already feel like sitting in italian restaurant.
     setActivePage: function(page) {
         this.activePage = page;
         this.getActivePage().addClass("active");
         $("#statusDiv").html("Page: " + $(page).attr("id"));
-
-
         // $("#application > .animation").css({
         //     "-webkit-transform": "translate3d(0," + pageHeight + "px,0)",
         //     "-webkit-transition": "-webkit-transform 600ms ease-in-out",
@@ -129,7 +93,6 @@ Vifi.PageManager = {
         //     "transition": "transform 600ms ease-in-out"
         // });
         $("body").scrollTo(page, 250);
-
         return true;
     },
     // Returns currently active page 
@@ -140,25 +103,18 @@ Vifi.PageManager = {
         return false;
     },
     focusFirst: function(ev) {
-
         if (this.setFocusByClass("active-item") === true) {
             this.getActivePage().find(".active-item").removeClass("active-item");
             return true;
-
         } else {
-
             if (this.setFocusByClass("tv-component-focused") === true) {
                 return true;
-            } else
-                return this.setFocusByClass("tv-component");
-
+            } else return this.setFocusByClass("tv-component");
         }
         return false;
     },
-
     setFocusById: function(id) {
         var element = goog.dom.getElement(id);
-
         if (undefined !== element) {
             return this.setFocus(element);
         }
@@ -166,29 +122,22 @@ Vifi.PageManager = {
     },
     setFocusByClass: function(el) {
         var page = goog.dom.getElement(this.getActivePage().attr("id"));
-
-
         if (undefined !== page) var focusElement = page.getElementsByClassName(el)[0];
         if (undefined !== focusElement) {
             return this.setFocus(focusElement);
         }
-
         return false;
     },
     setFocus: function(element) {
         // Following three lines find component that we want to put focus on.
         var el = tv.ui.getComponentByElement(element);
         if (undefined !== el) {
-
             el.tryFocus(true);
-
             this.focusedElement = el;
             return true;
         }
-
         return false;
     },
-
     /*
      * Navigate to a page
      * params:
@@ -197,27 +146,18 @@ Vifi.PageManager = {
      * fullredraw - set to true to decorate whole app again
      * cb - callback to run after to
      */
-
     switchToPage: function(page, redraw, fullredraw, cb) {
-
         if (page != "") var pageid = '#' + page + "Page";
         else return false;
         if (this.changing) return false;
         var el = "#application";
-
         if (this.needsredraw) redraw = true;
-
         this.callback = function() {
             //    $log("doing callback");
-
             this.redraw(pageid, redraw, fullredraw);
-
             if (cb) cb();
         }.bind(this);
-
-
         this.changing = true;
-
         Vifi.Event.trigger("page:beforepagechange", pageid);
     },
     switchToPrevious: function(cb) {
@@ -225,31 +165,22 @@ Vifi.PageManager = {
             var pageName = this.lastActivePage.replace("Page", "").replace("#", "");
             this.switchToPage(pageName, true, false);
         }
-
     },
-
     onBeforePageChange: function(page) {
-
-
         this.getActivePage().removeClass("active");
         this.lastActivePage = this.activePage;
-
         Vifi.Event.trigger("page:onpagechange", page);
     },
     onPageChange: function(page) {
-
         this.setActivePage(page);
         Vifi.Event.trigger("page:afterpagechange", page);
     },
-
     onAfterPageChange: function(page) {
         if (this.callback) this.callback();
         this.callback = false;
         this.changing = false;
     },
     redraw: function(el, redraw, fullredraw) {
-
-
         if (!this.drawing) {
             this.drawing = true;
             var str = "";
@@ -260,42 +191,27 @@ Vifi.PageManager = {
             }
             var page = "#application";
             if (str != "") page = str;
-
             var appComponent = this.appComponent;
             if (fullredraw) page = "#application";
-
             if (fullredraw) {
                 //$log("Full redraw for " + page);
                 tv.ui.decorate(document.body);
                 var appElement = tv.ui.getComponentByElement(goog.dom.getElement(page.substr(1)));
-                if (undefined != appElement)
-                    tv.ui.getComponentByElement(goog.dom.getElement(page.substr(1))).removeChildren();
+                if (undefined != appElement) tv.ui.getComponentByElement(goog.dom.getElement(page.substr(1))).removeChildren();
                 tv.ui.decorateChildren(goog.dom.getElement(page.substr(1)), this.decorateHandler.getHandler(), appComponent);
                 tv.ui.decorate(goog.dom.getElement(page.substr(1)));
-
             }
-
             if (redraw) {
                 // $log("Redrawing " + page);
                 tv.ui.decorateChildren(goog.dom.getElement(page.substr(1)), this.decorateHandler.getHandler(), appComponent);
             }
-
-
             this.focusFirst();
-
-
-
             this.drawing = false;
         }
         return this;
-
     },
-
-
     // Setup initial handlers for the keyboard navigation
     setHandlers: function() {
-
-
         var _this = this;
         // Film view buttons
         Vifi.PageManager.decorateHandler.addClassHandler('movie-button', function(component) {
@@ -321,8 +237,6 @@ Vifi.PageManager = {
         Vifi.PageManager.decorateHandler.addClassHandler('cleartext', function(component) {
             component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, _this.handleClearEvent);
         });
-
-
         Vifi.PageManager.decorateHandler.addIdHandler("search-options-bar", function(button) {
             button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, _this.handleBrowserOptionKeys, false, _this);
         });
@@ -365,9 +279,7 @@ Vifi.PageManager = {
             event.stopPropagation();
         }
     },
-
     // Handle blocking left arrow
-
     handleBorderKeyLeft: function(event) {
         event.preventDefault();
         var keyCode = event.keyCode;
@@ -399,7 +311,6 @@ Vifi.PageManager = {
             Vifi.Event.trigger("page:change", "browser");
             event.stopPropagation();
         }
-
         if (keyCode == 38 /*Up*/ ) {
             Vifi.Event.trigger("page:change", "home");
             event.stopPropagation();
@@ -407,33 +318,22 @@ Vifi.PageManager = {
     },
     // Handle pushing action-buttons
     onActionEvent: function(event) {
-
         event.preventDefault();
         var keyCode = event.keyCode;
         if (keyCode == 13 /*Enter*/ ) {
-
             var item = event.target.element_;
             var link = item.firstChild;
-
             $(link).trigger("click");
             event.stopPropagation();
-
         }
-
     },
-
     onClearSearchEvent: function(event) {
-
         if (event.keyCode == 13 /*Enter*/ ) {
             $("#browserPage input[type=text]").val("");
             $("#browserPage .first").click();
         }
         event.preventDefault();
-
     },
-
-
-
     /** Handle buttons on the onscreen keyboard  */
     handleKeyboardEvent: function(event) {
         var keyCode = event.keyCode;
@@ -442,7 +342,7 @@ Vifi.PageManager = {
             var text = event.target.element_.outerText;
             if (text == "space") text = " ";
             $("#q").val(q + text);
-            app.onSearchFieldChange(event);
+            app.browser.onSearchFieldChange(event);
         }
     },
     /** Handle clearing the search */
@@ -450,7 +350,7 @@ Vifi.PageManager = {
         var keyCode = event.keyCode;
         if (keyCode == 13 /*Enter*/ ) {
             $("#q").val("");
-            app.onSearchFieldChange(event);
+            app.browser.onSearchFieldChange(event);
         }
     },
     /** Handle browser topbar buttons */
@@ -461,13 +361,11 @@ Vifi.PageManager = {
             if ($("#moviePage:visible").size() > 0) Vifi.Event.trigger("page:change", "movie");
             else Vifi.Event.trigger("page:change", "home");
             event.stopPropagation();
-
         }
         if (keyCode == 40 /*Down*/ ) {
             var el = tv.ui.getComponentByElement(goog.dom.getElement("search-options-bar"));
             el.tryFocus(true);
             event.stopPropagation();
-
         }
     },
     /** Handle browser optionbar buttons */
@@ -478,25 +376,20 @@ Vifi.PageManager = {
             var el = tv.ui.getComponentByElement(goog.dom.getElement("film-results"));
             if (undefined !== el) {
                 var jee = el.getElement().getElementsByClassName("tv-container-selected-child")[0];
-
                 if (jee) tv.ui.getComponentByElement(jee).tryFocus();
                 else {
-
                     el.removeChildren();
                     tv.ui.decorateChildren(el.getElement(), function(component) {
                         goog.events.listen(component, tv.ui.Component.EventType.KEY, this.handleMovieEvent);
                     }.bind(this), el);
-
                     el.tryFocus();
                 }
             }
             event.stopPropagation();
         }
         if (keyCode == 38 /*Up*/ ) {
-
             this.setFocus(goog.dom.getElement("searchbar"));
             event.stopPropagation();
-
         }
         return false;
     },
@@ -513,7 +406,6 @@ Vifi.PageManager = {
         var category = element.attr("data-category");
         if (undefined != category) Vifi.Event.trigger("button:" + category, val, this);
         if (undefined != type && type == "radio") {
-
             var butvalue = element.attr("data-value");
             element.parent().find(".tv-toggle-button").each(function() {
                 $(this).addClass("reset-toggle");
@@ -522,12 +414,9 @@ Vifi.PageManager = {
             $(resetbuttons).each(function() {
                 var btn = tv.ui.getComponentByElement(this);
                 var value = $(this).attr("data-value");
-
                 if (value == butvalue) btn.setOn(true);
                 else btn.setOn(false);
             });
-
-
         }
         // Reset selections if user pushed reset button
         if (val == "reset" || type == "radio") {
@@ -551,16 +440,13 @@ Vifi.PageManager = {
             var resetbutton = goog.dom.getElementByClass("reset-toggle");
             var tvbutton = tv.ui.getComponentByElement(resetbutton);
             if (tvbutton != false && tvbutton != "undefined") {
-
                 element.parent().find(".tv-toggle-button").each(function() {
                     $(this).addClass("reset-toggle");
                 });
-
                 tvbutton.setOn(reset);
                 $("#id_" + coll + " option:first").attr("selected", false);
             }
         }
-
         $(".reset-toggle").removeClass("reset-toggle");
         if (button.isOn() == true) selected = true;
         if (val != undefined && coll != undefined) {
@@ -574,31 +460,22 @@ Vifi.PageManager = {
                 }
             });
         }
-
-        app.onSearchFieldChange(event);
+        app.browser.onSearchFieldChange(event);
     },
-
     /* Handle focusing on the frontpage */
     handleFeaturedFocus: function(event) {
-
         var item = event.target.element_;
         var link = item.firstChild;
         $(link).trigger("showdetails");
-
     },
     /* Handle clicking on film at homepage */
     handleFeaturedKey: function(event) {
         var keyCode = event.keyCode;
         event.preventDefault();
         var item = event.target.element_;
-
-
-
         if (keyCode == 13 /*Enter*/ ) {
             var link = item.firstChild;
             $(link).trigger("click");
-
-
         }
         if (keyCode == 40 /*Down*/ ) {
             var page = "browser";
@@ -608,16 +485,12 @@ Vifi.PageManager = {
                 this.setFocus("filter-toolbar");
             }
             Vifi.Event.trigger("page:change", page);
-
             event.stopPropagation();
-
         }
         if (keyCode == 38 /*Up*/ ) {
             Vifi.Event.trigger("page:change", "account");
             event.stopPropagation();
-
         }
-
         return false;
     },
     /* Handle clicking on film at browser */
@@ -627,7 +500,6 @@ Vifi.PageManager = {
             var item = event.target.element_;
             var link = item.firstChild;
             $(item).addClass("active-item");
-
             $(link).trigger("click");
             event.stopPropagation();
         }
@@ -635,30 +507,19 @@ Vifi.PageManager = {
             var el = tv.ui.getComponentByElement(goog.dom.getElement("search-options-bar"));
             el.tryFocus(true);
             event.stopPropagation();
-
         }
         if (keyCode == 39 /*Right */ ) {
             var item = event.target;
             app.trigger("browser:pagination", item);
         }
-
         if (keyCode == 40 /*Down*/ ) {
             event.stopPropagation();
         }
-
         return false;
     }
-
 }
-
-
 _.extend(Vifi.PageManager, Backbone.Events);
 Vifi.Engine.addModule("PageManager", Vifi.PageManager);
-
-
-
-
-
 Vifi.Utils.ApiModel = Backbone.Model.extend({
     defaults: {
         "id": '',
@@ -666,12 +527,9 @@ Vifi.Utils.ApiModel = Backbone.Model.extend({
     },
     path: "",
     params: false,
-
-
     url: function() {
         return Vifi.Settings.api_url + this.path + '?' + this.params;
     },
-
     // override backbone synch to force a jsonp call
     sync: function(method, model, options) {
         // Default JSON-request options.
@@ -688,15 +546,9 @@ Vifi.Utils.ApiModel = Backbone.Model.extend({
             jsonp: "jsoncallback", // the api requires the jsonp callback name to be this exact name
             processData: true
         }, options);
-
         // Make the request.
         return $.ajax(params);
     },
-
-
-
-
-
 });
 //A utility model to track state using the hash and also generate a url
 Vifi.Utils.State = Backbone.Model.extend({
@@ -735,14 +587,9 @@ Vifi.Utils.State = Backbone.Model.extend({
         this.set(dict);
     }
 });
-
 /******************/
 /* Film Models & Collections */
 /******************************/
-
-
-
-
 Vifi.Films.FilmModel = Backbone.Model.extend({});
 Vifi.Films.FilmDetailView = Backbone.View.extend({
     tagName: 'div',
@@ -758,22 +605,17 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
     },
     playFilm: function(event) {
         event.preventDefault();
-
         app.player.trigger("player:load", this.model.get("id"));
         event.stopPropagation();
     },
-
     playTrailer: function(event) {
         event.preventDefault();
-
         var trailerView = new Vifi.Films.TrailerView({
             model: this.model
         });
         trailerView.play();
-
         $("#trailer").html(trailerView.el);
         app.pagemanager.redraw("#moviePage", true);
-
         var el = tv.ui.getComponentByElement(goog.dom.getElement("trailer-options-selection"));
         tv.ui.decorateChildren(el.getElement(), function(component) {
             goog.events.listen(component, tv.ui.Component.EventType.KEY, function(event) {
@@ -781,37 +623,29 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
                 event.preventDefault();
                 if (keyCode == 13 /*Enter*/ ) {
                     var item = event.target.element_;
-
                     $(item).trigger("click");
-
                 }
                 if (keyCode == 38 /*Up*/ || keyCode == 40) {
                     event.stopPropagation();
                 }
-
             })
         }, el);
         el.tryFocus();
-
     },
     showFilm: function(id) {
-        var film = app.collection.get(id);
-
+        var film = app.browser.collection.get(id);
         if (undefined == film) {
-            var film = app.options.featured.get(id);
+            var film = app.browser.options.featured.get(id);
         }
         if (undefined !== film) {
             router.navigate('film/' + id);
             this.model = film;
             this.render().showPage();
-
         }
-
     },
     showPage: function() {
         if (this.$el.is(":hidden") === true && $("#browserPage").hasClass("active")) {
             var height = $(window).height() + "px";
-
             $("#moviePage").css({
                 "margin-top": "-" + height,
                 "height": "0px",
@@ -824,18 +658,12 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
                 "display": "block"
             }, 500, function() {
                 $("#moviePage").removeAttr("style");
-
                 Vifi.Event.trigger("page:change", "movie");
-
             }).show();
-
         } else {
             $("#moviePage").show();
             Vifi.Event.trigger("page:change", "movie");
-
         }
-
-
     },
     render: function() {
         this.$el.html(ich.filmDetailsTemplate(this.model.toJSON()));
@@ -849,7 +677,6 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
             this.$("#button-trailer").addClass("no-trailer").html("Treilerit pole");
         }
         app.pagemanager.redraw("#moviePage", true);
-
         return this;
     }
 });
@@ -876,7 +703,6 @@ Vifi.Films.FilmView = Backbone.View.extend({
         var model = this.model;
         Vifi.Event.trigger("film:show", model.id);
         event.stopPropagation();
-
     },
     onClickRemoveQueue: function(event) {
         event.preventDefault();
@@ -947,26 +773,20 @@ Vifi.Films.FeaturedFilmView = Vifi.Films.FilmView.extend({
         var view = this;
         var model = this.model;
         Vifi.Event.trigger("film:show", model.id);
-
     },
     updateDetails: function(ev, model) {
         $("#homePage .active-item").removeClass("active-item");
-
         ev.preventDefault();
         var model = this;
         Vifi.Event.trigger("featured:focus", this.model);
         this.$el.addClass("active-item");
-
         $("#home-background div.visible").removeClass("visible");
-
         $("#home-background div#film-" + this.model.get("film").id).addClass("visible");
-
     },
     render: function() {
         var model = this.model;
         this.$el.addClass("tv-component tv-button movie featured-movie");
         this.$el.html(ich.featuredFilmTemplate(model.toJSON()));
-
         return this;
     }
 });
@@ -976,10 +796,10 @@ Vifi.Films.GenreCollection = Backbone.Collection.extend({
     initialize: function(models, options) {},
     update: function() {
         this.url = this.baseUrl + '&api_key=' + Vifi.Settings.api_key + '&jsoncallback=?';
-        if (!app.collection.state.get('genre')) {
+        if (!app.browser.collection.state.get('genre')) {
             this.reset();
         } else {
-            this.url = this.baseUrl + app.collection.state.get('genre');
+            this.url = this.baseUrl + app.browser.collection.state.get('genre');
             this.fetch();
         }
     },
@@ -991,10 +811,10 @@ Vifi.Films.SubGenreCollection = Backbone.Collection.extend({
     baseUrl: '#',
     initialize: function(models, options) {},
     update: function() {
-        if (!app.collection.state.get('genre')) {
+        if (!app.browser.collection.state.get('genre')) {
             this.reset();
         } else {
-            this.url = this.baseUrl + app.collection.state.get('genre');
+            this.url = this.baseUrl + app.browser.collection.state.get('genre');
             this.fetch();
         }
     },
@@ -1013,12 +833,10 @@ Vifi.Films.FeaturedFilmCollectionView = Backbone.View.extend({
         this.models = models;
         this.render();
         Vifi.Event.trigger("app:ready");
-
     },
     render: function() {
         this.renderFilmViews();
-        app.pagemanager.redraw("#homePage", true);
-
+        Vifi.PageManager.redraw("#homePage", true);
         return this;
     },
     renderFilmViews: function() {
@@ -1027,57 +845,22 @@ Vifi.Films.FeaturedFilmCollectionView = Backbone.View.extend({
         var bg = this.bg;
         this.$el.html('');
         this.models.each(function(model) {
-
             fragment.appendChild(this.addChildView(model));
             var img = $("<div>").css("background", "url('" + model.get("film").backdrop_url + "')").attr("id", "film-" + model.get("film").id).addClass("featured_film_background");
             bg.push(img[0]);
         }, this);
-
-
         $.each(bg, function() {
             bgfragment.appendChild(this);
         });
-
         $("#home-background").html(bgfragment);
         this.$el.append(fragment);
-
-
     },
     addChildView: function(model) {
-
         var filmView = new Vifi.Films.FeaturedFilmView({
             model: model,
         });
-
         return filmView.el;
     }
-});
-
-Vifi.Pages.Browser = Vifi.PageView.extend({
-    el: $("#browserPage"),
-    model: new Vifi.Films.GenreCollection(),
-
-    onMovieEvent: function(ev) {
-        return false;
-    },
-    initialize: function() {
-        this.on("key_2", this.onMovieEvent);
-
-        this.context = {
-            "genres": this.model.toJSON()
-        };
-
-        this.render();
-    },
-
-    render: function() {
-        this.$el.html(ich.browserPageTemplate(this.context));
-        app.pagemanager.redraw("#browserPage", true);
-
-        return this;
-
-    }
-
 });
 
 Vifi.Films.TrailerView = Backbone.View.extend({
@@ -1085,18 +868,13 @@ Vifi.Films.TrailerView = Backbone.View.extend({
     events: {
         'click #closeTrailer': 'close',
         'click #watchFilm': 'playFilm'
-
-
     },
-
     playFilm: function(event) {
         this.close();
-
         event.preventDefault();
         app.player.trigger("player:load", this.model.get("id"));
         event.stopPropagation();
     },
-
     initialize: function() {
         Vifi.Event.on("trailer:init", this.play, this);
         this.template = _.template($("#trailerTemplate").html());
@@ -1110,14 +888,11 @@ Vifi.Films.TrailerView = Backbone.View.extend({
     },
     play: function() {
         var film = this.model.get("film");
-
         if (film.youtube_id) {
             this.render();
         }
     },
-
     close: function() {
-
         this.fadeOut();
         this.$el.empty();
         Vifi.Event.trigger("page:focus");
@@ -1131,11 +906,9 @@ Vifi.Films.FeaturedFilmDetailView = Backbone.View.extend({
     tagName: 'div',
     el: $("#featured-description"),
     events: {},
-
     bgimages: [],
     initialize: function() {
         Vifi.Event.on("featured:focus", this.setBackground, this);
-
         this.template = _.template($("#featuredFilmDetailsTemplate").html());
     },
     setBackground: function(model) {
@@ -1172,7 +945,6 @@ Vifi.Films.BaseAppView = Backbone.View.extend({
         this.trigger('filmRemovedFromQueue', model);
     },
     triggerFeaturedFilmsLoaded: function(model) {
-
         this.trigger('featuredFilmsLoaded', model);
     }
 });
