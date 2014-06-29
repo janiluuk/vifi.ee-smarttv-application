@@ -10,7 +10,7 @@ Vifi.Player.Subtitles = Backbone.Model.extend({
     ival: false,
     enabled: true,
     initialize: function() {
-        _.bindAll(this, 'load', 'start', 'playSubtitles', 'strip',  'disable', 'toSeconds', 'loadLanguage');
+        _.bindAll(this, 'load', 'start', 'playSubtitles', 'strip', 'disable', 'toSeconds', 'loadLanguage');
         Vifi.Event.on("button:player-subtitles", this.handleSubtitleSelection, this);
     },
     toSeconds: function(t) {
@@ -33,7 +33,11 @@ Vifi.Player.Subtitles = Backbone.Model.extend({
     disable: function() {
         this.subtitleFile = "";
         this.subtitledata = {};
+        this.language = '';
         this.enabled = false;
+        this.trigger("subtitles:disable");
+        $log("Disabling subtitles");
+
     },
     playSubtitles: function(subtitleElement) {
         var videoId = this.videoElement;
@@ -93,7 +97,11 @@ Vifi.Player.Subtitles = Backbone.Model.extend({
         this.enabled = true;
         var subtitleElement = document.getElementById(this.subtitleElement);
         var videoId = this.videoElement;
-        if (!videoId || !subtitleElement) return;
+        if (!videoId || !subtitleElement) {
+            $log("Aborting subtitle loading");
+            return;
+
+        }
         var srtUrl = this.subtitleFile;
         var that = this;
         if (srtUrl) {
@@ -114,18 +122,22 @@ Vifi.Player.Subtitles = Backbone.Model.extend({
             that.subtitles[code] = this;
             i++;
         });
-        if (!nodefault) this.loadLanguage(this.defaultCode);
+
         $log("Downloaded " + i + " subtitles");
+        if (!nodefault) this.loadLanguage(this.defaultCode);
     },
     loadLanguage: function(code) {
         if (this.subtitles && this.subtitles[code]) {
             this.subtitleFile = this.srtUrl + this.subtitles[code].file;
-            $log("Loaded  " + code + " language from " + this.subtitleFile);
+            $log("Loaded " + code + " language from " + this.subtitleFile);
             if (this.ival) clearInterval(this.ival);
             this.start();
-        } else {
-            $log("Disabling subtitles");
+            this.language = code;
+            this.trigger("subtitles:load", code);
+
+            return true;
         }
+        return false;
     }
 });
 _.extend(Vifi.Player.Subtitles, Backbone.Events);

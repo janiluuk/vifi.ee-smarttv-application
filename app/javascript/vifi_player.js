@@ -41,15 +41,15 @@ Vifi.Player.FilmContent = Vifi.Utils.ApiModel.extend({
     onLoadSubtitles: function(event) {
         if (this.get("subtitles").length > 0)
             this.trigger("subtitles:ready", this.get("subtitles"));
-        $log("Loaded new subtitles");
-
     },
 
 
 
     refresh: function() {
-        this.path = "content/" + this.get("id");
-        $log("Initializing new content with " + this.path);
+        if (this.get("id") > 0) {
+            this.path = "content/" + this.get("id");
+            $log("Initializing new content with " + this.path);
+        }
     }
 });
 
@@ -57,6 +57,7 @@ Vifi.Player.FilmContent = Vifi.Utils.ApiModel.extend({
 
 Vifi.Player.PlayerView = Backbone.View.extend({
     tagName: 'div',
+    playerTag: 'player',
 
     el: $("#" + Vifi.Settings.playerPageId),
     hideVideoNavigationTimeout: false,
@@ -69,14 +70,49 @@ Vifi.Player.PlayerView = Backbone.View.extend({
         _.bindAll(this, 'render', 'onPlayerPageExit', 'onPlayerPageEnter', 'closeDetails', 'showDetails', 'showNavigation', 'hideNavigation', "clearAllTimeouts", "touchVideoNavigationTimeout", "onBufferingStart");
         Vifi.MediaPlayer.on("mediaplayer:bufferingstart", this.onBufferingStart, this);
         Vifi.MediaPlayer.on("mediaplayer:bufferingend", this.onBufferingStop, this);
-
         this.on("player:show", this.onPlayerPageEnter, this);
         this.on("player:exit", this.onPlayerPageExit, this);
         this.render();
+        this.listenTo(this.model, "content:load", this.onContentLoad);
 
     },
 
+  
+    onContentLoad: function() {
 
+        
+        this.renderPlayerInfo();
+        this.renderPlayerControls();
+
+    },
+    renderPlayerControls: function() {
+
+        this.$("#player-options").html(ich.playerControlsTemplate(this.model.content.toJSON()));
+        $("#playerPage .tab-content").each(function() {
+            $(this).find("div:first").addClass("no-left");
+            $(this).find("div:last").addClass("no-right");
+        });
+        Vifi.PageManager.decorateHandler.addClassHandler('action-button', function(component) {
+            component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, Vifi.PageManager.onActionEvent, false, Vifi.PageManager)
+        });
+        tv.ui.decorateChildren(goog.dom.getElement("playerPage"), Vifi.PageManager.decorateHandler.getHandler());
+        var focus = tv.ui.getComponentByElement(goog.dom.getElement("player-options"));
+        if (focus) focus.tryFocus();
+        this.setSubtitleSelection();
+
+    },
+
+    setSubtitleSelection: function() {
+
+        var code = this.model.subtitles.language;
+        this.$("#playerSubtitles div[data-value="+code+"]").click();
+
+    },
+    renderPlayerInfo: function() {
+
+        this.$("#player-info").html(ich.playerInfoTemplate(this.model.content.toJSON()));
+
+    },
     onBufferingStart: function() {
 
         this.$("#player-loading").css("visibility", "visible");
@@ -91,12 +127,9 @@ Vifi.Player.PlayerView = Backbone.View.extend({
     },
 
     render: function() {
-        this.$el.html(ich.playerTemplate(app.player.content.toJSON()));
-        $("#playerPage .tab-content").each(function() {
-            $(this).find("div:first").addClass("no-left");
-            $(this).find("div:last").addClass("no-right");
-        });
-
+       
+        this.$el.html(ich.playerTemplate(this.model.content.toJSON()));
+        
         return this;
 
     },
@@ -136,19 +169,18 @@ Vifi.Player.PlayerView = Backbone.View.extend({
     },
 
     onPlayerPageEnter: function() {
+        this.render();
 
         $(".container:visible:not(#playerPage)").addClass("container-hidden").fadeOut();
         this.$el.fadeIn();
         this.showNavigation();
         $("body").scrollTo("#playerPage");
+        this.onContentLoad();
 
         setTimeout(function() {
-            Vifi.PageManager.decorateHandler.addClassHandler('action-button', function(component) {
-                component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, app.pagemanager.onActionEvent, false, app.pagemanager)
-            });
-            tv.ui.decorateChildren(goog.dom.getElement("playerPage"), app.pagemanager.decorateHandler.getHandler());
-            var focus = tv.ui.getComponentByElement(goog.dom.getElement("player-options")).tryFocus();
+           
             Vifi.MediaPlayer.play();
+
         }, 1200);
 
 
@@ -156,12 +188,12 @@ Vifi.Player.PlayerView = Backbone.View.extend({
     onPlayerPageExit: function() {
 
         Vifi.MediaPlayer.stop();
+        tv.ui.getComponentByElement(goog.dom.getElement("playerPage")).removeChildren();
 
         $("#playerPage").empty().fadeOut();
 
         $(".container-hidden").fadeIn();
         $(".container-hidden").removeClass("container-hidden");
-        tv.ui.getComponentByElement(goog.dom.getElement("playerPage")).removeChildren();
         tv.ui.decorate(document.body);
         tv.ui.decorateChildren(goog.dom.getElement("application"), app.pagemanager.decorateHandler.getHandler(), tv.ui.getComponentByElement(goog.dom.getElement("application")));
         $("#film-results .tv-container-selected-child").removeClass("tv-container-selected-child");
@@ -202,28 +234,26 @@ Vifi.Player.Player = Backbone.Model.extend({
         }
 
         this.subtitles = new Vifi.Player.Subtitles();
-
+        this.content = new Vifi.Player.FilmContent();
         this.on('player:load', this.onLoadFilm, this);
         this.on('subtitles:ready', this.onSubtitlesReady, this);
-
     },
 
     onSubtitlesReady: function(subtitles) {
 
-        app.player.subtitles.load(subtitles);
+
+        this.subtitles.load(subtitles);
 
     },
+  
     onContentReady: function(content) {
 
 
-        this.set("endingtime", app.player.getEndingTime(this.get("running_time")));
-        this.set("genres_text", app.player.movie.genres_text);
 
-        app.player.playerPage = new Vifi.Player.PlayerView({
-            model: this,
-        });
+        this.content.set("endingtime", this.getEndingTime(this.content.get("running_time")));
+        this.content.set("genres_text", this.movie.genres_text);
 
-        var content = this.get("videos");
+        var content = this.content.get("videos");
         Vifi.MediaPlayer.setContent(content);
 
         Vifi.KeyHandler.unbind("keyhandler:onReturn");
@@ -231,10 +261,16 @@ Vifi.Player.Player = Backbone.Model.extend({
 
         app.player.playerPage.trigger("player:show");
     },
-
-    getEndingTime: function(duration) {
+    /*
+     * Calculate ending time for the film.
+     * @params duration - total length of film in seconds
+     * @params offset - current position of the film which will be reducted
+     */
+    getEndingTime: function(duration, offset) {
+        if (!offset) offset = 0;
         if (!duration || duration == "") return false;
         var time = new Date();
+        duration = duration - offset;
         var endingtime = new Date(time.getTime() + duration * 60000);
         var endingtimestring = endingtime.getHours();
         var string = ":";
@@ -262,8 +298,8 @@ Vifi.Player.Player = Backbone.Model.extend({
 
             });
             content.fetch();
-            content.bind("content:ready", this.onContentReady);
-            content.bind("subtitles:ready", this.onSubtitlesReady);
+            content.bind("content:ready", this.onContentReady, this);
+            content.bind("subtitles:ready", this.onSubtitlesReady, this);
 
 
             this.content = content;
@@ -275,20 +311,28 @@ Vifi.Player.Player = Backbone.Model.extend({
 
     },
 
-    getVideo: function(profile_name) {
-        var url = false;
-        var content = this.get("content");
+    /* 
+     * Get video file information from the content
+     * @params profile = id of the profile, defaults to the first available
+     *
+     */
 
+    getVideo: function(profile) {
+
+        var content = this.content;
+        var videos = false;
         if (content) {
-            var videos = content.get("videos")[0];
-            if (!profile_name) {
-
-                url = videos.mp4;
-                this.url = url;
+            if (profile) {
+                videos = _.find(content.get("videos"), function(video) {
+                    return video.code == profile;
+                });
+            } else {
+                videos = content.get("videos")[0];
             }
+
         }
 
-        return url;
+        return videos;
     },
 
     verifyContent: function() {

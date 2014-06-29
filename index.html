@@ -195,22 +195,63 @@
     <script type="text/html" id="playerTemplate">
                     <div id="player-loading" style="visibility:hidden"></div>
                     <div id="player-info">
-                            <div id="player-info-title">{{ title }}</div>
-                            
-                            <div id="player-info-additional">
-                                    <span>{{ year }}</span> - <span>{{ genres_text }}</span>
-                            </div>
-                            <div id="player-info-timer">
-                                    <p class="player-info-timer-heading">Movie ends at:</p>
-                                    <p class="player-info-timer-time">{{ endingtime }}</p>
-                            </div>
+                           
                     </div>
                     <div id="player">
                     </div>
                     <div id="subtitles">
                     </div>
-                    
-                    <div id="player-options" class="tv-tab-container tv-container-vertical">
+                     <div id="player-options" class="tv-tab-container tv-container-vertical"></div>
+
+                   
+            
+    </script>
+    <script type="text/html" id="playerSubtitlesTemplate">
+                            
+                            <div data-value="{{ code }}" class="nav-item tv-toggle-button tv-component">
+                                                <span class="first">{{ name }}</span>
+                            </div>
+    </script>
+    <script type="text/template" id="toolbarTemplate">
+            <div id="company">
+            <div class="logo"></div>
+    </div>
+    <div id="user">
+        <div class="avatar" style="background-image: url('app/stylesheets/img/anonymous_avatar.png')"></div>
+        <ul class="usercontrol">
+               
+                <li id="username-text"><%- email %></li>
+                <li id="account-notification">          
+                </li>
+              
+        </ul>
+    </div>
+    </script>
+    <script type="text/template" id="notificationTemplate">
+        <table id="notification-table">
+                <tr>
+                        <td class="notification-icon">!</td>
+                        <td class="notification-message"><%- notificationText %></td>
+                </tr>
+        </table>
+    </script>
+    <script type="text/template" id="accountTemplate">
+                        <div class="account_info">
+                                            <img id="avatar_img" src="app/stylesheets/img/anonymous_avatar.png" />
+                        </div>
+                        <div class="account_description">
+                                <p class="username" id="account_username"><%- email %></p>
+                                <p class="status" id="account_status">Please pair your acount with this device</p>
+                                <div class="buttonsrow tv-container-horizontal no-up">
+                                            <div id="pairButton" class="tv-button tv-component action-button account-button"><div id="pair" class="width20 float_left button signin">Pair account</div>
+                                        </div>
+                                    <div id="reloadButton" class="tv-button tv-component action-button account-button"><div id="reload" class="width20 float_left button reload">Reload</div>
+                                </div>
+                        </div>
+                    </div>
+</script>
+<script type="text/html" id="playerControlsTemplate">
+ 
                             <div id="player-options-selection" class="tv-tab-container-bar tv-container-horizontal tv-container tab-bar domtabs row">
                                     <div class="tv-component tab nav-item normal-item no-up">
                                         <a href="#c1">Controls</a>
@@ -283,52 +324,17 @@
                                         </div>
                             
                             </div>
-                </div>
-            
-    </script>
-    <script type="text/html" id="playerSubtitlesTemplate">
+</script>
+<script type="text/html" id="playerInfoTemplate">
+ <div id="player-info-title">{{ title }}</div>
                             
-                            <div data-value="{{ code }}" class="nav-item tv-toggle-button tv-component">
-                                                <span class="first">{{ name }}</span>
+                            <div id="player-info-additional">
+                                    <span>{{ year }}</span> - <span>{{ genres_text }}</span>
                             </div>
-    </script>
-    <script type="text/template" id="toolbarTemplate">
-            <div id="company">
-            <div class="logo"></div>
-    </div>
-    <div id="user">
-        <div class="avatar" style="background-image: url('app/stylesheets/img/anonymous_avatar.png')"></div>
-        <ul class="usercontrol">
-               
-                <li id="username-text"><%- email %></li>
-                <li id="account-notification">          
-                </li>
-              
-        </ul>
-    </div>
-    </script>
-    <script type="text/template" id="notificationTemplate">
-        <table id="notification-table">
-                <tr>
-                        <td class="notification-icon">!</td>
-                        <td class="notification-message"><%- notificationText %></td>
-                </tr>
-        </table>
-    </script>
-    <script type="text/template" id="accountTemplate">
-                        <div class="account_info">
-                                            <img id="avatar_img" src="app/stylesheets/img/anonymous_avatar.png" />
-                        </div>
-                        <div class="account_description">
-                                <p class="username" id="account_username"><%- email %></p>
-                                <p class="status" id="account_status">Please pair your acount with this device</p>
-                                <div class="buttonsrow tv-container-horizontal no-up">
-                                            <div id="pairButton" class="tv-button tv-component action-button account-button"><div id="pair" class="width20 float_left button signin">Pair account</div>
-                                        </div>
-                                    <div id="reloadButton" class="tv-button tv-component action-button account-button"><div id="reload" class="width20 float_left button reload">Reload</div>
-                                </div>
-                        </div>
-                    </div>
+                            <div id="player-info-timer">
+                                    <p class="player-info-timer-heading">Movie ends at:</p>
+                                    <p class="player-info-timer-time">{{ endingtime }}</p>
+                            </div>
 </script>
 <script type="text/template" id="trailerTemplate">
 <div style="position: absolute; z-index: 15; width: 100%; height: 100%">

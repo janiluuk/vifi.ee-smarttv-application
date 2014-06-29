@@ -32,7 +32,7 @@ Vifi.PageManager = {
         Vifi.Event.on('app:ready', this.start, this);
         Vifi.Event.on('page:back', this.switchToPrevious, this);
         this.decorateHandler = new tv.ui.DecorateHandler;
-        _.bindAll(this, 'redraw', 'focusFirst', 'setFocus', 'setFocusByClass', 'switchToPage', 'setHandlers');
+        _.bindAll(this, 'redraw', 'enableNavigation','disableNavigation', 'focusFirst', 'setFocus', 'setFocusByClass', 'switchToPage', 'setHandlers');
         this.setHandlers();
         if (!this.appComponent) {
             this.appElement = goog.dom.getElement("application");
@@ -51,6 +51,8 @@ Vifi.PageManager = {
     },
     disableNavigation: function() {
         tv.ui.getComponentByElement(goog.dom.getElement("application")).removeChildren();
+        tv.ui.decorate(goog.dom.getElement("application"))
+
     },
     moveUp: function() {
         var active = this.getActivePage().prevAll("div:visible:first");
@@ -699,7 +701,6 @@ Vifi.Films.FilmView = Backbone.View.extend({
     },
     onClickShowDetails: function(event) {
         event.preventDefault();
-        var view = this;
         var model = this.model;
         Vifi.Event.trigger("film:show", model.id);
         event.stopPropagation();

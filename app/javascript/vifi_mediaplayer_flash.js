@@ -21,7 +21,7 @@ Vifi.MediaPlayer = {
         this._active = false
     },
     getCurrentTime: function() {
-
+        if (typeof $f() == "undefined") return 0;
         return $f().getTime() * 1000;
     },
     _videoElement: null,

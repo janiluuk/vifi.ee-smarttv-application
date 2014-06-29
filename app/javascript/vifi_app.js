@@ -1,4 +1,3 @@
-
 $(function() {
 
     var AppView = Vifi.Films.BaseAppView.extend({
@@ -17,7 +16,9 @@ $(function() {
             this.player = new Vifi.Player.Player({
                 session: this.session
             });
-   
+            this.player.playerPage = new Vifi.Player.PlayerView({
+                model: this.player,
+            });
 
 
         }
@@ -171,10 +172,10 @@ $(function() {
         var featuredview = new Vifi.Films.FeaturedFilmDetailView();
         var homePage = new Vifi.Films.FeaturedFilmCollectionView(collection.featured());
         var browserPage = new Vifi.Pages.Browser({
-                model: genres,
-                collection: collection,
-                featured: collection.featured(),
-                genres:genres
+            model: genres,
+            collection: collection,
+            featured: collection.featured(),
+            genres: genres
         });
         // Bind keys
 
