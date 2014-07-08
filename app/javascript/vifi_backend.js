@@ -32,7 +32,7 @@ Vifi.PageManager = {
         Vifi.Event.on('app:ready', this.start, this);
         Vifi.Event.on('page:back', this.switchToPrevious, this);
         this.decorateHandler = new tv.ui.DecorateHandler;
-        _.bindAll(this, 'redraw', 'enableNavigation','disableNavigation', 'focusFirst', 'setFocus', 'setFocusByClass', 'switchToPage', 'setHandlers');
+        _.bindAll(this, 'redraw', 'enableNavigation', 'disableNavigation', 'focusFirst', 'setFocus', 'setFocusByClass', 'switchToPage', 'setHandlers');
         this.setHandlers();
         if (!this.appComponent) {
             this.appElement = goog.dom.getElement("application");
@@ -512,7 +512,8 @@ Vifi.PageManager = {
         }
         if (keyCode == 39 /*Right */ ) {
             var item = event.target;
-            app.trigger("browser:pagination", item);
+            app.browser.trigger("browser:pagination", item);
+
         }
         if (keyCode == 40 /*Down*/ ) {
             event.stopPropagation();
