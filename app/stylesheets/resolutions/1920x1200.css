@@ -1,0 +1,21 @@
+#player { 
+    width: 1920px;
+    height: 1080px;
+}
+
+#featured .tv-component.movie {
+display: inline-block;
+width: 23em;
+height: 34em;
+margin: 1em;
+
+}
+#featured .tv-component.movie.tv-component-focused {
+width: 24em !important;
+height: 35em !important;
+}
+
+#homePage #featured {
+bottom: 25em;
+
+}
