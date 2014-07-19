@@ -2,5 +2,20 @@
     width: 1920px;
     height: 1080px;
 }
+#featured .tv-component.movie {
+display: inline-block;
+width: 22em;
+height: 30em;
+margin: 1em;
 
+}
+#featured .tv-component.tv-button.movie.tv-component-focused {
+width: 24em !important;
+height: 32em !important;
+}
+
+#homePage #featured {
+bottom: 25em;
+
+}
 

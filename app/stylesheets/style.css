@@ -234,6 +234,7 @@ span.stars.r1 {
     text-shadow: 0 0 0.2em #36442C, 0 0 0.4em #63D116, 0 0 0.5em #B6FF83;
 }
 .secondary_domtabs .keyboard {
+
     padding: 4.2pt 0 0 1.5%;
     width: 105%;
 }
@@ -260,6 +261,7 @@ span.stars.r1 {
     position: relative;
     font-size:2.4em;
     display:inline-block;
+    z-index:10;
 }
 
 .key.first {
@@ -318,10 +320,13 @@ span.stars.r1 {
 #filter_toolbar #search-options-bar h2 {
     display:none;
 }
-
+.secondary_domtabs .tab-content.tv-component-focused {
+    z-index:15;
+}
 .secondary_domtabs .selection .nav-item.tv-component:hover, .secondary_domtabs .selection .nav-item.tv-component.tv-component-focused {
     background-color: #63D116;
     color: black;
+
     box-shadow: 0 0 0.1em rgb(11, 75, 11), 0 0 0.15em rgb(117, 211, 16), 0 0 0.2em rgb(109, 255, 63), 0 0 0.3em rgb(161, 255, 124);
 }
 .secondary_domtabs .selection .nav-item.tv-component.tv-toggle-button-on {

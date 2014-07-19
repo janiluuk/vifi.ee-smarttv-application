@@ -18,7 +18,6 @@ Vifi.PageManager = {
     drawing: false,
     activeItem: false,
     lastActivePage: false,
-    lastAnimation: 0,
     activePage: this.homePage,
     init: function() {
         Vifi.Event.on("page:beforepagechange", this.onBeforePageChange, this);
@@ -56,7 +55,7 @@ Vifi.PageManager = {
     },
     moveDown: function() {
         var active = this.getActivePage().nextAll("div:visible:first");
-        if (undefined != active && active != "") {
+        if (undefined != active && active != "" && active.length > 0) {
             var name = $(active).attr("id").replace("Page", "");
             Vifi.Event.trigger("page:change", name);
         }
@@ -206,6 +205,8 @@ Vifi.PageManager = {
         // Film view buttons
         Vifi.PageManager.decorateHandler.addClassHandler('action-button', function(component) {
             component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, _this.onActionEvent, false, _this)
+            component.getEventHandler().listen(component, tv.ui.Button.EventType.ACTION, _this.onActionEvent, false, _this)
+
         });
         // Film view buttons
         Vifi.PageManager.decorateHandler.addClassHandler('account-button', function(component) {
@@ -214,6 +215,7 @@ Vifi.PageManager = {
         // Toggle o
         Vifi.PageManager.decorateHandler.addClassHandler('tv-toggle-button', function(component) {
             component.getEventHandler().listen(component, tv.ui.Button.EventType.ACTION, _this.handleToggleEvent, false, _this);
+
         });
         // Keyboard
         Vifi.PageManager.decorateHandler.addClassHandler('key', function(component) {
@@ -304,9 +306,10 @@ Vifi.PageManager = {
     },
     // Handle pushing action-buttons
     onActionEvent: function(event) {
+
         event.preventDefault();
         var keyCode = event.keyCode;
-        if (keyCode == 13 /*Enter*/ ) {
+        if (event.type == tv.ui.Button.EventType.ACTION || keyCode == 13 /*Enter*/ ) {
             var item = event.target.element_;
             var link = item.firstChild;
             $(link).trigger("click");
@@ -314,7 +317,7 @@ Vifi.PageManager = {
         }
     },
     onClearSearchEvent: function(event) {
-        if (event.keyCode == 13 /*Enter*/ ) {
+        if (event.type == tv.ui.Button.EventType.ACTION || keyCode == 13 /*Enter*/ ) {
             $("#browserPage input[type=text]").val("");
             $("#browserPage .first").click();
         }
@@ -323,7 +326,7 @@ Vifi.PageManager = {
     /** Handle buttons on the onscreen keyboard  */
     handleKeyboardEvent: function(event) {
         var keyCode = event.keyCode;
-        if (keyCode == 13 /*Enter*/ ) {
+        if (event.type == tv.ui.Button.EventType.ACTION || keyCode == 13 /*Enter*/ ) {
             var q = $("#q").val();
             var text = event.target.element_.outerText;
             if (text == "space") text = " ";
@@ -478,25 +481,25 @@ Vifi.PageManager = {
     },
     /* Handle clicking on film at browser */
     handleMovieEvent: function(event) {
-        var keyCode = event.keyCode;
-        if (keyCode == 13 /*Enter*/ ) {
+
+        if (event.type == tv.ui.Button.EventType.ACTION || event.keyCode == 13 /*Enter*/ ) {
             var item = event.target.element_;
             var link = item.firstChild;
             $(item).addClass("active-item");
             $(link).trigger("click");
             event.stopPropagation();
         }
-        if (keyCode == 38 /*Up*/ ) {
+        if (event.keyCode == 38 /*Up*/ ) {
             var el = tv.ui.getComponentByElement(goog.dom.getElement("search-options-bar"));
             el.tryFocus(true);
             event.stopPropagation();
         }
-        if (keyCode == 39 /*Right */ ) {
+        if (event.keyCode == 39 /*Right */ ) {
             var item = event.target;
             app.browser.trigger("browser:pagination", item);
 
         }
-        if (keyCode == 40 /*Down*/ ) {
+        if (event.keyCode == 40 /*Down*/ ) {
             event.stopPropagation();
         }
         return false;

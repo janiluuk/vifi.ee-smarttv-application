@@ -98,7 +98,8 @@ if (!COMPILED) goog.included_ = {}, goog.dependencies_ = {
         }
     }
     var b = [],
-        c = {}, d = goog.dependencies_,
+        c = {},
+        d = goog.dependencies_,
         e;
     for (e in goog.included_) d.written[e] || a(e);
     for (e = 0; e < b.length; e++)
@@ -119,7 +120,7 @@ goog.typeOf = function(a) {
             if (c == "[object Array]" || typeof a.length == "number" && typeof a.splice != "undefined" && typeof a.propertyIsEnumerable != "undefined" && !a.propertyIsEnumerable("splice")) return "array";
             if (c == "[object Function]" || typeof a.call != "undefined" && typeof a.propertyIsEnumerable != "undefined" && !a.propertyIsEnumerable("call")) return "function"
         } else return "null";
-        else
+    else
     if (b ==
         "function" && typeof a.call == "undefined") return "object";
     return b
@@ -185,7 +186,8 @@ goog.cloneObject = function(a) {
     var b = goog.typeOf(a);
     if (b == "object" || b == "array") {
         if (a.clone) return a.clone();
-        var b = b == "array" ? [] : {}, c;
+        var b = b == "array" ? [] : {},
+            c;
         for (c in a) b[c] = goog.cloneObject(a[c]);
         return b
     }
@@ -243,8 +245,9 @@ goog.globalEval = function(a) {
 };
 goog.getCssName = function(a, b) {
     var c = function(a) {
-        return goog.cssNameMapping_[a] || a
-    }, d;
+            return goog.cssNameMapping_[a] || a
+        },
+        d;
     d = goog.cssNameMapping_ ? goog.cssNameMappingStyle_ == "BY_WHOLE" ? c : function(a) {
         for (var a = a.split("-"), b = [], d = 0; d < a.length; d++) b.push(c(a[d]));
         return b.join("-")
@@ -258,9 +261,10 @@ goog.setCssNameMapping = function(a, b) {
     goog.cssNameMappingStyle_ = b
 };
 goog.getMsg = function(a, b) {
-    var c = b || {}, d;
+    var c = b || {},
+        d;
     for (d in c) var e = ("" + c[d]).replace(/\$/g, "$$$$"),
-    a = a.replace(RegExp("\\{\\$" + d + "\\}", "gi"), e);
+        a = a.replace(RegExp("\\{\\$" + d + "\\}", "gi"), e);
     return a
 };
 goog.exportSymbol = function(a, b, c) {
@@ -315,7 +319,7 @@ goog.string.caseInsensitiveEndsWith = function(a, b) {
 };
 goog.string.subs = function(a) {
     for (var b = 1; b < arguments.length; b++) var c = String(arguments[b]).replace(/\$/g, "$$$$"),
-    a = a.replace(/\%s/, c);
+        a = a.replace(/\%s/, c);
     return a
 };
 goog.string.collapseWhitespace = function(a) {
@@ -1045,12 +1049,14 @@ goog.object.forEach = function(a, b, c) {
     for (var d in a) b.call(c, a[d], d, a)
 };
 goog.object.filter = function(a, b, c) {
-    var d = {}, e;
+    var d = {},
+        e;
     for (e in a) b.call(c, a[e], e, a) && (d[e] = a[e]);
     return d
 };
 goog.object.map = function(a, b, c) {
-    var d = {}, e;
+    var d = {},
+        e;
     for (e in a) d[e] = b.call(c, a[e], e, a);
     return d
 };
@@ -1140,7 +1146,8 @@ goog.object.setIfUndefined = function(a, b, c) {
     return b in a ? a[b] : a[b] = c
 };
 goog.object.clone = function(a) {
-    var b = {}, c;
+    var b = {},
+        c;
     for (c in a) b[c] = a[c];
     return b
 };
@@ -1148,14 +1155,16 @@ goog.object.unsafeClone = function(a) {
     var b = goog.typeOf(a);
     if (b == "object" || b == "array") {
         if (a.clone) return a.clone();
-        var b = b == "array" ? [] : {}, c;
+        var b = b == "array" ? [] : {},
+            c;
         for (c in a) b[c] = goog.object.unsafeClone(a[c]);
         return b
     }
     return a
 };
 goog.object.transpose = function(a) {
-    var b = {}, c;
+    var b = {},
+        c;
     for (c in a) b[a[c]] = c;
     return b
 };
@@ -1325,7 +1334,7 @@ goog.userAgent.initPlatform_ = function() {
     goog.userAgent.detectedMac_ = goog.string.contains(goog.userAgent.PLATFORM, "Mac");
     goog.userAgent.detectedWindows_ = goog.string.contains(goog.userAgent.PLATFORM, "Win");
     goog.userAgent.detectedLinux_ = goog.string.contains(goog.userAgent.PLATFORM, "Linux");
-    goog.userAgent.detectedX11_ = !! goog.userAgent.getNavigator() && goog.string.contains(goog.userAgent.getNavigator().appVersion || "", "X11")
+    goog.userAgent.detectedX11_ = !!goog.userAgent.getNavigator() && goog.string.contains(goog.userAgent.getNavigator().appVersion || "", "X11")
 };
 goog.userAgent.PLATFORM_KNOWN_ || goog.userAgent.initPlatform_();
 goog.userAgent.MAC = goog.userAgent.PLATFORM_KNOWN_ ? goog.userAgent.ASSUME_MAC : goog.userAgent.detectedMac_;
@@ -1630,7 +1639,7 @@ goog.dom.createTextNode = function(a) {
     return document.createTextNode(a)
 };
 goog.dom.createTable = function(a, b, c) {
-    return goog.dom.createTable_(document, a, b, !! c)
+    return goog.dom.createTable_(document, a, b, !!c)
 };
 goog.dom.createTable_ = function(a, b, c, d) {
     for (var e = ["<tr>"], f = 0; f < c; f++) e.push(d ? "<td>&nbsp;</td>" : "<td></td>");
@@ -2008,7 +2017,7 @@ goog.dom.DomHelper.prototype.createTextNode = function(a) {
     return this.document_.createTextNode(a)
 };
 goog.dom.DomHelper.prototype.createTable = function(a, b, c) {
-    return goog.dom.createTable_(this.document_, a, b, !! c)
+    return goog.dom.createTable_(this.document_, a, b, !!c)
 };
 goog.dom.DomHelper.prototype.htmlToDocumentFragment = function(a) {
     return goog.dom.htmlToDocumentFragment_(this.document_, a)
@@ -2465,12 +2474,12 @@ goog.style.getClientPosition = function(a) {
             b.x = a.x - c.x;
             b.y = a.y - c.y
         } else {
-            var c = goog.isFunction(a.getBrowserEvent),
-                d = a;
-            a.targetTouches ? d = a.targetTouches[0] : c && a.getBrowserEvent().targetTouches && (d = a.getBrowserEvent().targetTouches[0]);
-            b.x = d.clientX;
-            b.y = d.clientY
-        }
+        var c = goog.isFunction(a.getBrowserEvent),
+            d = a;
+        a.targetTouches ? d = a.targetTouches[0] : c && a.getBrowserEvent().targetTouches && (d = a.getBrowserEvent().targetTouches[0]);
+        b.x = d.clientX;
+        b.y = d.clientY
+    }
     return b
 };
 goog.style.setPageOffset = function(a, b, c) {
@@ -2607,7 +2616,7 @@ goog.style.setBorderBoxSize = function(a, b) {
             c.pixelWidth = b.width - e.left - d.left - d.right - e.right;
             c.pixelHeight = b.height - e.top - d.top - d.bottom - e.bottom
         } else c.pixelWidth = b.width, c.pixelHeight = b.height;
-        else goog.style.setBoxSizingSize_(a, b, "border-box")
+    else goog.style.setBoxSizingSize_(a, b, "border-box")
 };
 goog.style.getContentBoxSize = function(a) {
     var b = goog.dom.getOwnerDocument(a),
@@ -2684,7 +2693,7 @@ goog.style.getBorderBox = function(a) {
             a = goog.style.getIePixelBorder_(a, "borderBottom");
         return new goog.math.Box(d, c, a, b)
     } else return b = goog.style.getComputedStyle(a, "borderLeftWidth"), c = goog.style.getComputedStyle(a, "borderRightWidth"), d = goog.style.getComputedStyle(a, "borderTopWidth"), a = goog.style.getComputedStyle(a, "borderBottomWidth"),
-    new goog.math.Box(parseFloat(d), parseFloat(c), parseFloat(a), parseFloat(b))
+        new goog.math.Box(parseFloat(d), parseFloat(c), parseFloat(a), parseFloat(b))
 };
 goog.style.getFontFamily = function(a) {
     var b = goog.dom.getOwnerDocument(a),
@@ -2963,7 +2972,7 @@ goog.events.BrowserEvent.prototype.init = function(a, b) {
     delete this.propagationStopped_
 };
 goog.events.BrowserEvent.prototype.isButton = function(a) {
-    return goog.events.BrowserFeature.HAS_W3C_BUTTON ? this.event_.button == a : this.type == "click" ? a == goog.events.BrowserEvent.MouseButton.LEFT : !! (this.event_.button & goog.events.BrowserEvent.IEButtonMap[a])
+    return goog.events.BrowserFeature.HAS_W3C_BUTTON ? this.event_.button == a : this.type == "click" ? a == goog.events.BrowserEvent.MouseButton.LEFT : !!(this.event_.button & goog.events.BrowserEvent.IEButtonMap[a])
 };
 goog.events.BrowserEvent.prototype.isMouseActionButton = function() {
     return this.isButton(goog.events.BrowserEvent.MouseButton.LEFT) && !(goog.userAgent.WEBKIT && goog.userAgent.MAC && this.ctrlKey)
@@ -3000,7 +3009,7 @@ goog.events.Listener.prototype.init = function(a, b, c, d, e, f) {
     this.proxy = b;
     this.src = c;
     this.type = d;
-    this.capture = !! e;
+    this.capture = !!e;
     this.handler = f;
     this.callOnce = !1;
     this.key = ++goog.events.Listener.counter_;
@@ -3154,7 +3163,7 @@ goog.events.listen = function(a, b, c, d, e) {
             for (var f = 0; f < b.length; f++) goog.events.listen(a, b[f], c, d, e);
             return null
         } else {
-            var d = !! d,
+            var d = !!d,
                 g = goog.events.listenerTree_;
             b in g || (g[b] = goog.events.pools.getObject());
             g = g[b];
@@ -3202,7 +3211,7 @@ goog.events.unlisten = function(a, b, c, d, e) {
         for (var f = 0; f < b.length; f++) goog.events.unlisten(a, b[f], c, d, e);
         return null
     }
-    d = !! d;
+    d = !!d;
     a = goog.events.getListeners_(a, b, d);
     if (!a) return !1;
     for (f = 0; f < a.length; f++)
@@ -3253,7 +3262,7 @@ goog.events.removeAll = function(a, b, c) {
     var d = 0,
         e = b == null,
         f = c == null,
-        c = !! c;
+        c = !!c;
     if (a == null) goog.object.forEach(goog.events.sources_, function(a) {
         for (var g = a.length - 1; g >= 0; g--) {
             var h = a[g];
@@ -3276,7 +3285,7 @@ goog.events.getListeners_ = function(a, b, c) {
     return null
 };
 goog.events.getListener = function(a, b, c, d, e) {
-    d = !! d;
+    d = !!d;
     if (a = goog.events.getListeners_(a, b, d))
         for (b = 0; b < a.length; b++)
             if (a[b].listener == c && a[b].capture == d && a[b].handler == e) return a[b];
@@ -3288,7 +3297,7 @@ goog.events.hasListener = function(a, b, c) {
     if (d) {
         var e = goog.isDef(b),
             f = goog.isDef(c);
-        return e && f ? (d = goog.events.listenerTree_[b], !! d && !! d[c] && a in d[c]) : !e && !f ? !0 : goog.array.some(d, function(a) {
+        return e && f ? (d = goog.events.listenerTree_[b], !!d && !!d[c] && a in d[c]) : !e && !f ? !0 : goog.array.some(d, function(a) {
             return e && a.type == b || f && a.capture == c
         })
     }
@@ -4746,7 +4755,7 @@ goog.dom.selection.getRangeIe_ = function(a) {
 };
 goog.dom.selection.canonicalizePositionIe_ = function(a, b) {
     if (a.type == "textarea") var c = a.value.substring(0, b),
-    b = goog.string.canonicalizeNewlines(c).length;
+        b = goog.string.canonicalizeNewlines(c).length;
     return b
 };
 goog.dom.selection.useSelectionProperties_ = function(a) {
