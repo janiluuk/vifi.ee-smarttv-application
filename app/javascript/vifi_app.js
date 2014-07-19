@@ -41,8 +41,7 @@ $(function() {
                 genres: this.genres
             });
 
-            this.featuredview = new Vifi.Films.FeaturedFilmDetailView();
-            this.homePage = new Vifi.Films.FeaturedFilmCollectionView(this.collection.featured());
+
             this.detailview = new Vifi.Films.FilmDetailView();
 
             this.player = new Vifi.Player.Player({
@@ -51,6 +50,9 @@ $(function() {
             this.player.playerPage = new Vifi.Player.PlayerView({
                 model: this.player,
             });
+
+            this.featuredview = new Vifi.Films.FeaturedFilmDetailView();
+            this.homePage = new Vifi.Films.FeaturedFilmCollectionView(this.collection.featured());
         }
 
     });
@@ -249,11 +251,11 @@ $(function() {
 *******************************************************************/
 Vifi.Engine.bind("app:ready", function() {
 
-    Vifi.Navigation.start();
     $("#loadingWrapper").fadeOut();
     $("#application").animate({
         "opacity": 1
     }, 2000);
+    Vifi.Navigation.start();
 
 
 

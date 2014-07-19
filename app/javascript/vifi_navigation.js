@@ -32,10 +32,11 @@ Vifi.Navigation = {
         $("#application").swipeEvents().bind("swipeUp", function(event) {
             event.preventDefault();
             Vifi.Event.trigger("page:down");
+            return false;
         }).bind("swipeDown", function(event) {
             Vifi.Event.trigger("page:up");
             event.preventDefault();
-
+            return false;
         });
 
         $(document).bind('mousewheel DOMMouseScroll', function(event) {
