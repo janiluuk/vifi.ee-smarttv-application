@@ -48,7 +48,7 @@
         eachCallback = eachCallback || $.noop;
 
         // Convert waitForAll to Boolean
-        waitForAll = !! waitForAll;
+        waitForAll = !!waitForAll;
 
         // Ensure callbacks are functions.
         if (!$.isFunction(finishedCallback) || !$.isFunction(eachCallback)) {
@@ -174,10 +174,13 @@ $.fn.swipeEvents = function() {
                 }
                 if (deltaY >= 50) {
                     $this.trigger("swipeUp");
+
                 }
                 if (deltaY <= -50) {
                     $this.trigger("swipeDown");
                 }
+                event.preventDefault();
+                event.stopPropagation();
                 if (Math.abs(deltaX) >= 50 || Math.abs(deltaY) >= 50) {
                     $this.unbind('touchmove', touchmove);
                 }

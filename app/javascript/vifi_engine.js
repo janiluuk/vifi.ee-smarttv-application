@@ -64,7 +64,7 @@ Vifi.Engine = {
         this._modulesToLoad = _.without(this._modulesToLoad, callback);
         if (this._modulesToLoad.length == 0) {
             $log(" NOT WAITING FOR MORE MODULES, TRIGGERING READY ")
-            this.trigger("app:ready");
+            this.trigger("modules:ready");
         }
     },
 
@@ -168,7 +168,7 @@ Vifi.Engine = {
             document.write($('<div>').append($("<img />", conf).clone()).remove().html());
         },
         convertMstoHumanReadable: function(ms, leadingZeros) {
-            leadingZeros = typeof(leadingZerons) == 'undefined' ? true : !! leadingZeros // Make sure its boolean
+            leadingZeros = typeof(leadingZerons) == 'undefined' ? true : !!leadingZeros // Make sure its boolean
 
             var x = ms / 1000
             var numSecs = seconds = Math.floor(x % 60)

@@ -218,7 +218,6 @@ $(function() {
 
             Vifi.Event.trigger("page:change", "home");
 
-
         } else if (window.location.hash.indexOf('#search') == 0) {
 
             Vifi.Event.trigger("page:change", "browser");

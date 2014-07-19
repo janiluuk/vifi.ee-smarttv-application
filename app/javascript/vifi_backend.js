@@ -48,7 +48,7 @@ Vifi.PageManager = {
     },
     moveUp: function() {
         var active = this.getActivePage().prevAll("div:visible:first");
-        if (active != "") {
+        if (active != "" && active.length > 0) {
             var name = $(active).attr("id").replace("Page", "");
             Vifi.Event.trigger("page:change", name);
         }

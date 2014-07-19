@@ -14,8 +14,6 @@ Vifi.Navigation = {
     enable: function() {
         this.enabled = true;
         this.initTouch();
-
-
         if (!this.currentMenu || !this.currentFocus) return;
         this.currentMenu.fireItem(this.currentFocus.item, 'onFocus');
     },
@@ -29,14 +27,15 @@ Vifi.Navigation = {
         this.enable();
     },
     initTouch: function() {
+
         $("#application").swipeEvents().bind("swipeUp", function(event) {
-            event.preventDefault();
+
+
             Vifi.Event.trigger("page:down");
-            return false;
         }).bind("swipeDown", function(event) {
+
+
             Vifi.Event.trigger("page:up");
-            event.preventDefault();
-            return false;
         });
 
         $(document).bind('mousewheel DOMMouseScroll', function(event) {
