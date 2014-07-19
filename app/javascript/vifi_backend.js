@@ -32,14 +32,18 @@ Vifi.PageManager = {
         this.decorateHandler = new tv.ui.DecorateHandler;
         _.bindAll(this, 'redraw', 'enableNavigation', 'disableNavigation', 'focusFirst', 'setFocus', 'setFocusByClass', 'switchToPage', 'setHandlers');
         this.setHandlers();
+
+        tv.ui.decorate(document.body);
         if (!this.appComponent) {
             this.appElement = goog.dom.getElement("application");
             this.appComponent = tv.ui.getComponentByElement(this.appElement);
         }
+
     },
 
     enableNavigation: function() {
         this.redraw("#application", true);
+
     },
     disableNavigation: function() {
         tv.ui.getComponentByElement(goog.dom.getElement("application")).removeChildren();
@@ -307,7 +311,6 @@ Vifi.PageManager = {
     // Handle pushing action-buttons
     onActionEvent: function(event) {
 
-        event.preventDefault();
         var keyCode = event.keyCode;
         if (event.type == tv.ui.Button.EventType.ACTION || keyCode == 13 /*Enter*/ ) {
             var item = event.target.element_;
@@ -315,8 +318,12 @@ Vifi.PageManager = {
             $(link).trigger("click");
             event.stopPropagation();
         }
+        event.preventDefault();
+
     },
     onClearSearchEvent: function(event) {
+        var keyCode = event.keyCode;
+
         if (event.type == tv.ui.Button.EventType.ACTION || keyCode == 13 /*Enter*/ ) {
             $("#browserPage input[type=text]").val("");
             $("#browserPage .first").click();
@@ -401,8 +408,7 @@ Vifi.PageManager = {
             $(resetbuttons).each(function() {
                 var btn = tv.ui.getComponentByElement(this);
                 var value = $(this).attr("data-value");
-                if (value == val) btn.setOn(true);
-                else btn.setOn(false);
+                btn.setOn(value == val);
             });
         }
         // Reset selections if user pushed reset button
@@ -820,7 +826,7 @@ Vifi.Films.FeaturedFilmCollectionView = Backbone.View.extend({
     initialize: function(models) {
         this.models = models;
         this.render();
-        $("#featured").waitForImages(function() {
+        $("#homePage").waitForImages(function() {
             Vifi.Engine.trigger("app:ready");
         });
     },

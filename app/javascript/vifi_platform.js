@@ -21,6 +21,7 @@ Vifi.Platforms = {
 
     supportedPlatforms: {},
     addSupportedPlatform: function(platform) {
+
         this.supportedPlatforms[platform.name] = platform;
         if (platform.defaultPlatform == true) {
             this.defaultPlatform = platform;
@@ -105,10 +106,14 @@ Vifi.Platform = function(name) {
     // You can override this if you'd like
     this.init = $noop;
 
-    this.ready = $noop;
+
 
     // Might want to set this to something different
     this.needsProxy = null;
+
+}
+Vifi.Platform.prototype.initready = function() {
+    $log("<< Platform ready (" + this.name + " " + this.matrix() + " on " + window.screen.width + "x" + window.screen.height + " ) >>");
 
 }
 // override this if necessary
@@ -155,13 +160,13 @@ Vifi.Platform.prototype.addPlatformCSS = function() {
     $("<link/>", {
         rel: "stylesheet",
         type: "text/css",
-        href: "app/stylesheets/resolutions/" + this.matrix() + ".css"
+        href: "app/stylesheets/resolutions/" + this.matrix() + ".css?1234"
     }).appendTo("head");
 
     $("<link/>", {
         rel: "stylesheet",
         type: "text/css",
-        href: "app/stylesheets/platforms/" + this.name.toLowerCase() + ".css"
+        href: "app/stylesheets/platforms/" + this.name.toLowerCase() + ".css?1234"
     }).appendTo("head");
 
 
@@ -184,12 +189,13 @@ Vifi.Platform.prototype.proxy = function() {
     var browser = new Vifi.Platform('browser');
     // browser.needsProxy = true;
     // We want this to fail, and get added as default
+
     browser.setResolution(window.screen.width, window.screen.height);
     browser.defaultPlatform = true;
     Vifi.Platforms.addSupportedPlatform(browser);
 }());
 
-/* The second default platform "browser" */
+/* The second default platform "flash" */
 
 (function() {
     var browser = new Vifi.Platform('flash');
@@ -212,11 +218,11 @@ Vifi.Platform.prototype.proxy = function() {
             }
             return false;
         } catch (error) {
-
+            return false;
         }
     }
 
-    browser.defaultPlatform = true;
+    browser.defaultPlatform = false;
     Vifi.Platforms.addSupportedPlatform(browser);
     browser.setMediaPlayer("flash");
 
@@ -231,6 +237,7 @@ Vifi.Platform.prototype.proxy = function() {
         try {
             webapis.avplay.getAVPlay(function(avplay) {
                 supported = true;
+
             }, function(error) {
 
             });
@@ -244,33 +251,6 @@ Vifi.Platform.prototype.proxy = function() {
 
     platform.init = function() {
 
-        // Add samsung objects
-
-        var objects = [ {
-            "classid": "clsid:SAMSUNG-INFOLINK-TVMW",
-            "id": "pluginTVMW"
-        }, {
-            "classid": "clsid:SAMSUNG-INFOLINK-NETWORK",
-            "id": "pluginNetwork"
-        }, {
-            "classid": "clsid:SAMSUNG-INFOLINK-WINDOW",
-            "id": "window-plugin"
-        }, {
-            "classid": "clsid:SAMSUNG-INFOLINK-NNAVI",
-            "id": "pluginObjectNNavi"
-        }, {
-            "classid": "clsid:SAMSUNG-INFOLINK-AUDIO",
-            "id": "audio-plugin"
-        }];
-        $.each(objects, function(idx, val) {
-
-            $("<object/>", {
-                id: val.id,
-                classid: val.classid,
-                style: "opacity:0; border:0; background-color:#000000;"
-            }).appendTo("body");
-        });
-
 
         var keys = this.keys();
         window.widgetAPI = new Common.API.Widget();
@@ -280,9 +260,12 @@ Vifi.Platform.prototype.proxy = function() {
         pluginAPI.unregistKey(keys.KEY_VOL_UP);
         pluginAPI.unregistKey(keys.KEY_VOL_DOWN);
         pluginAPI.unregistKey(keys.KEY_MUTE);
+
+
     }
-    platform.ready = function() {
+    platform.initready = function() {
         window.widgetAPI.sendReadyEvent();
+        $log("<< Platform ready (" + this.name + " " + this.matrix() + " on " + window.screen.width + "x" + window.screen.height + " ) >>")
 
     }
     platform.keys = function() {

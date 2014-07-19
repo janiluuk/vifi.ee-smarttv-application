@@ -249,14 +249,13 @@ $(function() {
 	This is the real meat of the interactions here. 
 *******************************************************************/
 Vifi.Engine.bind("app:ready", function() {
-
+    Vifi.Navigation.start();
     $("#loadingWrapper").fadeOut();
     $("#application").animate({
         "opacity": 1
     }, 2000);
-    Vifi.Navigation.start();
 
-
+    Vifi.Platforms.platform.initready();
 
     // Bind to our menu's onSelect handler. Normally you'd put this code in the menu
     // But we're trying to keep everything in one piece right here.
@@ -264,7 +263,7 @@ Vifi.Engine.bind("app:ready", function() {
 }, Vifi.Engine);
 
 
-var currentViewState = "menu" // Can Be menu, details or video
+var currentViewState = "menu"; // Can Be menu, details or video
 var setReturnButton = function(state) {
     // Can Be menu, details or video
     Vifi.KeyHandler.unbind("keyhandler:onReturn");

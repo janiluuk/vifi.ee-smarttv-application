@@ -39,7 +39,7 @@ Vifi.KeyHandler = {
     keyMap: {},
 
     init: function() {
-        $log("Initializing keyhandler")
+        //$log("Initializing keyhandler")
         // Maps system key list to ours
         $KEYS = Vifi.Engine.getPlatform().keys();
         // Transforming Samsung keymap into something we like slightly better.
@@ -55,8 +55,8 @@ Vifi.KeyHandler = {
         $(document).bind("keydown", function(event) {
 
             var action = _this.keyActions[_this.keyMap[event.keyCode]];
-            if (action == "onReturn" && widgetAPI) widgetAPI.blockNavigation(event);
-            if (action == "onExit" && widgetAPI) {
+            if (action == "onReturn" && typeof(widgetAPI) != "undefined") widgetAPI.blockNavigation(event);
+            if (action == "onExit" && typeof(widgetAPI) != "undefined") {
                 widgetAPI.sendReturnEvent();
                 return false;
             }
