@@ -14,7 +14,6 @@ Vifi.Navigation = {
     enable: function() {
         this.enabled = true;
         this.initTouch();
-        this.initScroll();
 
 
         if (!this.currentMenu || !this.currentFocus) return;

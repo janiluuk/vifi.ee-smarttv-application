@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en-us">
     <head>
         <meta charset="utf-8">
@@ -50,9 +50,8 @@
 
   </script>
 
-    <body class="device-tv" onload="window.launch(); ">
-        ﻿<object id="pluginNetwork" border=0 style="opacity:0" classid="clsid:SAMSUNG-INFOLINK-NETWORK"></object>
-        <object id="pluginObjectNNavi" border=0 style="opacity:0" classid="clsid:SAMSUNG-INFOLINK-NNAVI"></object>
+    <body class="device-tv">
+        ﻿
 			
         <div id="console"></div>
 
@@ -354,7 +353,7 @@
                     <div id="trailer-options" class="tv-tab-container tv-container-vertical">
                             <div id="trailer-options-selection" class="tv-tab-container-bar tv-container-horizontal tv-container tab-bar domtabs row">
                                         <div id="closeTrailer"  class="tv-component tab nav-item normal-item">
-                                                    <a href="#d1">Tagasi filmi lehele</a>
+                                                    <a href="#d1">Tagasi filmi lehele</a>   
                                         </div>
                                         <div id="watchFilm" class="tv-component tab nav-item normal-item">
                                                     <a href="#d2">Vaata filmi</a>
@@ -420,6 +419,7 @@
                             </div>
                             <div id="div_id_period">
                                 <select id="id_period" multiple>
+                                <option>All</option>
                                     <option value="2014-2014"></option>
                                     <option value="2013-2013"></option>
                                     <option value="2000-2012"></option>
@@ -431,6 +431,7 @@
                             </div>
                             <div id="div_id_duration">
                                 <select id="id_duration" multiple>
+                                    <option>All</option>
                                     <option value="0-60"></option>
                                     <option value="60-120"></option>
                                     <option value="120-"></option>
@@ -655,10 +656,6 @@
             </div>
 </script>
 
-<object id="pluginTVMW" border=0 classid="clsid:SAMSUNG-INFOLINK-TVMW"></object>
-<object id="audio-plugin" style="opacity:0.0; background-color:#000000;" border="0" classid="clsid:SAMSUNG-INFOLINK-AUDIO"></object>
-<object id="window-plugin" style="opacity:0.0; background-color:#000000;" border="0" classid="clsid:SAMSUNG-INFOLINK-WINDOW"></object>
-
 <script type="text/javascript" src="app/javascript/vifi_engine.js"></script>
 <script type="text/javascript" src="app/javascript/vifi_navigation.js"></script>
 <script type="text/javascript" src="app/javascript/vifi_logger.js"></script>
@@ -676,7 +673,6 @@
 <script type="text/javascript" src="app/javascript/vifi_search.js"></script>
 <script type="text/javascript" src="app/javascript/vifi_app.js"></script>
 
-<script language="javascript" type="text/javascript" src="app/javascript/Main.js"></script>
 
 </body>
 </html>

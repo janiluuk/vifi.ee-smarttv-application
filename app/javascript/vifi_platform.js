@@ -105,6 +105,8 @@ Vifi.Platform = function(name) {
     // You can override this if you'd like
     this.init = $noop;
 
+    this.ready = $noop;
+
     // Might want to set this to something different
     this.needsProxy = null;
 
@@ -126,6 +128,7 @@ Vifi.Platform.prototype.fetchMediaPlayer = function() {
             type: 'text/javascript'
         }).appendTo("head");
     }
+
 }
 
 Vifi.Platform.prototype.cleanAppVersion = function() {
@@ -224,6 +227,7 @@ Vifi.Platform.prototype.proxy = function() {
     platform.setResolution(1280, 720);
     platform.detectPlatform = function() {
         var supported = false;
+
         try {
             webapis.avplay.getAVPlay(function(avplay) {
                 supported = true;
@@ -235,6 +239,50 @@ Vifi.Platform.prototype.proxy = function() {
 
         }
         return supported;
+
+    }
+
+    platform.init = function() {
+
+        // Add samsung objects
+
+        var objects = [ {
+            "classid": "clsid:SAMSUNG-INFOLINK-TVMW",
+            "id": "pluginTVMW"
+        }, {
+            "classid": "clsid:SAMSUNG-INFOLINK-NETWORK",
+            "id": "pluginNetwork"
+        }, {
+            "classid": "clsid:SAMSUNG-INFOLINK-WINDOW",
+            "id": "window-plugin"
+        }, {
+            "classid": "clsid:SAMSUNG-INFOLINK-NNAVI",
+            "id": "pluginObjectNNavi"
+        }, {
+            "classid": "clsid:SAMSUNG-INFOLINK-AUDIO",
+            "id": "audio-plugin"
+        }];
+        $.each(objects, function(idx, val) {
+
+            $("<object/>", {
+                id: val.id,
+                classid: val.classid,
+                style: "opacity:0; border:0; background-color:#000000;"
+            }).appendTo("body");
+        });
+
+
+        var keys = this.keys();
+        window.widgetAPI = new Common.API.Widget();
+        window.pluginAPI = new Common.API.Plugin();
+
+        // Unregister volume and mute keys
+        pluginAPI.unregistKey(keys.KEY_VOL_UP);
+        pluginAPI.unregistKey(keys.KEY_VOL_DOWN);
+        pluginAPI.unregistKey(keys.KEY_MUTE);
+    }
+    platform.ready = function() {
+        window.widgetAPI.sendReadyEvent();
 
     }
     platform.keys = function() {

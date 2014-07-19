@@ -6,21 +6,51 @@ $(function() {
             this.pagemanager = this.options.pagemanager;
             this.genres = this.options.genres;
             this.queue = this.options.queue;
+            this.collection = this.options.collection;
             this.usercollection = this.options.usercollection;
-            this.browser = this.options.browser;
-            this.payment = this.options.payment;
-            this.purchasePage = this.options.purchasePage;
-            this.account = this.options.account;
             this.session = this.options.session;
             this.logger = this.options.logger;
+            this.profile = this.session.get("profile");
+            this.initializeUI();
+        },
+        initializeUI: function() {
+
+            this.accountPage = new Vifi.User.ProfileView({
+                model: this.profile
+            });
+            this.activationPage = new Vifi.User.ActivationView({
+                model: this.session
+            });
+            this.alertPage = new Vifi.User.AlertView({
+                model: this.session
+            });
+            this.purchasePage = new Vifi.PurchaseView(),
+
+            this.payment = new Vifi.Payment({
+                session: this.session
+            });
+
+            this.toolbar = new Vifi.User.ToolbarView({
+                model: this.profile
+            });
+
+            this.browser = new Vifi.Pages.Browser({
+                model: this.genres,
+                collection: this.collection,
+                featured: this.collection.featured(),
+                genres: this.genres
+            });
+
+            this.featuredview = new Vifi.Films.FeaturedFilmDetailView();
+            this.homePage = new Vifi.Films.FeaturedFilmCollectionView(this.collection.featured());
+            this.detailview = new Vifi.Films.FilmDetailView();
+
             this.player = new Vifi.Player.Player({
                 session: this.session
             });
             this.player.playerPage = new Vifi.Player.PlayerView({
                 model: this.player,
             });
-
-
         }
 
     });
@@ -114,8 +144,8 @@ $(function() {
         if (window.location.hash.indexOf('#search') != -1) {
             // start with empty state because Router will configure it later.
             var state = new Vifi.Utils.State();
-            //var hash = window.location.hash.replace('#search/', '');
-            //state.setFromHash(hash);
+            var hash = window.location.hash.replace('#search/', '');
+            state.setFromHash(hash);
         } else {
             // set the state to avoid an additional call to the server as we have
             // data to bootstrap the app. 
@@ -141,10 +171,8 @@ $(function() {
         var queue = new Vifi.Films.QueueCollection(initial_search_json.queue);
         var usercollection = new Vifi.Films.UserCollection(initial_search_json.queue);
 
-        var profile = new Vifi.User.Profile();
 
         var session = new Vifi.User.Session({
-            profile: profile,
             activationCode: activationCode,
 
         });
@@ -152,32 +180,6 @@ $(function() {
 
         Vifi.Engine.start(Vifi.Settings);
 
-        var accountPage = new Vifi.User.ProfileView({
-            model: profile
-        });
-        var activationPage = new Vifi.User.ActivationView({
-            model: session
-        });
-        var alertPage = new Vifi.User.AlertView({
-            model: session
-        });
-
-        var payment = new Vifi.Payment({
-            session: session
-        });
-
-        var toolbar = new Vifi.User.ToolbarView({
-            model: profile
-        });
-        var featuredview = new Vifi.Films.FeaturedFilmDetailView();
-        var homePage = new Vifi.Films.FeaturedFilmCollectionView(collection.featured());
-        var browserPage = new Vifi.Pages.Browser({
-            model: genres,
-            collection: collection,
-            featured: collection.featured(),
-            genres: genres
-        });
-        // Bind keys
 
         Vifi.KeyHandler.bind("keyhandler:onRed", function() {
             if (!Vifi.Utils.Logger.visible) {
@@ -188,24 +190,15 @@ $(function() {
 
         window.app = new AppView({
             el: $('#application'),
-            profile: profile,
-            detailview: new Vifi.Films.FilmDetailView(),
             session: session,
-            payment: payment,
-            homePage: homePage,
-            toolbar: toolbar,
             logger: Vifi.Utils.Logger,
-            browser: browserPage,
-            purchasePage: new Vifi.PurchaseView(),
             pagemanager: Vifi.PageManager,
             user_is_authenticated: user_is_authenticated,
             queue: queue,
-            usercollection: usercollection,
+            genres: genres,
+            collection: collection,
+            usercollection: usercollection
         });
-
-
-
-
 
         // make the app globally available.
         window.app = app;
@@ -216,7 +209,6 @@ $(function() {
         //This will search routes from the router and serve them
         window.history = Backbone.history.start();
 
-        Vifi.Navigation.start();
 
         // if there's no hash, let's render the results
         // ( if there's a hash , the router will take care of this when it sets state from hash)
@@ -255,38 +247,18 @@ $(function() {
 	
 	This is the real meat of the interactions here. 
 *******************************************************************/
-Vifi.Engine.bind("tvengine:appready", function() {
-    $log(" Enabling Navigation ");
-    $("#wrapper").fadeIn();
-    TVEngine.Navigation.start();
+Vifi.Engine.bind("app:ready", function() {
 
-    // Get the data we discussed earlier out of the datastore.
-    var userlists = Vifi.DataStore.get("vifi:usertitles");
-
-
-    var videocategories = [];
-
-    // Handle each category
-    _.each(playlists, function(playlist) {
-        var cat = new VideoCategory(playlist.videos, {
-            name: playlist.categoryName,
-            thumb: playlist.thumb
-        });
-        var view = new VideoCategoryView({
-            collection: cat,
-            tagName: "div",
-            className: "videoCategory",
-            target: $("#playlists")
-        })
-        view.render();
-        $("#playlistsNav").append($("<li> " + playlist.categoryName + "</li>"));
-    })
+    Vifi.Navigation.start();
+    $("#loadingWrapper").fadeOut();
+    $("#application").animate({
+        "opacity": 1
+    }, 2000);
 
 
 
     // Bind to our menu's onSelect handler. Normally you'd put this code in the menu
     // But we're trying to keep everything in one piece right here.
-    Vifi.Navigation.bindToMenu("brightcove:mainmenu", 'onselect', handleMenuSelection);
 
 }, Vifi.Engine);
 

@@ -77,10 +77,10 @@ Vifi.Player.PlayerView = Backbone.View.extend({
 
     },
 
-  
+
     onContentLoad: function() {
 
-        
+
         this.renderPlayerInfo();
         this.renderPlayerControls();
 
@@ -92,6 +92,7 @@ Vifi.Player.PlayerView = Backbone.View.extend({
             $(this).find("div:first").addClass("no-left");
             $(this).find("div:last").addClass("no-right");
         });
+
         Vifi.PageManager.decorateHandler.addClassHandler('action-button', function(component) {
             component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, Vifi.PageManager.onActionEvent, false, Vifi.PageManager)
         });
@@ -105,7 +106,7 @@ Vifi.Player.PlayerView = Backbone.View.extend({
     setSubtitleSelection: function() {
 
         var code = this.model.subtitles.language;
-        this.$("#playerSubtitles div[data-value="+code+"]").click();
+        this.$("#playerSubtitles div[data-value=" + code + "]").click();
 
     },
     renderPlayerInfo: function() {
@@ -127,9 +128,9 @@ Vifi.Player.PlayerView = Backbone.View.extend({
     },
 
     render: function() {
-       
+
         this.$el.html(ich.playerTemplate(this.model.content.toJSON()));
-        
+
         return this;
 
     },
@@ -178,7 +179,7 @@ Vifi.Player.PlayerView = Backbone.View.extend({
         this.onContentLoad();
 
         setTimeout(function() {
-           
+
             Vifi.MediaPlayer.play();
 
         }, 1200);
@@ -245,10 +246,8 @@ Vifi.Player.Player = Backbone.Model.extend({
         this.subtitles.load(subtitles);
 
     },
-  
+
     onContentReady: function(content) {
-
-
 
         this.content.set("endingtime", this.getEndingTime(this.content.get("running_time")));
         this.content.set("genres_text", this.movie.genres_text);
@@ -280,6 +279,15 @@ Vifi.Player.Player = Backbone.Model.extend({
         return endingtimestring;
     },
 
+    updateCurrentTime: function() {
+
+        var currentTime = Vifi.MediaPlayer.getCurrentTime();
+
+
+
+    },
+
+
     /*
      * Load defined film content to the player
      */
@@ -300,7 +308,6 @@ Vifi.Player.Player = Backbone.Model.extend({
             content.fetch();
             content.bind("content:ready", this.onContentReady, this);
             content.bind("subtitles:ready", this.onSubtitlesReady, this);
-
 
             this.content = content;
             return true;

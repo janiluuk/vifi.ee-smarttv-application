@@ -84,9 +84,13 @@ Vifi.User.Session = Backbone.Model.extend({
     initialize: function() {
         var code = this.get("step2text").replace("CODE", this.get("activationCode"));
         this.set("step2text", code);
+
+
+        this.profile = new Vifi.User.Profile();
+        this.set("profile", this.profile);
+
         Vifi.Event.on('poll:enable', this.enable, this);
         Vifi.Event.on('poll:disable', this.disable, this);
-
 
         Vifi.Event.on('user:login', this.onUserAuthenticate, this);
         Vifi.Event.on('user:logout', this.onUserSignout, this);

@@ -34,6 +34,7 @@ Vifi.Player.Subtitles = Backbone.Model.extend({
         this.subtitleFile = "";
         this.subtitledata = {};
         this.language = '';
+        $("#" + this.subtitleElement).html('');
         this.enabled = false;
         this.trigger("subtitles:disable");
         $log("Disabling subtitles");

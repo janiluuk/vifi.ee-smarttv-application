@@ -36,7 +36,7 @@ Vifi.Pages.Browser = Vifi.PageView.extend({
         Vifi.PageManager.redraw("#browserPage", true);
         return this;
     },
-  
+
     setGenreDropDown: function(action, subgenres_obj) {
         $('#div_id_genre select').empty();
         if (this.options.genres.length > 0) {
@@ -46,10 +46,7 @@ Vifi.Pages.Browser = Vifi.PageView.extend({
             _.each(this.options.genres.models, function(genre, key, list) {
                 $('#div_id_genre select').append(new Option(genre.attributes.name, genre.id));
             });
-            $('#div_id_genre').show();
             this.$('#id_genre option[value="' + this.collection.state.get('genre') + '"]').attr('selected', 'selected');
-        } else {
-            $('#div_id_genre').show();
         }
     },
     redirectToBaseURL: function() {
@@ -104,14 +101,15 @@ Vifi.Pages.Browser = Vifi.PageView.extend({
             var fieldid = $(this).parent().attr("id");
             var fieldname = fieldid.replace("id_", "");
             var val = $(this).val();
+
             search_dict[fieldname] = search_dict[fieldname] == undefined ? val : search_dict[fieldname] += ";" + val;
         });
+
         this.collection.state.set(search_dict);
     },
     renderResults: function(e) {
         if (this.rendering) return false;
         this.rendering = true;
-        this.$('#loading').show();
         //$("#search-results > div.movie").addClass("loading");
         var appView = this;
         var filmresults = tv.ui.getComponentByElement(goog.dom.getElement("film-results"));
@@ -131,22 +129,34 @@ Vifi.Pages.Browser = Vifi.PageView.extend({
         appView.$("#search-results").html(fragment);
         this.loadBrowserImages();
         this.updateUIToState();
-        this.$('#loading').hide();
         this.rendering = false;
     },
     updateUIToState: function() {
         var state = this.collection.state;
-        // set intended audience checkboxes
-        // selects
-        this.$('#id_genre option[value="' + state.get('genre') + '"]').attr('selected', 'selected');
-        this.$('#id_subgenre option[value="' + state.get('subgenre') + '"]').attr('selected', 'selected');
-        this.$('#id_period option[value="' + state.get('period') + '"]').attr('selected', 'selected');
-        this.$('#id_duration option[value="' + state.get('duration') + '"]').attr('selected', 'selected');
-        // year
-        this.$('#id_period').val(state.get('period'));
+        var $this = this;
         // main search text box
-        var query = this.collection.state.get('q');
+        var query = state.get('q');
         $('#q').val(query);
+
+        var options = ['genre', 'period', 'duration'];
+        $.each(options, function(idx, option) {
+            var val = decodeURIComponent(state.get(option));
+            if (val != "") {
+                var parts = val.split(';');
+
+                if (parts.length > 0 && parts != "undefined") {
+                    $.each(parts, function(idx, item) {
+                        $this.$('#id_' + option + ' option[value="' + item + '"]').attr('selected', 'selected');
+
+                        $("#search-options-bar div[data-field='" + option + "'] div[data-value=" + item + "]").addClass("tv-toggle-button-on");
+
+                    });
+                    $("#search-options-bar div[data-field='" + option + "'] div[data-value=reset]").removeClass("tv-toggle-button-on");
+                }
+            }
+        });
+
+
     },
     onChangeCollectionState: function(state) {
         var changed_keys = _.keys(state.changedAttributes());
