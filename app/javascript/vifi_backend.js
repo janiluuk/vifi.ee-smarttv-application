@@ -209,7 +209,6 @@ Vifi.PageManager = {
         // Film view buttons
         Vifi.PageManager.decorateHandler.addClassHandler('action-button', function(component) {
             component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, _this.onActionEvent, false, _this)
-            component.getEventHandler().listen(component, tv.ui.Button.EventType.ACTION, _this.onActionEvent, false, _this)
 
         });
         // Film view buttons

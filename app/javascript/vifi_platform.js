@@ -85,17 +85,20 @@ Vifi.Platform = function(name) {
         KEY_DOWN: 40,
         KEY_LEFT: 37,
         KEY_RIGHT: 39,
-        KEY_ENTER: 13,
-        KEY_RED: 65,
-        KEY_GREEN: 66,
-        KEY_YELLOW: 67,
-        KEY_BLUE: 68,
-        KEY_BACK: 8,
-        KEY_PLAY: 80,
-        KEY_FF: 190,
-        KEY_RW: 188,
+        KEY_ENTER: 13, // Enter
+        KEY_RED: 65, // a
+        KEY_GREEN: 66, // b
+        KEY_YELLOW: 67, // c
+        KEY_BLUE: 68, // d
+        KEY_BACK: 8, // backspace
+        KEY_PLAY: 80, // p
+        KEY_FF: 190, // .
+        KEY_RW: 188, // ,
         KEY_PAUSE: 189,
-        KEY_STOP: 83,
+        KEY_STOP: 83, // s
+        KEY_VOL_UP: 187, // +
+        KEY_VOL_DOWN: 48, // 0
+        KEY_MUTE: 77 // m
 
     }
     this.resolution = {
@@ -257,10 +260,13 @@ Vifi.Platform.prototype.proxy = function() {
         window.pluginAPI = new Common.API.Plugin();
 
         // Unregister volume and mute keys
-        pluginAPI.unregistKey(keys.KEY_VOL_UP);
-        pluginAPI.unregistKey(keys.KEY_VOL_DOWN);
-        pluginAPI.unregistKey(keys.KEY_MUTE);
-
+        setTimeout(function() {
+            pluginAPI.SetBannerState(1);
+            NNaviPlugin.SetBannerState(2);
+            pluginAPI.unregistKey(keys.KEY_VOL_UP);
+            pluginAPI.unregistKey(keys.KEY_VOL_DOWN);
+            pluginAPI.unregistKey(keys.KEY_MUTE);
+        }, 1000);
 
     }
     platform.initready = function() {

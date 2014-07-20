@@ -61,6 +61,10 @@ Vifi.MediaPlayerCore = {
             case 'onRew':
                 this.rewind();
                 break;
+            case 'onMute':
+                this.mute();
+                break;
+
             case 'onFF':
                 this.fastforward();
                 break;
@@ -162,7 +166,7 @@ Vifi.Playlist = function() {
         }]);
     }
     this.loop = function(toLoop) {
-        this.looping = !! toLoop; // force a boolean
+        this.looping = !!toLoop; // force a boolean
     };
     return this;
 };

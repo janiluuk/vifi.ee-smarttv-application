@@ -255,8 +255,14 @@ Vifi.MediaPlayer = {
         if (this.plugin) {
             // need to hold on to this so we know when we've switched state in our onvolumechange handler.
             this.wasMuted = this.plugin.getStatus().muted;
-            if (!this.wasMuted) this.plugin.mute();
-            else this.plugin.unmute();
+            if (!this.wasMuted) {
+                this.plugin.mute();
+                this.trigger("mediaplayer:onmute");
+
+            } else {
+                this.trigger("mediaplayer:onunmute");
+                this.plugin.unmute();
+            }
         }
     },
 

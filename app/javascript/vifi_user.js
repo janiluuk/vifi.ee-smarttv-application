@@ -233,6 +233,7 @@ Vifi.User.ProfileView = Backbone.View.extend({
         return this;
     },
     showPairScreen: function() {
+
         var email = this.model.get("email");
         if (email == "Visitor") Vifi.Event.trigger("activation:show");
         else this.model.trigger("user:logout");
