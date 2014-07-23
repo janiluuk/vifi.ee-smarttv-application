@@ -5,7 +5,6 @@ Vifi.Films.FilmCollection = Backbone.Collection.extend({
     baseUrl: Vifi.Settings.api_url + 'search/',
     initialize: function(models, options) {
         this.state = options.state;
-
         this.initial_search = options.search;
 
         // Whenever the state is changed, 

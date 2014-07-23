@@ -167,6 +167,7 @@ $(function() {
                 search: initial_search_json.search
             });
 
+
         // Create collection of featured films and add them to the frontpage
 
         var genres = new Vifi.Films.GenreCollection(initial_search_json.genres);

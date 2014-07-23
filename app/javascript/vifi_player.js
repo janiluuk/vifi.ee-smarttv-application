@@ -294,8 +294,10 @@ Vifi.Player.Player = Backbone.Model.extend({
 
     onLoadFilm: function(id) {
         var content = false;
-        var movie = app.browser.collection.get(id);
-
+        var movie = app.collection.get(id);
+        if (undefined == movie) {
+            movie = app.browser.options.featured.get(id);
+        }
         if (this.verifySession(movie) == true) {
 
             this.movie = movie.get("film");
