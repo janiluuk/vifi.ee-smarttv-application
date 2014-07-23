@@ -378,8 +378,22 @@
 <script type="text/template" id="activationTemplate">
             <div class="activation-container">
                 <p class="header">Hei! Your activation code is <span id="activation-code"><%- activationCode %></span></p>
-                <p class="activation-description" id="step1"><span class="step">1</span> <%- step1text %></p>
-                <p class="activation-description" id="step2"><span class="step">2</span> <%- step2text %></p>
+                <table class="step-table">
+                    <colgroup>
+                        <col class="step-column"></col>
+                        <col class="description-column"></col>
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td class="step-number"><span id="step-number-1">1</span></td>
+                            <td class="step-description"><span id="step1"><%- step1text %></span></td>
+                        </tr>
+                        <tr>
+                            <td class="step-number"><span id="step-number-2">2</span></td>
+                            <td class="step-description"><span id="step2"><%- step2text %></span></td>
+                        </tr>
+                    <tbody>
+                </table>
                         <div class="buttonsrow tv-container-horizontal">
                                 <div class="tv-component action-button no-down no-up" id="hideActivation"><a href="#" class="float_left button">Continue without pairing</a>
                                 </div>
@@ -391,14 +405,29 @@
                 </div>
 </script>
 <script type="text/template" id="purchaseTemplate">
-            <div class="activation-container">
-                <p class="header">You are purchasing <span id="activation-code"><%- film.title %></span></p>
-                <p class="activation-description" id="step1"><span class="step">1</span> asd</p>
-                <p class="activation-description" id="step2"><span class="step">2</span>asd</p>
+            <div class="alert-container">
+                <div id="alert-icon"></div>
+                <p class="header">You are purchasing <span id="movie-title"><%- film.title %></span></p>
+                <table class="step-table">
+                    <colgroup>
+                        <col class="step-column"></col>
+                        <col class="description-column"></col>
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td class="step-number"><span id="step-number-1">1</span></td>
+                            <td class="step-description"><span id="step1">This is step 1</span></td>
+                        </tr>
+                        <tr>
+                            <td class="step-number"><span id="step-number-2">2</span></td>
+                            <td class="step-description"><span id="step2">This is step 2 and so on</span></td>
+                        </tr>
+                    <tbody>
+                </table>
                         <div class="buttonsrow tv-container-horizontal">
-                                <div class="tv-component action-button no-down no-up" id="purchase"><a href="#" class="float_left button">Purchase (<%- film.price %>) </a>
+                                <div class="tv-component action-button no-down no-up" id="purchase"><a href="#" class="float_left button">Confirm (<%- film.price %>) </a>
                                 </div>
-                                <div class="tv-component action-button no-down no-up" id="hideActivation"><a href="#" class="float_left button">Use my subscription</a>
+                                <div class="tv-component action-button no-down no-up" id="closePurchase"><a href="#" class="float_left button">Cancel</a>
                                 </div>
                                
                         </div>

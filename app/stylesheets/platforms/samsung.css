@@ -2,6 +2,10 @@ html,body {
         font-size: 7px;
 }
 
+#homePage .featuredlist {
+	bottom: 25em;
+}
+
 .secondary_domtabs {
 	height: 7em;
 }
@@ -74,6 +78,6 @@ html,body {
 }
 
 #homePage .featuredlist {
-    bottom: 26em;
+    bottom: 12em;
 }
 

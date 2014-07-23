@@ -727,18 +727,22 @@ span.stars.r1 {
     float: left;
     position: relative;
 }
+
 #moviePage .movie_description p, #accountPage .account_description p {
     padding-left:0pt;
 }
+
 #moviePage .movie_info p, #accountPage .account_info p {
     margin: 0.5em 0 0 10%;
     padding: 0;
 }
+
 .summary br {
     line-height: 0em;
 }
+
 .button {
-    padding: 0.8em 0;
+    padding: 0.8em 0.4em 0.8em 0;
     text-decoration: none;
     border: 1px solid white;
     border-radius: 10pt;
@@ -752,7 +756,7 @@ span.stars.r1 {
     text-indent: 4em;
     background-repeat: no-repeat;
     background-position: 1em;
-    min-width: 14em;
+    min-width: 13em;
     font-size:2.5em;
 }
 .buttonsrow {
@@ -1040,7 +1044,7 @@ span.stars.r1 {
 
 .activation-container .header, .alert-container .header {
     font-size: 4.5em;
-    line-height: 1em;
+    line-height: 1.3em;
     font-weight: 100;
     text-shadow: 0 0 0.5em black;
     color: #63D116;
@@ -1092,7 +1096,7 @@ span.stars.r1 {
     text-shadow: 0 0 0.5em black;
 }
 
-.activation-container .activation-description span.step {
+.activation-container .activation-description span.step, table.step-table td.step-number span{
     background: rgba(255, 255, 255, 0.2);
     padding: 0.2em 0.6em;
     margin-right: 0.5em;
@@ -1102,7 +1106,7 @@ span.stars.r1 {
     color: #D8D8D8;
 }
 
-.activation-container .header, .activation-container .sub-header, .activation-container .activation-description {
+.activation-container .header, .activation-container .sub-header, .activation-container .activation-description, .activation-container table.step-table {
     padding-left: 12%;
 }
 
@@ -1165,8 +1169,31 @@ span.stars.r1 {
 .activation-container .buttonsrow .button, .alert-container .buttonsrow .button {
     text-indent: 0px;
     padding: 0.5em 2em;
+    min-width: 10em;
 }
 
+.alert-container span#movie-title {
+font-weight: 700;
+color: #9CE669;
+}
+
+table.step-table {
+    width: auto;
+    margin: 2em 0;
+    color: #cacaca;
+}
+
+table.step-table tr.highlighted {
+    color: #63D116;
+}
+
+
+.step-table tr td {
+    padding: 0.7em 0;
+    line-height: 1.4em;
+    font-size: 3em;
+    verticle-align: center;
+}
 
 #loadingWrapper{
 position: fixed;

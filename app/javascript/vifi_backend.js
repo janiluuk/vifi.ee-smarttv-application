@@ -512,6 +512,50 @@ Vifi.PageManager = {
 }
 _.extend(Vifi.PageManager, Backbone.Events);
 Vifi.Engine.addModule("PageManager", Vifi.PageManager);
+
+/* Views */
+
+Vifi.Views = {};
+Vifi.Views.DialogView = Backbone.View.extend({
+    defaults: {
+        name: 'activation'
+    },
+    tagName: 'div',
+
+    onShow: function() {},
+
+    onHide: function() {
+        Vifi.Event.trigger("page:back");
+    },
+    render: function() {
+        this.$el.html(this.template(this.model.toJSON()));
+        Vifi.Event.trigger("page:ready", "#" + this.$el.attr("id"));
+        Vifi.PageManager.redraw("#" + this.$el.attr("id"), true);
+
+        return this;
+    },
+    show: function() {
+        $(".container:visible[not='.active']").addClass("hidden-container").fadeOut();
+        $(".hidden-container .tv-component").removeClass("tv-component").addClass("tv-component-hidden");
+        var pos = $(".container.active").position();
+        this.$el.css("top", pos.top);
+        this.$el.fadeIn().show();
+        Vifi.Event.trigger("page:change", this.$el.attr("id").replace("Page", ""));
+        this.onShow();
+    },
+    hide: function() {
+        if (this.$el.hasClass("active")) {
+            $(".hidden-container .tv-component-hidden").addClass("tv-component").removeClass("tv-component-hidden");
+            $(".hidden-container").removeClass("hidden-container").fadeIn();
+            this.$el.fadeOut().hide();
+            this.onHide();
+        }
+    }
+
+});
+
+
+
 Vifi.Utils.ApiModel = Backbone.Model.extend({
     defaults: {
         "id": '',

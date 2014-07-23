@@ -24,7 +24,7 @@ $(function() {
             this.alertPage = new Vifi.User.AlertView({
                 model: this.session
             });
-            this.purchasePage = new Vifi.PurchaseView(),
+            this.purchasePage = new Vifi.PurchaseView();
 
             this.payment = new Vifi.Payment({
                 session: this.session

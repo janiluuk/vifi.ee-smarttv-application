@@ -202,6 +202,9 @@ Vifi.User.Session = Backbone.Model.extend({
         return this;
     }
 });
+
+
+
 Vifi.User.ProfileView = Backbone.View.extend({
     tagName: 'div',
     defaults: {},
@@ -291,7 +294,7 @@ Vifi.User.ToolbarView = Backbone.View.extend({
         this.$("#username-text").fadeIn("slow");
     }
 });
-Vifi.User.ActivationView = Backbone.View.extend({
+Vifi.User.ActivationView = Vifi.Views.DialogView.extend({
     el: $("#" + Vifi.Settings.activationPageId),
     events: {
         'click a': 'hide'
@@ -302,42 +305,19 @@ Vifi.User.ActivationView = Backbone.View.extend({
         Vifi.Event.on('activation:show', this.show, this);
         this.model.on('change:activationCode', this.renderCode, this);
         _.bindAll(this, 'hide');
-
         Vifi.Event.on('user:login', this.hide, this);
-
         this.render();
-    },
-    render: function() {
-        this.$el.html(this.template(this.model.toJSON()));
-        Vifi.Event.trigger("page:ready", "#" + this.$el.attr("id"));
-        Vifi.PageManager.redraw("#activationPage", true);
-
-        return this;
     },
     renderCode: function() {
         $('#activation-code', this.$el).html(this.model.get('activationCode'));
         return this;
     },
-    show: function() {
-        $(".container:visible").addClass("hidden-container").fadeOut();
-        this.$el.find("#hideActivation").addClass("tv-component");
-        $(".hidden-container .tv-component").removeClass("tv-component").addClass("tv-component-hidden");
-        this.$el.fadeIn().show();
-        Vifi.Event.trigger("page:change", "activation");
+    onShow: function() {
         Vifi.Event.trigger("poll:enable");
-
     },
-    hide: function() {
-        if (this.$el.hasClass("active")) {
-            $(".hidden-container .tv-component-hidden").addClass("tv-component").removeClass("tv-component-hidden");
-            $(".hidden-container").removeClass("hidden-container").fadeIn();
-            this.$el.fadeOut().hide();
-            Vifi.Event.trigger("page:back");
-        }
-    }
 });
 
-Vifi.User.AlertView = Backbone.View.extend({
+Vifi.User.AlertView = Vifi.Views.DialogView.extend({
     el: $("#" + Vifi.Settings.alertPageId),
     events: {
         'click a': 'hide'
@@ -349,32 +329,15 @@ Vifi.User.AlertView = Backbone.View.extend({
         this.model.on('change:alertText', this.renderText, this)
         this.render();
     },
-    render: function() {
-        this.$el.html(this.template(this.model.toJSON()));
-        Vifi.Event.trigger("page:ready", "#" + this.$el.attr("id"));
-        return this;
-    },
     renderText: function() {
         $('#alert-header', this.$el).html(this.model.get('alertHeader'));
         $('#alert-text', this.$el).html(this.model.get('alertText'));
         return this;
     },
-    show: function() {
-        $(".container:visible").addClass("hidden-container").fadeOut();
-        this.$el.find("#hideAlert").addClass("tv-component");
-        $(".hidden-container .tv-component").removeClass("tv-component").addClass("tv-component-hidden");
-        this.$el.fadeIn().show();
+    onShow: function() {
         Vifi.Event.trigger("page:change", "alert", true);
 
     },
-    hide: function() {
-        if (this.$el.hasClass("active")) {
-            $(".hidden-container .tv-component-hidden").addClass("tv-component").removeClass("tv-component-hidden");
-            $(".hidden-container").removeClass("hidden-container").fadeIn();
-            this.$el.fadeOut().hide();
-            Vifi.Event.trigger("page:back");
-        }
-    }
 });
 
 

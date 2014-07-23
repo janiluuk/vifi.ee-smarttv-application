@@ -69,11 +69,13 @@ Vifi.Payment = Backbone.Model.extend({
 _.extend(Vifi.Payment, Backbone.Events);
 
 
-Vifi.PurchaseView = Vifi.User.ActivationView.extend({
+Vifi.PurchaseView = Vifi.Views.DialogView.extend({
     el: $("#" + Vifi.Settings.purchasePageId),
     model: Vifi.Films.FilmModel,
     events: {
-        'click a': 'purchase'
+        'click #purchase': 'purchase',
+        'click #closePurchase': 'hide'
+
     },
 
     initialize: function() {
@@ -89,21 +91,8 @@ Vifi.PurchaseView = Vifi.User.ActivationView.extend({
 
         return this;
     },
-    show: function() {
-        $(".container:visible").addClass("hidden-container").fadeOut();
-        this.$el.find("#hideActivation").addClass("tv-component");
-        $(".hidden-container .tv-component").removeClass("tv-component").addClass("tv-component-hidden");
-        this.$el.fadeIn().show();
-
-        Vifi.Event.trigger("page:change", "purchase");
-    },
-    hide: function() {
-        if (this.$el.hasClass("active")) {
-            $(".hidden-container .tv-component-hidden").addClass("tv-component").removeClass("tv-component-hidden");
-            $(".hidden-container").removeClass("hidden-container").fadeIn();
-            this.$el.fadeOut().hide();
-            Vifi.Event.trigger("page:change", "movie");
-        }
+    onHide: function() {
+        Vifi.Event.trigger("page:change", "movie");
     },
     purchase: function() {
 

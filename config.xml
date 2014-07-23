@@ -8,7 +8,7 @@
 	<category>Movies</category>
 	<autoUpdate>y</autoUpdate>
 	<cpname>Vifi</cpname>
-	<cpauthjs>n</cpauthjs>
+	<cpauthjs>N</cpauthjs>
 	<login>n</login>
 
 	<ver>0.999</ver>
