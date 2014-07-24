@@ -64,16 +64,6 @@ Vifi.PageManager = {
             Vifi.Event.trigger("page:change", name);
         }
     },
-    getPage: function(name) {
-        if (name == "alert") return $(this.alertPage);
-        if (name == "activation") return $(this.activationPage);
-        if (name == "movie") return $(this.moviePage);
-        if (name == "browser") return $(this.browserPage);
-        if (name == "home") return $(this.homePage);
-        if (name == "player") return $(this.playerPage);
-        if (name == "account" || "accountPage") return $(this.accountPage);
-        return false;
-    },
     // Bring given page to the screen after making preparations accordingly.
     // Looking at this makes ma already feel like sitting in italian restaurant.
     setActivePage: function(page) {
@@ -180,22 +170,24 @@ Vifi.PageManager = {
             }
             var page = "#application";
             if (str != "" && !fullredraw) page = str;
-            var appComponent = this.appComponent;
+            var pageName = page.substr(1);
 
             if (fullredraw) {
                 //$log("Full redraw for " + page);
                 tv.ui.decorate(document.body);
-                var appElement = tv.ui.getComponentByElement(goog.dom.getElement(page.substr(1)));
-                if (undefined != appElement) tv.ui.getComponentByElement(goog.dom.getElement(page.substr(1))).removeChildren();
-                tv.ui.decorateChildren(goog.dom.getElement(page.substr(1)), this.decorateHandler.getHandler(), appComponent);
-                tv.ui.decorate(goog.dom.getElement(page.substr(1)));
+                var appElement = tv.ui.getComponentByElement(goog.dom.getElement(pageName));
+                if (undefined != appElement) appElement.removeChildren();
+                tv.ui.decorateChildren(goog.dom.getElement(pageName), this.decorateHandler.getHandler(), this.appComponent);
+                tv.ui.decorate(goog.dom.getElement(pageName));
             }
             if (redraw) {
                 // $log("Redrawing " + page);
-                tv.ui.decorateChildren(goog.dom.getElement(page.substr(1)), this.decorateHandler.getHandler(), appComponent);
+                tv.ui.decorateChildren(goog.dom.getElement(pageName), this.decorateHandler.getHandler(), this.appComponent);
             }
+
             this.focusFirst();
             this.drawing = false;
+
         }
         return this;
     },
