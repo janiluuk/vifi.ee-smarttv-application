@@ -41,7 +41,11 @@ Vifi.Payment = Backbone.Model.extend({
         var price = film.get("film").price;
         SmartpayGateway.init(this.productKey, app.payment.paymentCallback, "sessionId:" + app.session.get("sessionId"), 'EN', price, 'EUR');
 
-        $("#smartpayContainer").css("top", $("#moviePage").offset().top);
+        $("#smartpayContainer").css({
+            "top": $("#moviePage").offset().top,
+            "z-index": 999
+        }
+        );
         $log("Disabling navigation");
         setTimeout(function() {
             app.pagemanager.disableNavigation();
@@ -96,7 +100,6 @@ Vifi.PurchaseView = Vifi.Views.DialogView.extend({
     },
     purchase: function() {
 
-        this.hide();
         app.payment.purchase(this.model);
 
     }
