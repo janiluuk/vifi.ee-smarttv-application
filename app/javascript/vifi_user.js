@@ -11,6 +11,7 @@ Vifi.User.Profile = Vifi.Utils.ApiModel.extend({
         "city": '',
         "balance": "",
         "tickets": [],
+        "paired_user": false,
         "purchase_history": [],
         "favorites": '',
         "messages": 0,
@@ -226,7 +227,7 @@ Vifi.User.ProfileView = Backbone.View.extend({
     renderBalance: function() {
         var text = "";
         var balance = this.model.get('balance');
-        if (this.model.get("email") == "Visitor") text = "Please pair your account with this device";
+        if (this.model.get("email") == "Visitor" || !this.model.get("paired_user")) text = "Please pair your account with this device";
         else text = "Balance on account: " + this.model.get('balance') + "€";
         $('#account_status', this.$el).html(text);
         return this;
@@ -238,7 +239,7 @@ Vifi.User.ProfileView = Backbone.View.extend({
     showPairScreen: function() {
 
         var email = this.model.get("email");
-        if (email == "Visitor") Vifi.Event.trigger("activation:show");
+        if (this.model.get("email") == "Visitor" || !this.model.get("paired_user")) Vifi.Event.trigger("activation:show");
         else this.model.trigger("user:logout");
     },
     showAlertScreen: function() {
@@ -251,7 +252,7 @@ Vifi.User.ProfileView = Backbone.View.extend({
     },
     toggleSignedIn: function() {
         var email = this.model.get("email");
-        if (email != "" && email != "Visitor") {
+        if (email != "" && email != "Visitor" && !this.model.get("paired_user")) {
             this.$("#pair").html("Sign out").addClass("signout").removeClass("signin");
         } else {
             this.$("#pair").html("Pair device").addClass("signin").removeClass("signout");
