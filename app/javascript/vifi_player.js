@@ -39,7 +39,7 @@ Vifi.Player.FilmContent = Vifi.Utils.ApiModel.extend({
     },
 
     onLoadSubtitles: function(event) {
-        if (this.get("subtitles").length > 0)
+        if (this.get("subtitles") != null && this.get("subtitles").length > 0)
             this.trigger("subtitles:ready", this.get("subtitles"));
     },
 
@@ -353,7 +353,7 @@ Vifi.Player.Player = Backbone.Model.extend({
 
         // Check if user is paired at all
 
-        if ((!this.session || !this.session.isLoggedIn()) && !this.session.get("profile").hasMovie(movie)) {
+        if (!this.session.get("profile").hasMovie(movie)) {
             app.purchasePage.model = movie;
             app.purchasePage.render();
 

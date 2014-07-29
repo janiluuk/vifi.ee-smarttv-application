@@ -36,28 +36,56 @@ Vifi.Payment = Backbone.Model.extend({
 
     exitPurchase: function() {
 
-            app.pagemanager.enableNavigation();
-            app.purchasePage.hide();
-            Vifi.Event.trigger("page:change", "movie");
+        app.pagemanager.enableNavigation();
+        app.purchasePage.hide();
+        Vifi.Event.trigger("page:change", "movie");
 
 
     },
 
     // Purchase with smartpay
 
+    generatePurchaseInfo: function(film) {
+        var film_id = film.get("film").id;
+        var user_id = app.session.get("user_id");
+
+        if (!film_id || film_id < 1) {
+            throw ("Invalid film given for purchase");
+        }
+        if (!user_id || user_id < 1) {
+            throw ("Invalid or missing user for purchase");
+            return false;
+        }
+
+        var info = {
+            'auth_id': app.session.get("hash"),
+            'user_id': user_id,
+            'film_id': film_id
+        }
+        return JSON.stringify(info);
+
+    },
     purchase: function(film) {
 
         this.film = film;
+        try {
+            info = this.generatePurchaseInfo(film);
+        } catch (e) {
+            $log("Error while making purchase: " + e);
+            return false;
+
+        }
+
         var price = film.get("film").price;
-        SmartpayGateway.init(this.productKey, app.payment.paymentCallback, "sessionId:" + app.session.get("sessionId"), 'EN', price, 'EUR');
+
+        SmartpayGateway.init(this.productKey, app.payment.paymentCallback, info, 'EN', price, 'EUR');
         Vifi.KeyHandler.unbind("keyhandler:onReturn");
         Vifi.KeyHandler.bind("keyhandler:onReturn", this.exitPurchase, this);
 
         $("#smartpayContainer").css({
             "top": $("#moviePage").offset().top,
             "z-index": 999
-        }
-        );
+        });
         $log("Disabling navigation");
         setTimeout(function() {
             app.pagemanager.disableNavigation();

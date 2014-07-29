@@ -18,12 +18,19 @@ Vifi.User.Profile = Vifi.Utils.ApiModel.extend({
         "subscription": "0",
         "active_sessions": []
     },
+
     initialize: function() {
-        this.on("change", this.updateParams);
+        this.on("change:tickets", this.updateUserCollection);
+
         Vifi.Event.on("user:logout", this.signout, this);
         this.on("user:logout", function() {
             Vifi.Event.trigger("user:logout");
         });
+    },
+
+    updateUserCollection: function() {
+        var tickets = this.get("tickets");
+        app.usercollection.reset(tickets);
 
     },
     signout: function() {
@@ -37,7 +44,8 @@ Vifi.User.Profile = Vifi.Utils.ApiModel.extend({
 
 
     purchase: function(movie) {
-        app.usercollection.add(movie);
+        this.fetch();
+
         return true;
     },
     hasMovie: function(movie) {
@@ -46,6 +54,13 @@ Vifi.User.Profile = Vifi.Utils.ApiModel.extend({
             id: id
         });
         if (movies.length > 0) return true;
+        return false;
+    },
+    isRegisteredUser: function() {
+
+        if (this.get("user_id") != "" && this.get("paired_user")) {
+            return true;
+        }
         return false;
     },
 
@@ -161,7 +176,7 @@ Vifi.User.Session = Backbone.Model.extend({
             profile.set("user_id", user_id);
             profile.set("session", this);
             profile.fetch();
-            if (profile.get("email") != "Visitor") {
+            if (profile.get("user_id") != "") {
                 this.set("profile", profile);
                 $log("Logging in with user " + profile.get("email"));
                 Vifi.Event.trigger("user:login");
@@ -180,7 +195,6 @@ Vifi.User.Session = Backbone.Model.extend({
         if (!this.isLoggedIn() && this.isEnabled()) {
             this.fetch();
             setTimeout(function() {
-
                 this.send();
             }.bind(this), 5000);
         } else {
@@ -196,8 +210,19 @@ Vifi.User.Session = Backbone.Model.extend({
         if (logged == true) return true;
         return false;
     },
+    isRegisteredUser: function() {
+        var profile = this.get("profile");
+
+        if (profile.get("user_id") != "" && profile.get("paired_user")) {
+            return true;
+        }
+        return false;
+    },
     onUserAuthenticate: function() {
         this.set("logged_in", true);
+
+
+        this.disable();
     },
     render: function() {
         return this;
@@ -227,7 +252,7 @@ Vifi.User.ProfileView = Backbone.View.extend({
     renderBalance: function() {
         var text = "";
         var balance = this.model.get('balance');
-        if (this.model.get("email") == "Visitor" || !this.model.get("paired_user")) text = "Please pair your account with this device";
+        if (!this.model.isRegisteredUser()) text = "Please pair your account with this device";
         else text = "Balance on account: " + this.model.get('balance') + "€";
         $('#account_status', this.$el).html(text);
         return this;
@@ -238,8 +263,7 @@ Vifi.User.ProfileView = Backbone.View.extend({
     },
     showPairScreen: function() {
 
-        var email = this.model.get("email");
-        if (this.model.get("email") == "Visitor" || !this.model.get("paired_user")) Vifi.Event.trigger("activation:show");
+        if (!this.model.isRegisteredUser()) Vifi.Event.trigger("activation:show");
         else this.model.trigger("user:logout");
     },
     showAlertScreen: function() {
@@ -251,8 +275,8 @@ Vifi.User.ProfileView = Backbone.View.extend({
 
     },
     toggleSignedIn: function() {
-        var email = this.model.get("email");
-        if (email != "" && email != "Visitor" && !this.model.get("paired_user")) {
+
+        if (this.model.isRegisteredUser()) {
             this.$("#pair").html("Sign out").addClass("signout").removeClass("signin");
         } else {
             this.$("#pair").html("Pair device").addClass("signin").removeClass("signout");
