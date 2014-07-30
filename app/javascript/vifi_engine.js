@@ -10,6 +10,7 @@ var Vifi = {};
 
 Vifi = {
     Utils: {},
+    Views: {},
     Films: {},
     Browser: {},
     Player: {},

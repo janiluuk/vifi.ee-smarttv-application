@@ -518,7 +518,6 @@ Vifi.Engine.addModule("PageManager", Vifi.PageManager);
 
 /* Views */
 
-Vifi.Views = {};
 Vifi.Views.DialogView = Backbone.View.extend({
     defaults: {
         name: 'activation'
