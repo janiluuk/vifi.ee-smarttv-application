@@ -81,6 +81,7 @@ Vifi.PageManager = {
         }
         return false;
     },
+
     focusFirst: function(ev) {
         if (this.setFocusByClass("active-item") === true) {
             this.getActivePage().find(".active-item").removeClass("active-item");
@@ -117,6 +118,7 @@ Vifi.PageManager = {
         }
         return false;
     },
+
     /*
      * Navigate to a page
      * params:
@@ -207,7 +209,7 @@ Vifi.PageManager = {
         Vifi.PageManager.decorateHandler.addClassHandler('account-button', function(component) {
             component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, _this.onAccountEvent, false, _this)
         });
-        // Toggle o
+        // Toggle on / off buttons
         Vifi.PageManager.decorateHandler.addClassHandler('tv-toggle-button', function(component) {
             component.getEventHandler().listen(component, tv.ui.Button.EventType.ACTION, _this.handleToggleEvent, false, _this);
 
@@ -220,16 +222,22 @@ Vifi.PageManager = {
         Vifi.PageManager.decorateHandler.addClassHandler('cleartext', function(component) {
             component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, _this.handleClearEvent);
         });
+        // Search bar actions
+
         Vifi.PageManager.decorateHandler.addIdHandler("search-options-bar", function(button) {
             button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, _this.handleBrowserOptionKeys, false, _this);
         });
         Vifi.PageManager.decorateHandler.addIdHandler("searchbar", function(button) {
             button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, _this.handleBrowserKeys, false, _this);
         });
+        // Home page
+
         Vifi.PageManager.decorateHandler.addClassHandler("featured-movie", function(button) {
             button.getEventHandler().listen(button, tv.ui.Component.EventType.FOCUS, _this.handleFeaturedFocus, false, _this);
             button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, _this.handleFeaturedKey, false, _this);
         });
+        // Block arrow keys
+
         Vifi.PageManager.decorateHandler.addClassHandler("no-left", function(button) {
             button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, _this.handleBorderKeyLeft, false, _this);
         });
@@ -242,6 +250,9 @@ Vifi.PageManager = {
         Vifi.PageManager.decorateHandler.addClassHandler("no-down", function(button) {
             button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, _this.handleBorderKeyDown, false, _this);
         });
+
+        // Clear search 
+
         Vifi.PageManager.decorateHandler.addIdHandler("clear-search-options", function(button) {
             button.getEventHandler().listen(button, tv.ui.Component.EventType.KEY, _this.onClearSearchEvent, false, _this);
         });
