@@ -83,6 +83,29 @@ Vifi.Navigation = {
         }
     },
 
+    /*  
+     *  Set the return button action, if no parameters, go back
+     *  @param func - function to execute
+     *  @param context - context to bind the function
+     */
+
+
+    setReturnButton: function(func, context) {
+
+        Vifi.KeyHandler.unbind("keyhandler:onReturn");
+        if (!context) context = this;
+
+        if (func && context) {
+
+            Vifi.KeyHandler.bind("keyhandler:onReturn", func, context);
+            return true;
+        }
+
+        Vifi.KeyHandler.bind("keyhandler:onReturn", function() {
+            Backbone.history.history.back();
+        }, this);
+        return true;
+    },
     menus: {},
     currentFocus: null,
     currentMenu: null,

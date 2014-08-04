@@ -178,13 +178,13 @@ Vifi.Player.PlayerView = Backbone.View.extend({
         $("body").scrollTo("#playerPage");
         this.onContentLoad();
 
+        Vifi.PageManager.setReturnButton(app.player.playerPage.onPlayerPageExit, this);
+
         setTimeout(function() {
 
             Vifi.MediaPlayer.play();
 
         }, 1200);
-
-
     },
     onPlayerPageExit: function() {
 
@@ -255,9 +255,6 @@ Vifi.Player.Player = Backbone.Model.extend({
         var content = this.content.get("videos");
         Vifi.MediaPlayer.setContent(content);
 
-        Vifi.KeyHandler.unbind("keyhandler:onReturn");
-        Vifi.KeyHandler.bind("keyhandler:onReturn", app.player.playerPage.onPlayerPageExit);
-
         app.player.playerPage.trigger("player:show");
     },
     /*
@@ -282,8 +279,6 @@ Vifi.Player.Player = Backbone.Model.extend({
     updateCurrentTime: function() {
 
         var currentTime = Vifi.MediaPlayer.getCurrentTime();
-
-
 
     },
 

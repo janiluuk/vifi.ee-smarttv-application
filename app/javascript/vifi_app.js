@@ -262,24 +262,3 @@ Vifi.Engine.bind("app:ready", function() {
     // But we're trying to keep everything in one piece right here.
 
 }, Vifi.Engine);
-
-
-var currentViewState = "menu"; // Can Be menu, details or video
-var setReturnButton = function(state) {
-    // Can Be menu, details or video
-    Vifi.KeyHandler.unbind("keyhandler:onReturn");
-    switch (state) {
-        case "menu":
-            Vifi.KeyHandler.bind("keyhandler:onReturn", returnToMenu);
-            $(".backButton:first").text("Exit");
-            break;
-        case "video":
-            Vifi.KeyHandler.bind("keyhandler:onReturn", showNavigation);
-            $(".backButton:first").text("Back");
-            break;
-        case "details":
-            Vifi.KeyHandler.bind("keyhandler:onReturn", closeDetails);
-            $(".backButton:first").text("Back");
-            break;
-    }
-}

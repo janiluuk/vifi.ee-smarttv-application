@@ -302,8 +302,7 @@ Vifi.Films.TrailerView = Backbone.View.extend({
 
         var film = this.model.get("film");
         if (film.youtube_id) {
-            Vifi.KeyHandler.unbind("keyhandler:onReturn");
-            Vifi.KeyHandler.bind("keyhandler:onReturn", this.close, this);
+            Vifi.Navigation.setReturnButton(this.close, this);
             this.render();
         }
     },

@@ -79,8 +79,7 @@ Vifi.Payment = Backbone.Model.extend({
         var price = film.get("film").price;
 
         SmartpayGateway.init(this.productKey, app.payment.paymentCallback, info, 'EN', price, 'EUR');
-        Vifi.KeyHandler.unbind("keyhandler:onReturn");
-        Vifi.KeyHandler.bind("keyhandler:onReturn", this.exitPurchase, this);
+        Vifi.Navigation.setReturnButton(this.exitPurchase, this);
 
         $("#smartpayContainer").css({
             "top": $("#moviePage").offset().top,
