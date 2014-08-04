@@ -1,6 +1,6 @@
 $(function() {
 
-    var AppView = Vifi.Films.BaseAppView.extend({
+    var AppView = Vifi.Views.BaseAppView.extend({
         initialize: function(options) {
             this.options = options || {};
             this.pagemanager = this.options.pagemanager;

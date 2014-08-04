@@ -402,54 +402,39 @@ Vifi.PageManager = {
         var type = element.attr("data-type");
         var category = element.attr("data-category");
         if (undefined != category) Vifi.Event.trigger("button:" + category, val, this);
-        if (undefined != type && type == "radio") {
-            element.parent().find(".tv-toggle-button").each(function() {
-                $(this).addClass("reset-toggle");
-            });
-            var resetbuttons = goog.dom.getElementsByClass("reset-toggle");
+
+        element.parent().find(".tv-toggle-button").each(function() {
+            $(this).addClass("reset-toggle");
+        });
+        var resetbuttons = goog.dom.getElementsByClass("reset-toggle");
+        if (val == "reset" || element.parent().find(".tv-toggle-button-on").length == 0) var reset = true;
+        if ((undefined != type && type == "radio")) {
+
             $(resetbuttons).each(function() {
                 var btn = tv.ui.getComponentByElement(this);
                 var value = $(this).attr("data-value");
-                btn.setOn(value == val);
+                btn.setOn(value == val || reset);
             });
-        }
-        // Reset selections if user pushed reset button
-        if (val == "reset" || type == "radio") {
-            var reset = true;
-            element.parent().find(".tv-toggle-button").each(function() {
-                $(this).addClass("reset-toggle");
-            });
-            var resetbuttons = goog.dom.getElementsByClass("reset-toggle");
-            $(resetbuttons).each(function() {
-                var btn = tv.ui.getComponentByElement(this);
-                var attribute = $(this).attr("data-value");
-                if (attribute == "reset" || attribute == val) btn.setOn(true);
-                else btn.setOn(false);
-            });
+
         } else {
-            //    Mute Reset choices exist
-            if (element.parent().find(".tv-toggle-button-on").length == 0) {
-                var reset = true;
-            }
-            element.parent().find(".tv-toggle-button:first").addClass("reset-toggle");
-            var resetbutton = goog.dom.getElementByClass("reset-toggle");
-            var tvbutton = tv.ui.getComponentByElement(resetbutton);
-            if (tvbutton != false && tvbutton != "undefined") {
-                element.parent().find(".tv-toggle-button").each(function() {
-                    $(this).addClass("reset-toggle");
-                });
-                tvbutton.setOn(reset);
-                $("#id_" + coll + " option:first").attr("selected", false);
+            //    Mute Reset choices exist         
+            if (resetbuttons.length > 0) {
+                var tvbutton = tv.ui.getComponentByElement(resetbuttons[0]);
+                if (tvbutton != false && tvbutton != "undefined") {
+                    tvbutton.setOn(reset);
+                    $("#id_" + coll + " option:first").attr("selected", false);
+                }
             }
         }
+
         $(".reset-toggle").removeClass("reset-toggle");
+
         if (val != undefined && coll != undefined) {
             $("#id_" + coll + " option").each(function() {
                 if (reset) {
                     if (this.value > 0 || this.value != "") $(this).attr("selected", false);
                     else $(this).attr("selected", "selected")
-                }
-                if (this.value == val && reset != true) {
+                } else if (this.value == val) {
                     $(this).attr("selected", button.isOn());
                 }
             });

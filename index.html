@@ -98,7 +98,6 @@
                 <div id="browserPage" class="container">
                   
         </div>
-        <div id="action-output" style="display:none;"></div>
         <input type="hidden" id="history-token" />
         <!-- Dummy anchor as focus for key events -->
         <script type="text/html" id="mustacheRawFilmTemplate">
@@ -233,7 +232,7 @@
     </script>
     <script type="text/template" id="accountTemplate">
                         <div class="account_info">
-                                            <img id="avatar_img" src="app/stylesheets/img/anonymous_avatar.png" />
+                                             <img id="avatar_img" src="app/stylesheets/img/anonymous_avatar.png" />
                         </div>
                         <div class="account_description">
                                 <p class="username" id="account_username"><%- email %></p>
@@ -241,10 +240,11 @@
                                 <div class="buttonsrow tv-container-horizontal no-up">
                                             <div id="pairButton" class="tv-button tv-component action-button account-button"><div id="pair" class="width20 float_left button signin">Pair account</div>
                                         </div>
-                                    <div id="reloadButton" class="tv-button tv-component action-button account-button"><div id="reload" class="width20 float_left button reload">Reload</div>
-                                </div>
+                                    <div id="reloadButton" class="tv-button tv-component action-button account-button">
+                                    <div id="reload" class="width20 float_left button reload">Reload</div>
+                                    </div>
+                                 </div>
                         </div>
-                    </div>
 </script>
 <script type="text/html" id="playerControlsTemplate">
  
@@ -687,6 +687,8 @@
 <script type="text/javascript" src="app/javascript/vifi_logger.js"></script>
 <script type="text/javascript" src="app/javascript/vifi_dataloader.js"></script>
 <script type="text/javascript" src="app/javascript/vifi_backend.js"></script>
+<script type="text/javascript" src="app/javascript/vifi_films.js"></script>
+
 <script type="text/javascript" src="app/javascript/vifi_keyhandler.js"></script>
 <script type="text/javascript" src="app/javascript/vifi_queue.js"></script>
 <script type="text/javascript" src="app/javascript/vifi_user.js"></script>

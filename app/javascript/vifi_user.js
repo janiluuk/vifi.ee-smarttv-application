@@ -38,6 +38,7 @@ Vifi.User.Profile = Vifi.Utils.ApiModel.extend({
         this.set("notificationText", "");
         this.set("user_id", "");
         this.set("balance", 0);
+        this.set("paired_user", false);
         this.set("sessionId", "");
         this.set("email", "Visitor");
     },
@@ -58,7 +59,7 @@ Vifi.User.Profile = Vifi.Utils.ApiModel.extend({
     },
     isRegisteredUser: function() {
 
-        if (this.get("user_id") != "" && this.get("paired_user")) {
+        if (this.get("user_id") != "" && this.get("paired_user") === true) {
             return true;
         }
         return false;
@@ -220,8 +221,6 @@ Vifi.User.Session = Backbone.Model.extend({
     },
     onUserAuthenticate: function() {
         this.set("logged_in", true);
-
-
         this.disable();
     },
     render: function() {
@@ -258,7 +257,8 @@ Vifi.User.ProfileView = Backbone.View.extend({
         return this;
     },
     renderEmail: function() {
-        $('#account_username', this.$el).html(this.model.get('email'));
+        if (this.model.isRegisteredUser())
+            $('#account_username', this.$el).html(this.model.get('email'));
         return this;
     },
     showPairScreen: function() {
