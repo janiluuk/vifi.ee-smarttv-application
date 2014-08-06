@@ -43,12 +43,14 @@ Vifi.PageManager = {
 
     enableNavigation: function() {
         this.redraw("#application", true);
+        Vifi.KeyHandler.enable();
+
 
     },
     disableNavigation: function() {
         tv.ui.getComponentByElement(goog.dom.getElement("application")).removeChildren();
         tv.ui.decorate(goog.dom.getElement("application"))
-
+        Vifi.KeyHandler.disable();
     },
 
     moveUp: function() {
@@ -88,7 +90,6 @@ Vifi.PageManager = {
 
     focusFirst: function(ev) {
         if (this.setFocusByClass("active-item") === true) {
-            this.getActivePage().find(".active-item").removeClass("active-item");
             return true;
         } else {
             if (this.setFocusByClass("tv-component-focused") === true) {
@@ -144,6 +145,7 @@ Vifi.PageManager = {
         }.bind(this);
         this.changing = true;
         Vifi.Event.trigger("page:beforepagechange", pageid);
+        router.trigger("page:change", page);
     },
     switchToPrevious: function(cb) {
         if (this.lastActivePage) {
@@ -158,10 +160,14 @@ Vifi.PageManager = {
     },
     onPageChange: function(page) {
         this.setActivePage(page);
+
         Vifi.Event.trigger("page:afterpagechange", page);
     },
     onAfterPageChange: function(page) {
-        if (this.callback) this.callback();
+        if (this.callback) {
+            this.callback();
+        }
+
         this.callback = false;
         this.changing = false;
     },
@@ -401,7 +407,7 @@ Vifi.PageManager = {
         button.setOn(button.isOn());
         var el = button.element_;
         var element = $(el);
-        var coll = element.parent().attr("data-field");
+        var field = element.parent().attr("data-field");
         var val = element.attr("data-value");
         var type = element.attr("data-type");
         var category = element.attr("data-category");
@@ -412,32 +418,22 @@ Vifi.PageManager = {
         });
         var resetbuttons = goog.dom.getElementsByClass("reset-toggle");
         if (val == "reset" || element.parent().find(".tv-toggle-button-on").length == 0) var reset = true;
-        if ((undefined != type && type == "radio")) {
+        if (undefined != type && type == "radio" || reset) {
 
             $(resetbuttons).each(function() {
                 var btn = tv.ui.getComponentByElement(this);
                 var value = $(this).attr("data-value");
-                btn.setOn(value == val || reset);
+
+                btn.setOn(value == val);
             });
 
-        } else {
-            //    Mute Reset choices exist         
-            if (resetbuttons.length > 0) {
-                var tvbutton = tv.ui.getComponentByElement(resetbuttons[0]);
-                if (tvbutton != false && tvbutton != "undefined") {
-                    tvbutton.setOn(reset);
-                    $("#id_" + coll + " option:first").attr("selected", false);
-                }
-            }
         }
-
         $(".reset-toggle").removeClass("reset-toggle");
 
-        if (val != undefined && coll != undefined) {
-            $("#id_" + coll + " option").each(function() {
+        if (val != undefined && field != undefined) {
+            $("#id_" + field + " option").each(function() {
                 if (reset) {
-                    if (this.value > 0 || this.value != "") $(this).attr("selected", false);
-                    else $(this).attr("selected", "selected")
+                    $(this).attr("selected", this.value != "" ? false : "selected");
                 } else if (this.value == val) {
                     $(this).attr("selected", button.isOn());
                 }
@@ -482,6 +478,8 @@ Vifi.PageManager = {
         if (event.type == tv.ui.Button.EventType.ACTION || event.keyCode == 13 /*Enter*/ ) {
             var item = event.target.element_;
             var link = item.firstChild;
+            $(item).parent().find(".active-item").removeClass("active-item");
+
             $(item).addClass("active-item");
             $(link).trigger("click");
             event.stopPropagation();

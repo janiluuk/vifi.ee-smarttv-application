@@ -1,4 +1,4 @@
-Vifi.Films.FilmCollection = Backbone.Collection.extend({
+Vifi.Films.BrowserCollection = Backbone.Collection.extend({
     model: Vifi.Films.FilmModel,
     initial_search: true,
     url: '',
@@ -22,13 +22,6 @@ Vifi.Films.FilmCollection = Backbone.Collection.extend({
         this.url = this.baseUrl + this.state.getQueryString() + '&api_key=' + Vifi.Settings.api_key + '&jsoncallback=?';
         this.fetch();
 
-
-    },
-    featured: function() {
-        var items = this.filter(function(data) {
-            return data.get("film").featured == 1
-        });
-        return new Vifi.Films.FeaturedFilmCollection(items);
     },
 
     parse: function(response) {
@@ -37,7 +30,23 @@ Vifi.Films.FilmCollection = Backbone.Collection.extend({
     }
 });
 
+Vifi.Films.FilmCollection = Backbone.Collection.extend({
+    model: Vifi.Films.FilmModel,
 
+    featured: function() {
+        var items = this.filter(function(data) {
+            return data.get("film").featured == 1
+        });
+        return new Vifi.Films.FeaturedFilmCollection(items);
+    },
+    purchased: function() {
+        var items = this.filter(function(data) {
+            return data.get("ticket")
+        });
+        return new Vifi.Films.UserCollection(items);
+
+    }
+});
 
 Vifi.Films.FilmCollectionView = Backbone.View.extend({
     page: 1,

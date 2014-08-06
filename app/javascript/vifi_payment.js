@@ -29,6 +29,7 @@ Vifi.Payment = Backbone.Model.extend({
             }
             //replace this line with the code that should run upon successful billing 
         } else {
+            app.pagemanager.enableNavigation();
             $log(response);
 
         }

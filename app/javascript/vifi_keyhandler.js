@@ -61,8 +61,12 @@ Vifi.KeyHandler = {
                 widgetAPI.sendReturnEvent();
                 return false;
             }
-            // $log("<<< GOT KEY ACTION: " + action + " (" + event.keyCode + ")    >>>");
+            $log("<<< GOT KEY ACTION: " + action + " (" + event.keyCode + ")    >>>");
             if (action && _this.enabled) _this.trigger("keyhandler:" + action);
+            else {
+                event.stopPropagation();
+                return false;
+            }
 
             return true;
         });

@@ -32,6 +32,19 @@ Vifi.User.Profile = Vifi.Utils.ApiModel.extend({
         var tickets = this.get("tickets");
         app.usercollection.reset(tickets);
 
+        _.each(app.usercollection.models, function(model) {
+            var id = model.get("id");
+            var film = app.collection.get(id);
+            var validto = model.get("validto");
+
+            if (film && validto) {
+                var date = Vifi.Engine.util.stringToDate(validto);
+                var validtotext = Vifi.Engine.util.dateToHumanreadable(date);
+                model.set("validtotext", validtotext);
+                film.set("ticket", model.toJSON());
+            }
+        });
+
     },
     signout: function() {
         this.set("id", "");
@@ -41,6 +54,7 @@ Vifi.User.Profile = Vifi.Utils.ApiModel.extend({
         this.set("paired_user", false);
         this.set("sessionId", "");
         this.set("email", "Visitor");
+        this.set("tickets", "");
     },
 
 

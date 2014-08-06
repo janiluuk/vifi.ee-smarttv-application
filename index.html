@@ -144,6 +144,7 @@
                                     <div class="background"></div>
         </script>
         <script type="text/html" id="filmDetailsTemplate">
+         
                             {{# film }}
                                     <div id="trailer"></div>
                             <div id="moviePage-header"></div>
@@ -162,6 +163,14 @@
                                                             <label>Subtiitrid:</label>
                                                             <span>{{ subtitles }}</span>
                                                         </p>
+                                                        {{# ticket }}
+                                                        <p class="list">
+                                                            <label>Kehtib kuni:</label>
+                                                            <span>{{ ticket.validtotext }}</span>
+                                                        </p>
+                                                        {{/ticket}}
+                                                
+
                                             
                                             </div>
                                             <div class="movie_description">
@@ -665,7 +674,7 @@
                                 <h2><a name="t5" id="t5">Aasta</a>
                                 </h2>
                                 <div class="nav-item tv-toggle-button tv-component tv-component-disabled fr">
-                                    <span class="first" id="reset-result">Otsingu tühistamine</span>
+                                    <span class="first" id="reset-result">Tühista</span>
                                 </div>
 
                             </div>

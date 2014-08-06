@@ -5,6 +5,7 @@ Vifi.Films.FilmModel = Backbone.Model.extend({});
 Vifi.Films.FilmDetailView = Backbone.View.extend({
     tagName: 'div',
     el: $("#moviePage"),
+    model: new Vifi.Films.FilmModel,
     events: {
         'click #button-watch': 'playFilm',
         'click #button-trailer': 'playTrailer',
@@ -12,6 +13,7 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
     initialize: function() {
         Vifi.Event.on('film:show', this.showFilm, this);
         Vifi.Event.on('trailer:show', this.playTrailer, this);
+
         _.bindAll(this, 'render');
     },
     playFilm: function(event) {
@@ -44,13 +46,15 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
         el.tryFocus();
     },
     showFilm: function(id) {
-        var film = app.browser.collection.get(id);
+        var film = app.collection.get(id);
         if (undefined == film) {
-            var film = app.browser.options.featured.get(id);
+            var film = app.browsercollection.get(id);
         }
         if (undefined !== film) {
             router.navigate('film/' + id);
             this.model = film;
+            this.listenToOnce(this.model, "change", this.render);
+
             this.render().showPage();
         }
     },
@@ -77,6 +81,7 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
         }
     },
     render: function() {
+        console.log(this.model);
         this.$el.html(ich.filmDetailsTemplate(this.model.toJSON()));
         var description = this.$("#movie_description").text();
         var maxAmount = Vifi.Platforms.platform.resolution.height > 720 ? 1100 : 900

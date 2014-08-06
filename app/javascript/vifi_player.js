@@ -178,7 +178,7 @@ Vifi.Player.PlayerView = Backbone.View.extend({
         $("body").scrollTo("#playerPage");
         this.onContentLoad();
 
-        Vifi.PageManager.setReturnButton(app.player.playerPage.onPlayerPageExit, this);
+        Vifi.Navigation.setReturnButton(this.onPlayerPageExit, this);
 
         setTimeout(function() {
 
@@ -259,21 +259,14 @@ Vifi.Player.Player = Backbone.Model.extend({
     },
     /*
      * Calculate ending time for the film.
-     * @params duration - total length of film in seconds
+     * @params duration - total length of film in minutes
      * @params offset - current position of the film which will be reducted
      */
     getEndingTime: function(duration, offset) {
         if (!offset) offset = 0;
         if (!duration || duration == "") return false;
-        var time = new Date();
         duration = duration - offset;
-        var endingtime = new Date(time.getTime() + duration * 60000);
-        var endingtimestring = endingtime.getHours();
-        var string = ":";
-        if (endingtime.getMinutes() < 10) string += '0' + endingtime.getMinutes();
-        else string += endingtime.getMinutes();
-        endingtimestring += string;
-        return endingtimestring;
+        return Vifi.Engine.util.minutesToTime(duration);
     },
 
     updateCurrentTime: function() {

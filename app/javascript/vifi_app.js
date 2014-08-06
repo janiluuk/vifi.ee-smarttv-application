@@ -6,6 +6,7 @@ $(function() {
             this.pagemanager = this.options.pagemanager;
             this.genres = this.options.genres;
             this.queue = this.options.queue;
+            this.browsercollection = this.options.browsercollection;
             this.collection = this.options.collection;
             this.usercollection = this.options.usercollection;
             this.session = this.options.session;
@@ -36,7 +37,7 @@ $(function() {
 
             this.browser = new Vifi.Pages.Browser({
                 model: this.genres,
-                collection: this.collection,
+                collection: this.browsercollection,
                 featured: this.collection.featured(),
                 genres: this.genres
             });
@@ -61,15 +62,18 @@ $(function() {
     //Create a router to make our search linkable
     var Router = Backbone.Router.extend({
         routes: {
-            '': 'clearSearch', //
+            '': 'homePage', //
             'search/:searchState': 'search',
-            'film/:id': 'showFilm' //
+            'film/:id': 'showFilm',
+
         },
         search: function(searchStateHash) {
             //Unescape is required for firefox only to fix unescaped spaces
             //https://github.com/documentcloud/backbone/pull/1156
             app.browser.setSearchStateFromHash(unescape(searchStateHash));
-            app.browser.collection.update();
+            if (!_.isEmpty(app.browser.collection.state.values().join("")))
+                app.browser.collection.update();
+
             Vifi.Event.trigger("page:change", "browser");
         },
         showFilm: function(id) {
@@ -77,12 +81,9 @@ $(function() {
             Vifi.Event.trigger('film:show', id);
         },
 
-        clearSearch: function() {
-            app.browser.clearSearch();
-        }
+        homePage: function() {}
 
     });
-
 
     /***************************
          WHAT HAPPENS ON PAGE LOAD?
@@ -160,13 +161,13 @@ $(function() {
         // Create Film Collection with state from hash (or not) 
         // and search which is the initial state values 
         // for the search when there is no hash at this URL.
-        var collection = new Vifi.Films.FilmCollection(
+        var browsercollection = new Vifi.Films.BrowserCollection(
             models, {
                 state: state,
                 pagination: pagination,
                 search: initial_search_json.search
             });
-
+        var collection = new Vifi.Films.FilmCollection(models);
 
         // Create collection of featured films and add them to the frontpage
 
@@ -200,6 +201,7 @@ $(function() {
             queue: queue,
             genres: genres,
             collection: collection,
+            browsercollection: browsercollection,
             usercollection: usercollection
         });
 
@@ -208,7 +210,13 @@ $(function() {
 
         //Create an instance of our router
         window.router = new Router();
+        window.router.on("page:change", function(page) {
+            if (page == "home")
+                window.router.navigate("home");
+            if (page == "browser")
+                window.router.navigate("search/" + app.browser.collection.state.getHash());
 
+        });
         //This will search routes from the router and serve them
         window.history = Backbone.history.start();
 
