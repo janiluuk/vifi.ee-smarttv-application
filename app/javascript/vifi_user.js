@@ -91,8 +91,8 @@ Vifi.User.Session = Backbone.Model.extend({
         return {
             user_id: '',
             hash: '',
-            step1text: 'Goto www.vifi.ee page, register or login to your account from top of the page. You can login with facebook or register a new user',
-            step2text: 'Enter "CODE" to the field asking pairing code',
+            step1text: 'Mine www.vifi.ee lehele, registreeri või logi sisse oma kontoga. Võid kasutada oma facebook kontot või teha uue kasutaja',
+            step2text: 'Sisesta "CODE" väljale kus küsitakse aktiveerimiskoodi',
             activationCode: '',
             logged_in: false,
             enabled: false
