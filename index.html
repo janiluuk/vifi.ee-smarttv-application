@@ -95,8 +95,9 @@
                 <!--  Movie page -->
                 <div id="moviePage" class="container" style="display:none;"></div>
                 <!--  Browser page -->
-                <div id="browserPage" class="container">
+                <div id="browserPage" class="container"></div>
                   
+        </div>
         </div>
         <input type="hidden" id="history-token" />
         <!-- Dummy anchor as focus for key events -->
@@ -245,12 +246,11 @@
                         </div>
                         <div class="account_description">
                                 <p class="username" id="account_username"><%- email %></p>
-                                <p class="status" id="account_status">Please pair your acount with this device</p>
+                                <p class="status" id="account_status">Seda seadet pole ühendatud isikliku kontoga</p>
                                 <div class="buttonsrow tv-container-horizontal no-up">
                                             <div id="pairButton" class="tv-button tv-component action-button account-button"><div id="pair" class="width20 float_left button signin">Pair account</div>
                                         </div>
-                                    <div id="reloadButton" class="tv-button tv-component action-button account-button">
-                                    <div id="reload" class="width20 float_left button reload">Reload</div>
+                                    <div id="reloadButton" class="tv-button tv-component action-button account-button"><div id="reload" class="width20 float_left button reload">Info / Abi</div>
                                     </div>
                                  </div>
                         </div>
@@ -259,22 +259,22 @@
  
                             <div id="player-options-selection" class="tv-tab-container-bar tv-container-horizontal tv-container tab-bar domtabs row">
                                     <div class="tv-component tab nav-item normal-item no-up">
-                                        <a href="#c1">Controls</a>
+                                        <a href="#c1">Kontrollid</a>
                                     </div>
                                     <div class="tv-component tab nav-item normal-item no-up">
-                                                <a href="#c2">Subtitles</a>
+                                                <a href="#c2">Subtiitrid</a>
                                     </div>
                                     <div class="tv-component tab nav-item normal-item no-up">
                                                 <a href="#c3">Audio</a>
                                     </div>
                                     <div class="tv-component tab nav-item normal-item no-up">
-                                                <a href="#c4">Quality</a>
+                                                <a href="#c4">Kvaliteet</a>
                                     </div>
                                 
                             </div>
                             <div id="player-options-bar" class="tv-tab-container-content tv-container-horizontal tab-content-container secondary_domtabs">
                                     <div id="player-controls" class="controls tab-content row tv-container-horizontal tv-container">                                          
-                                            <h2><a id="c1" name="c1">Controls</a></h2>
+                                            <h2><a id="c1" name="c1">Kontrollid</a></h2>
                                             <div class="tv-button action-button no-left"><a class="play">play</a></div>
                                             <div class="track">
                                                     <div class="buffer" id="player-buffer"></div>
@@ -294,10 +294,10 @@
                                     
                                     <div id="playerSubtitles" class="tab-content selection row tv-container-horizontal">
                                                     
-                                            <h2><a name="c2" id="c2">Subtitles</a>
+                                            <h2><a name="c2" id="c2">Subtiitrid</a>
                                             </h2>
                                             <div data-value="none" data-category="player-subtitles"data-filename="" data-type="radio" class="nav-item tv-toggle-button tv-component tv-toggle-button-on no-left">
-                                                        <span class="first">None</span>
+                                                        <span class="first">Välja</span>
                                             </div>
                                             {{#subtitles}}
                                             <div data-value="{{ code }}" data-category="player-subtitles" data-filename="{{file}}" data-type="radio" class="nav-item tv-toggle-button tv-component">
@@ -315,7 +315,7 @@
                                         </div>
                                     
                                         <div class="tab-content selection row tv-container-horizontal">
-                                                    <h2><a name="c4" id="c4">Quality</a>
+                                                    <h2><a name="c4" id="c4">Kvaliteet</a>
                                                     </h2>
                                                     <div data-value="auto" data-filename="auto" data-type="radio" data-category="player-quality" data-value="Auto" class="nav-item tv-toggle-button tv-component tv-toggle-button-on no-left">
                                                                 <span class="first">Auto</span>
@@ -376,17 +376,17 @@
 <script type="text/template" id="alertTemplate">
             <div class="alert-container">
                 <div id="alert-icon"></div>
-                <p id="alert-header" class="header">Hei! this is super seriouz alert</p>
-                <p id="alert-text" class="sub-header">Al gore needs your help</p>
+                <p id="alert-header" class="header">Küsimusi / Muresid?</p>
+                <p id="alert-text" class="sub-header">Helista ﻿+372 58 667 570 või saada maili abi@vifi.ee </p>
                         <div class="buttonsrow tv-container-horizontal">
-                                <div class="tv-component action-button" id="hideActivation"><a href="#" class="float_left button">Continue without pairing</a>
+                                <div class="tv-component action-button" id="hideActivation"><a href="#" class="float_left button">Tagasi</a>
                                 </div>
                         </div>
             </div>
 </script>
 <script type="text/template" id="activationTemplate">
             <div class="activation-container">
-                <p class="header">Hei! Your activation code is <span id="activation-code"><%- activationCode %></span></p>
+                <p class="header">Hei! Sinu aktiveerimiskood on <span id="activation-code"><%- activationCode %></span></p>
                 <table class="step-table">
                     <colgroup>
                         <col class="step-column"></col>
@@ -454,7 +454,7 @@
                             </div>
                             <div id="div_id_period">
                                 <select id="id_period" multiple>
-                                <option>All</option>
+                                <option>Kõik</option>
                                     <option value="2014-2014"></option>
                                     <option value="2013-2013"></option>
                                     <option value="2000-2012"></option>
@@ -466,7 +466,7 @@
                             </div>
                             <div id="div_id_duration">
                                 <select id="id_duration" multiple>
-                                    <option>All</option>
+                                    <option>Kõik</option>
                                     <option value="0-60"></option>
                                     <option value="60-120"></option>
                                     <option value="120-"></option>
@@ -619,7 +619,7 @@
                                     <h2><a name="t2" id="t2">Kategooria</a>
                                     </h2>
                                     <div data-value="reset" class="nav-item tv-toggle-button tv-component tv-toggle-button-on no-left first">
-                                        <span class="first">All</span>
+                                        <span class="first">Kõik</span>
                                     </div>
                                    {{#genres}}
                                           <div data-value="{{id}}" class="nav-item tv-toggle-button tv-component">

@@ -254,7 +254,6 @@ Vifi.User.ProfileView = Backbone.View.extend({
     el: $("#" + Vifi.Settings.accountpageId),
     initialize: function() {
         this.model.on('user:logout', this.toggleSignedIn, this);
-        this.model.on('change:email', this.renderEmail, this);
         this.model.on('change:balance', this.renderBalance, this);
         this.model.on('change:email', this.toggleSignedIn, this);
         this.listenTo(this.model, "change", this.renderBalance, this);
@@ -317,7 +316,7 @@ Vifi.User.ToolbarView = Backbone.View.extend({
     initialize: function() {
         this.template = _.template($("#toolbarTemplate").html());
         this.notificationTemplate = _.template($("#notificationTemplate").html());
-        this.listenTo(this.model, 'change:email', this.slideRender);
+        this.listenTo(this.model, 'change:paired_user', this.slideRender);
         this.render();
 
     },
@@ -331,7 +330,6 @@ Vifi.User.ToolbarView = Backbone.View.extend({
         return this;
     },
     slideRender: function() {
-
         this.$("#username-text").fadeOut("slow");
         this.render();
         this.$("#username-text").fadeIn("slow");
