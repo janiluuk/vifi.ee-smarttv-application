@@ -12,11 +12,9 @@ Vifi.Pages.Browser = Vifi.PageView.extend({
     },
     initialize: function(options) {
         this.options = options || {};
-        this.genres = this.options.genres;
-
-        this.on("key_2", this.onMovieEvent);
+        this.collection = options.collection;
         this.context = {
-            "genres": this.model.toJSON()
+            "genres": this.options.genres.toJSON()
         };
         this.options.genres.bind('all', this.setGenreDropDown, this);
         this.collection.bind('sync', this.renderResults, this);
@@ -37,7 +35,7 @@ Vifi.Pages.Browser = Vifi.PageView.extend({
         return this;
     },
 
-    setGenreDropDown: function(action, subgenres_obj) {
+    setGenreDropDown: function(action) {
         $('#div_id_genre select').empty();
         if (this.options.genres.length > 0) {
             if (this.options.genres.length > 1) {
@@ -94,7 +92,7 @@ Vifi.Pages.Browser = Vifi.PageView.extend({
             genre: undefined,
             duration: undefined,
             period: undefined
-        }
+        };
         var search_dict = _.extend({}, search_array);
         search_dict[name] = value;
         $("#search-form select :selected").each(function() {
@@ -121,8 +119,6 @@ Vifi.Pages.Browser = Vifi.PageView.extend({
         this.collection.each(function(model) {
             var filmView = new Vifi.Films.FilmView({
                 model: model,
-                user_is_authenticated: appView.options.user_is_authenticated,
-                queue: appView.options.queue
             });
             fragment.appendChild(filmView.el);
         });

@@ -52,7 +52,8 @@ Vifi.Utils.Logger = (function() {
             var STATUS_CONTAINER_DIV = "statusContainer";
             var Z_INDEX = 17;
             var DEBUG = Vifi.Settings.debug;
-
+            if (!DEBUG) return false;
+            
             // create logger DOM element
             this.containerDiv = document.getElementById(CONTAINER_DIV);
             if (!this.containerDiv) {

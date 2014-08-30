@@ -81,7 +81,6 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
         }
     },
     render: function() {
-        console.log(this.model);
         this.$el.html(ich.filmDetailsTemplate(this.model.toJSON()));
         var description = this.$("#movie_description").text();
         var maxAmount = Vifi.Platforms.platform.resolution.height > 720 ? 1100 : 900
@@ -116,6 +115,7 @@ Vifi.Films.FilmView = Backbone.View.extend({
     onClickShowDetails: function(event) {
         event.preventDefault();
         var model = this.model;
+        $log("Showing film"+model.id);
         Vifi.Event.trigger("film:show", model.id);
         event.stopPropagation();
     },
@@ -247,10 +247,10 @@ Vifi.Films.FeaturedFilmCollectionView = Backbone.View.extend({
     initialize: function(models) {
         this.models = models;
         this.render();
-        $("#homePage").waitForImages(function() {
+        setTimeout(function() { 
             Vifi.Engine.trigger("app:ready");
-        });
-    },
+        },2000)
+       },
     render: function() {
         this.renderFilmViews();
         Vifi.PageManager.redraw("#homePage", true);

@@ -2,20 +2,19 @@
     width: 1920px;
     height: 1080px;
 }
-
-#featured .tv-component.movie {
-display: inline-block;
-width: 23em;
-height: 34em;
-margin: 1em;
-
+#featured .tv-button.tv-component.movie.tv-component-focused.active-item { 
+	width: 24em !important;
+	height: 34em !important;
 }
-#featured .tv-component.movie.tv-component-focused {
-width: 24em !important;
-height: 35em !important;
+
+#featured .tv-component.tv-button.movie{
+display: inline-block;
+width: 24em;
+height: 34em;
+
 }
 
 #homePage #featured {
-bottom: 25em;
+bottom: 29em;
 
 }

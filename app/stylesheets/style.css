@@ -631,7 +631,7 @@ span.stars.r1 {
     z-index: -1;
 }
 
-#featured .tv-component.tv-button.movie.tv-component-focused {
+#featured .tv-component.movie.tv-component-focused {
     width: 19em !important;
     height: 27em !important;
     margin: -14em 1% 0 2%;

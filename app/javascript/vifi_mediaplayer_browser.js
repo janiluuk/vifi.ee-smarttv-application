@@ -104,7 +104,7 @@ Vifi.MediaPlayer = {
     },
 
     nextVideo: function() {
-        this.currentStream = this.playlist.nextFile()
+        this.currentStream = this.playlist.nextFile();
         if (this.currentStream) {
             this.trigger('mediaplayer:onnextvideo', this.playlist.currentItemIndex());
             this._playVideo();
@@ -180,7 +180,7 @@ Vifi.MediaPlayer = {
 
     playing: function() {
         var test = (this._videoElement.paused) ? false : true;
-        return test
+        return test;
     },
 
     duration: function() {
@@ -244,7 +244,7 @@ Vifi.MediaPlayer = {
     },
 
     _stopTrackingEvents: function() {
-        $log(" UNBINDING MEDIA EVENTS TO HTML5 VIDEO PLAYER ")
+        $log(" UNBINDING MEDIA EVENTS TO HTML5 VIDEO PLAYER ");
         $(this._videoElement).unbind(this.eventsToTrack, this._eventHandler);
         this.eventsBound = false;
     },

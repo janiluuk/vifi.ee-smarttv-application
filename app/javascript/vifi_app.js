@@ -25,23 +25,11 @@ $(function() {
             this.alertPage = new Vifi.User.AlertView({
                 model: this.session
             });
-            this.purchasePage = new Vifi.PurchaseView();
-
-            this.payment = new Vifi.Payment({
-                session: this.session
-            });
+            
 
             this.toolbar = new Vifi.User.ToolbarView({
                 model: this.profile
             });
-
-            this.browser = new Vifi.Pages.Browser({
-                model: this.genres,
-                collection: this.browsercollection,
-                featured: this.collection.featured(),
-                genres: this.genres
-            });
-
 
             this.detailview = new Vifi.Films.FilmDetailView();
 
@@ -54,6 +42,16 @@ $(function() {
 
             this.featuredview = new Vifi.Films.FeaturedFilmDetailView();
             this.homePage = new Vifi.Films.FeaturedFilmCollectionView(this.collection.featured());
+
+              this.browser = new Vifi.Pages.Browser({
+                collection: this.browsercollection,
+                genres: this.genres
+            });
+            this.purchasePage = new Vifi.PurchaseView();
+
+            this.payment = new Vifi.Payment({
+                session: this.session
+            });
         }
 
     });
@@ -154,7 +152,7 @@ $(function() {
             // data to bootstrap the app. 
             //            var state = new Vifi.Utils.State();
 
-            var state = new Vifi.Utils.State(initial_search_json.search);
+            var state = new Vifi.Utils.State(search);
         }
 
 
@@ -165,7 +163,7 @@ $(function() {
             models, {
                 state: state,
                 pagination: pagination,
-                search: initial_search_json.search
+                search: search
             });
         var collection = new Vifi.Films.FilmCollection(models);
 
@@ -184,7 +182,7 @@ $(function() {
 
         Vifi.Engine.start(Vifi.Settings);
 
-
+        
         Vifi.KeyHandler.bind("keyhandler:onRed", function() {
             if (!Vifi.Utils.Logger.visible) {
                 Vifi.Utils.Logger.show();
@@ -205,9 +203,7 @@ $(function() {
             usercollection: usercollection
         });
 
-        // make the app globally available.
-        window.app = app;
-
+     
         //Create an instance of our router
         window.router = new Router();
         window.router.on("page:change", function(page) {
@@ -237,7 +233,8 @@ $(function() {
         }
 
 
-
+        initial_search_json="";
+        
 
     }
 
@@ -258,15 +255,17 @@ $(function() {
 	This is the real meat of the interactions here. 
 *******************************************************************/
 Vifi.Engine.bind("app:ready", function() {
+	
+
     Vifi.Navigation.start();
-    $("#loadingWrapper").fadeOut();
+    Vifi.Platforms.platform.initready();
+
+    $("#loadingWrapper").fadeOut().remove();
     $("#application").animate({
         "opacity": 1
     }, 2000);
+    
 
-    Vifi.Platforms.platform.initready();
-
-    // Bind to our menu's onSelect handler. Normally you'd put this code in the menu
-    // But we're trying to keep everything in one piece right here.
+   
 
 }, Vifi.Engine);

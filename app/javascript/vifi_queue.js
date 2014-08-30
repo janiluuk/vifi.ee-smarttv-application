@@ -41,7 +41,7 @@ Vifi.Films.FilmCollection = Backbone.Collection.extend({
     },
     purchased: function() {
         var items = this.filter(function(data) {
-            return data.get("ticket")
+            return data.get("ticket");
         });
         return new Vifi.Films.UserCollection(items);
 

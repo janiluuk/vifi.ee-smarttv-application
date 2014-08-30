@@ -213,7 +213,7 @@ Vifi.User.Session = Backbone.Model.extend({
                 this.send();
             }.bind(this), 5000);
         } else {
-            $log("Disabling polling, logged in or disabled")
+            $log("Disabling polling, logged in or disabled");
             this.disable();
         }
     },
@@ -249,7 +249,7 @@ Vifi.User.ProfileView = Backbone.View.extend({
     defaults: {},
     events: {
         "click #pairButton": "showPairScreen",
-        "click #reloadButton": "showPaymentScreen"
+        "click #reloadButton": 'showAlertScreen'
     },
     el: $("#" + Vifi.Settings.accountpageId),
     initialize: function() {
@@ -258,21 +258,25 @@ Vifi.User.ProfileView = Backbone.View.extend({
         this.model.on('change:balance', this.renderBalance, this);
         this.model.on('change:email', this.toggleSignedIn, this);
         this.listenTo(this.model, "change", this.renderBalance, this);
+        
         this.template = _.template($("#accountTemplate").html());
         this.render();
-
+        
     },
     renderBalance: function() {
         var text = "";
         var balance = this.model.get('balance');
-        if (!this.model.isRegisteredUser()) text = "Please pair your account with this device";
-        else text = "Balance on account: " + this.model.get('balance') + "€";
+        if (!this.model.isRegisteredUser()) text = "Ühenda oma kontoga";
+        else text = "Balance on account: " + balance + "€";
         $('#account_status', this.$el).html(text);
+        app.pagemanager.redraw("#accountPage", true);
+
         return this;
     },
     renderEmail: function() {
         if (this.model.isRegisteredUser())
             $('#account_username', this.$el).html(this.model.get('email'));
+        app.pagemanager.redraw("#accountPage", true);
         return this;
     },
     showPairScreen: function() {
@@ -281,7 +285,7 @@ Vifi.User.ProfileView = Backbone.View.extend({
         else this.model.trigger("user:logout");
     },
     showAlertScreen: function() {
-        Vifi.User.Alertscreen.show();
+    	Vifi.Event.trigger("alert:show");
     },
     showPaymentScreen: function() {
 
@@ -291,9 +295,9 @@ Vifi.User.ProfileView = Backbone.View.extend({
     toggleSignedIn: function() {
 
         if (this.model.isRegisteredUser()) {
-            this.$("#pair").html("Sign out").addClass("signout").removeClass("signin");
+            this.$("#pair").html("Logi välja").addClass("signout").removeClass("signin");
         } else {
-            this.$("#pair").html("Pair device").addClass("signin").removeClass("signout");
+            this.$("#pair").html("Logi sisse").addClass("signin").removeClass("signout");
         }
         this.renderEmail();
         this.renderBalance();
@@ -365,7 +369,7 @@ Vifi.User.AlertView = Vifi.Views.DialogView.extend({
     initialize: function() {
         this.template = _.template($("#alertTemplate").html());
         Vifi.Event.on('alert:show', this.show, this);
-        this.model.on('change:alertText', this.renderText, this)
+        this.model.on('change:alertText', this.renderText, this);
         this.render();
     },
     renderText: function() {
@@ -377,6 +381,10 @@ Vifi.User.AlertView = Vifi.Views.DialogView.extend({
         Vifi.Event.trigger("page:change", "alert", true);
 
     },
+    onHide: function() {
+    	
+    	Vifi.Event.trigger("page:change", "account");
+    }
 });
 
 

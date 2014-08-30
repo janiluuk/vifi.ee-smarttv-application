@@ -46,7 +46,7 @@ Vifi.Platforms = {
             console.log(" COULD NOT DETECT PLATFORM, USING DEFAULT (" + this.defaultPlatform.name + ")");
             this.platform = this.defaultPlatform;
         }
-        $log("<< PLATFORM IS: (" + this.platform.name + ") >>")
+        $log("<< PLATFORM IS: (" + this.platform.name + ") >>");
         this.platform.init();
         this.platform.addPlatformCSS();
         this.platform.fetchMediaPlayer();
@@ -98,7 +98,8 @@ Vifi.Platform = function(name) {
         KEY_STOP: 83, // s
         KEY_VOL_UP: 187, // +
         KEY_VOL_DOWN: 48, // 0
-        KEY_MUTE: 77 // m
+        KEY_MUTE: 77, // m
+        KEY_CANCEL: 27 // ESC
 
     }
     this.resolution = {
@@ -259,17 +260,10 @@ Vifi.Platform.prototype.proxy = function() {
         window.widgetAPI = new Common.API.Widget();
         window.pluginAPI = new Common.API.Plugin();
 
-        // Unregister volume and mute keys
-        setTimeout(function() {
-            pluginAPI.SetBannerState(1);
-            NNaviPlugin.SetBannerState(2);
-            pluginAPI.unregistKey(keys.KEY_VOL_UP);
-            pluginAPI.unregistKey(keys.KEY_VOL_DOWN);
-            pluginAPI.unregistKey(keys.KEY_MUTE);
-        }, 1000);
 
     }
     platform.initready = function() {
+
         window.widgetAPI.sendReadyEvent();
         $log("<< Platform ready (" + this.name + " " + this.matrix() + " on " + window.screen.width + "x" + window.screen.height + " ) >>")
 

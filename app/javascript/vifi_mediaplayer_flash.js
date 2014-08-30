@@ -75,7 +75,10 @@ Vifi.MediaPlayer = {
                 if (!this.isFullscreen()) {}
             },
 
-
+            // canvas background
+            canvas: {
+                backgroundGradient: 'none'
+            },
             clip: {
                 baseUrl: 'rtmpe://media.vifi.ee/vod/',
                 autoBuffering: true,
@@ -349,7 +352,7 @@ Vifi.MediaPlayer = {
 }
 _.extend(Vifi.MediaPlayer, Backbone.Events);
 _.extend(Vifi.MediaPlayer, Vifi.MediaPlayerCore);
-Vifi.MediaPlayer.bind("mediaplayer:stop", function() { 
+Vifi.MediaPlayer.bind("mediaplayer:stop", function() {
     Vifi.MediaPlayer.stop(true);
 });
 
