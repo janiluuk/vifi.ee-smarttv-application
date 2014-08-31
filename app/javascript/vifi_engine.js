@@ -20,7 +20,7 @@ Vifi = {
     Settings: {
         // properties   
         version: "0.99.2807",
-        debug: false,
+        debug: true,
         api_url: 'http://backend.vifi.ee/api/',
         api_key: '27ah12A3d76f32',
         browserpageId: 'browserPage',

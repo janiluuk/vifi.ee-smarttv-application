@@ -49,7 +49,7 @@ Vifi.PageManager = {
     },
     disableNavigation: function() {
         tv.ui.getComponentByElement(goog.dom.getElement("application")).removeChildren();
-        tv.ui.decorate(goog.dom.getElement("application"))
+        tv.ui.decorate(goog.dom.getElement("application"));
         Vifi.KeyHandler.disable();
     },
 
@@ -202,6 +202,16 @@ Vifi.PageManager = {
 
         }
         return this;
+    },
+    decorateElement: function(el, handler) { 
+        var el = tv.ui.getComponentByElement(goog.dom.getElement(el));
+        if (undefined == el || !el || !handler) 
+            return false;
+        tv.ui.decorateChildren(el.getElement(), function(component) {
+                goog.events.listen(component, tv.ui.Component.EventType.KEY, handler);
+        }.bind(this), el);
+        el.tryFocus();
+        
     },
     // Setup initial handlers for the keyboard navigation
     setHandlers: function() {
@@ -383,16 +393,12 @@ Vifi.PageManager = {
         if (keyCode == 40 /*Down*/ ) {
             var el = tv.ui.getComponentByElement(goog.dom.getElement("film-results"));
             if (undefined !== el) {
-                var jee = el.getElement().getElementsByClassName("tv-container-selected-child")[0];
-                if (jee) tv.ui.getComponentByElement(jee).tryFocus();
-                else {
-                    el.removeChildren();
-                    tv.ui.decorateChildren(el.getElement(), function(component) {
-                        goog.events.listen(component, tv.ui.Component.EventType.KEY, this.handleMovieEvent);
-                    }.bind(this), el);
-                    el.tryFocus();
+                    var selectedEl = el.getElement().getElementsByClassName("tv-container-selected-child")[0];
+                    
+                    this.decorateElement("film-results", this.handleMovieEvent);
+                    if (selectedEl) tv.ui.getComponentByElement(selectedEl).tryFocus();
                 }
-            }
+            
             event.stopPropagation();
         }
         if (keyCode == 38 /*Up*/ ) {
@@ -485,8 +491,13 @@ Vifi.PageManager = {
             event.stopPropagation();
         }
         if (event.keyCode == 38 /*Up*/ ) {
+            var item = event.target.element_;
+
             var el = tv.ui.getComponentByElement(goog.dom.getElement("search-options-bar"));
             el.tryFocus(true);
+            $(item).parent().find(".active-item").removeClass("active-item");
+            $(item).addClass("active-item");
+
             event.stopPropagation();
         }
         if (event.keyCode == 39 /*Right */ ) {

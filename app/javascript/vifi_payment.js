@@ -19,20 +19,26 @@ Vifi.Payment = Backbone.Model.extend({
     paymentCallback: function(response) {
 
         if (undefined != response && response.success) {
-            app.pagemanager.enableNavigation();
 
             var profile = app.session.get("profile");
             if (profile.purchase(app.payment.film) == true) {
                 $log("Billing process successfully ended");
-                app.player.trigger("player:load", app.payment.film.get("film").id);
+
+                setTimeout(function() {  
                 app.purchasePage.hide();
+
+                app.player.trigger("player:load", app.payment.film.get("film").id);
+
+                },1500);
+
             }
             //replace this line with the code that should run upon successful billing 
         } else {
-            app.pagemanager.enableNavigation();
             $log(response);
 
         }
+        app.pagemanager.enableNavigation();
+
     },
 
     exitPurchase: function() {

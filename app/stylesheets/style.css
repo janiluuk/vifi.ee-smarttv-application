@@ -830,6 +830,14 @@ span.stars.r1 {
     background-image: url('img/reload_hover.png');
 }
 
+.button.help {
+    background-image: url('img/help.png');
+}
+
+.button.help:hover, .tv-button.tv-component-focused .button.help {
+    background-image: url('img/help_hover.png');
+}
+
 .button.signout {
     background-image: url('img/signout.png');
 }
@@ -1209,7 +1217,7 @@ position: absolute;
 width: 250px;
 height: 250px;
 z-index: 12;
-top: 0%;
+top: 20%;
 left: 40%;
 opacity:0.3;
 }

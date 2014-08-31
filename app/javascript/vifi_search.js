@@ -80,6 +80,7 @@ Vifi.Pages.Browser = Vifi.PageView.extend({
             effectspeed: 900
         });
     },
+    
     // Handle preloading imags on browser
     onBrowserPaginationEvent: function(e) {
         var images = $("#search-results div.lazy.loading:in-viewport");
