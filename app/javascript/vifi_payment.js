@@ -1,3 +1,4 @@
+
 Vifi.Payment = Backbone.Model.extend({
     film: false,
     session: false,
@@ -37,6 +38,8 @@ Vifi.Payment = Backbone.Model.extend({
             $log(response);
 
         }
+        app.purchasePage.hide();
+
         app.pagemanager.enableNavigation();
 
     },
@@ -122,6 +125,7 @@ _.extend(Vifi.Payment, Backbone.Events);
 Vifi.PurchaseView = Vifi.Views.DialogView.extend({
     el: $("#" + Vifi.Settings.purchasePageId),
     model: Vifi.Films.FilmModel,
+    state: "enabled",
     events: {
         'click #purchase': 'purchase',
         'click #closePurchase': 'hide'
@@ -143,11 +147,12 @@ Vifi.PurchaseView = Vifi.Views.DialogView.extend({
     },
     onHide: function() {
         Vifi.Event.trigger("page:change", "movie");
+        this.state = "enabled";
     },
     purchase: function() {
-
+        if (this.state == "enabled")
         app.payment.purchase(this.model);
-
+        this.state = "disabled";
     }
 
 });

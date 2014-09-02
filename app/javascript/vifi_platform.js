@@ -265,6 +265,10 @@ Vifi.Platform.prototype.proxy = function() {
     platform.initready = function() {
 
         window.widgetAPI.sendReadyEvent();
+        pluginAPI.unregistKey(Vifi.Engine.getPlatform().keys().KEY_VOL_UP);
+        pluginAPI.unregistKey(Vifi.Engine.getPlatform().keys().KEY_VOL_DOWN);
+        pluginAPI.unregistKey(Vifi.Engine.getPlatform().keys().KEY_PANEL_VOL_UP);
+        pluginAPI.unregistKey(Vifi.Engine.getPlatform().keys().KEY_PANEL_VOL_DOWN);
         $log("<< Platform ready (" + this.name + " " + this.matrix() + " on " + window.screen.width + "x" + window.screen.height + " ) >>")
 
     }

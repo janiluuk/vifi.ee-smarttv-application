@@ -42,15 +42,18 @@ Vifi.PageManager = {
     },
 
     enableNavigation: function() {
-        this.redraw("#application", true);
-        Vifi.KeyHandler.enable();
+        $(".tv-component-disabled").removeClass("tv-component-disabled");
 
+        this.redraw("#application", true);
+         this.decorateElement("film-results", this.handleMovieEvent);
+
+        Vifi.KeyHandler.enable();
 
     },
     disableNavigation: function() {
-        tv.ui.getComponentByElement(goog.dom.getElement("application")).removeChildren();
-        tv.ui.decorate(goog.dom.getElement("application"));
         Vifi.KeyHandler.disable();
+        $(".tv-component").addClass("tv-component-disabled");
+        tv.ui.decorate(goog.dom.getElement("application"));
     },
 
     moveUp: function() {
@@ -154,6 +157,7 @@ Vifi.PageManager = {
         }
     },
     onBeforePageChange: function(page) {
+        if (!Vifi.Navigation.enabled) return false;
         this.getActivePage().removeClass("active");
         this.lastActivePage = this.activePage;
         Vifi.Event.trigger("page:onpagechange", page);
