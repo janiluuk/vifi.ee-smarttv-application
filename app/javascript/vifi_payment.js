@@ -26,9 +26,8 @@ Vifi.Payment = Backbone.Model.extend({
                 $log("Billing process successfully ended");
 
                 setTimeout(function() {  
-                app.purchasePage.hide();
-
-                app.player.trigger("player:load", app.payment.film.get("film").id);
+                    app.purchasePage.hide();
+                    app.player.trigger("player:load", app.payment.film.get("film").id);
 
                 },1500);
 

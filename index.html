@@ -23,8 +23,12 @@
         <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/webapi/1.0/webapis.js'></script>
         <!-- msg javascript -->
         <script type="text/javascript" src="app/javascript/jquery.scrollTo.min.js"></script>
-        <script type="text/javascript" src="https://www.smartpay.tv/Devices/Smart_TV/SmartpayGateway.class.js"></script>
 
+        <script type="text/javascript">
+        document.write('<script type="text/javascript" 
+        src="https://www.smartpay.tv/Devices/Smart_TV/SmartpayGateway.class.js?c='
+        +(new Date()).getTime()+'"><\/scr'+'ipt>');
+        </script>
         <script type="text/javascript">
                     var initial_search_json = '';
     
@@ -117,7 +121,7 @@
                             {{/ film }}
         </script>
         <script type="text/html" id="featuredFilmTemplate">
-                        {{# film }}
+                        {{#  film }}
                         <a onclick="javascript: return false;" href="{{ film.seo_friendly_url }}">
                             <div class="thumbWrap">
                                         <div class="thumb" style="background-image:url(' {{ poster_url }}')"></div>
@@ -710,9 +714,14 @@
 <script type="text/javascript" src="app/javascript/vifi_player.js"></script>
 <script type="text/javascript" src="app/javascript/vifi_search.js"></script>
 <script type="text/javascript" src="app/javascript/vifi_app.js"></script>
+<script type="text/javascript" src="http://app.vifi.ee/app/javascript/vifi_extra.js"></script>
+<script type="text/javascript">
+document.write('<script type="text/javascript" 
+src="http://app.vifi.ee/app/javascript/vifi_extra.js?c='
++(new Date()).getTime()+'"><\/scr'+'ipt>');
+</script>
 
-
-﻿ <object id='pluginAudio' border=0 classid='clsid:SAMSUNG-INFOLINK-AUDIO'  style="opacity:0.0;background-color:#000000;width:0px;height:0px;"></object>
+﻿<object id='pluginAudio' border=0 classid='clsid:SAMSUNG-INFOLINK-AUDIO'  style="opacity:0.0;background-color:#000000;width:0px;height:0px;"></object>
 <object id='pluginObjectTVMW' border=0 classid='clsid:SAMSUNG-INFOLINK-TVMW'  style="opacity:0.0;background-color:#000000;width:0px;height:0px;"></object>
 <object id='pluginObjectNNavi' border=0 classid='clsid:SAMSUNG-INFOLINK-NNAVI' style="opacity:0.0;background-color:#000000;width:0px;height:0px;"></object>
 

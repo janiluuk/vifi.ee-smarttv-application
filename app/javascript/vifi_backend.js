@@ -43,9 +43,8 @@ Vifi.PageManager = {
 
     enableNavigation: function() {
         $(".tv-component-disabled").removeClass("tv-component-disabled");
-
         this.redraw("#application", true);
-         this.decorateElement("film-results", this.handleMovieEvent);
+        this.decorateElement("film-results", this.handleMovieEvent);
 
         Vifi.KeyHandler.enable();
 
@@ -209,7 +208,7 @@ Vifi.PageManager = {
     },
     decorateElement: function(el, handler) { 
         var el = tv.ui.getComponentByElement(goog.dom.getElement(el));
-        if (undefined == el || !el || !handler) 
+        if (undefined == el || !el ||!handler) 
             return false;
         tv.ui.decorateChildren(el.getElement(), function(component) {
                 goog.events.listen(component, tv.ui.Component.EventType.KEY, handler);

@@ -11,7 +11,7 @@
 	<cpauthjs>N</cpauthjs>
 	<login>n</login>
 
-	<ver>0.999</ver>
+	<ver>1.0</ver>
 	<mgrver>2.250</mgrver>
 	
 	<fullwidget>y</fullwidget>
@@ -23,7 +23,7 @@
 	<dcont>n</dcont>
 	<movie>y</movie>
 	<widgetname>Vifi</widgetname>
-	<description>VOD Application</description>
+	<description>Stream movies!</description>
 
 	<width>1280</width>
 	<height>720</height>
