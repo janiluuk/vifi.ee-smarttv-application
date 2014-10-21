@@ -119,6 +119,8 @@ Vifi.MediaPlayer = {
                 playCallback: playCB,
                 autoratio: true
             });
+            this.active();
+
             this.playerContainer = true;
         } else {
             avplayObj.show();
@@ -128,7 +130,6 @@ Vifi.MediaPlayer = {
         avplayObj.onerror = 'Vifi.MediaPlayer.videoError';
         avplayObj.OnStreamInfoReady = 'Vifi.MediaPlayer._streamInfoReady';
         avplayObj.OnStreamNotFound = 'Vifi.MediaPlayer.streamNotFound';
-        this.active();
 
         if (!this.currentStream || this.currentStream.mp4 == "") {
             $log("NO VIDEO URL SET");
@@ -227,7 +228,7 @@ Vifi.MediaPlayer = {
         if (this.visible) this.hide();
 
         if (avplayObj) {
-            $log(" Calling MediaPlayer Stop ")
+            $log(" Calling MediaPlayer Stop ");
             avplayObj.stop();
             avplayObj.clear();
             avplayObj.hide();
@@ -242,8 +243,14 @@ Vifi.MediaPlayer = {
 
     pause: function() {
         this.trigger("mediaplayer:onpause");
+        if (this.state == this.PAUSED) {
+          avplayObj.resume();
+          this.state = this.PLAYING;  
+        } 
+        else { 
         avplayObj.pause();
         this.state = this.PAUSED;
+        }
     },
 
     fastforward: function() {

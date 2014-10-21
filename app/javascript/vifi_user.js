@@ -7,7 +7,7 @@ Vifi.User.Profile = Vifi.Utils.ApiModel.extend({
         "lastname": '',
         "firstname": '',
         "notificationText": '',
-        "email": 'Visitor',
+        "email": 'Kasutaja',
         "city": '',
         "balance": "",
         "tickets": [],
@@ -52,8 +52,7 @@ Vifi.User.Profile = Vifi.Utils.ApiModel.extend({
         this.set("user_id", "");
         this.set("balance", 0);
         this.set("paired_user", false);
-        this.set("sessionId", "");
-        this.set("email", "Visitor");
+        this.set("email", "Kasutaja");
         this.set("tickets", "");
     },
 
@@ -87,10 +86,27 @@ Vifi.User.Session = Backbone.Model.extend({
     url: function() {
         return Vifi.Settings.api_url + 'session/' + this.path + '?jsoncallback=?';
     },
+    logout: function() { 
+        var options = this.getParams();
+        $.getJSON(this.url()+"&unpair=1", options.data).done(function(data) {
+
+            if (data.activationCode) {
+                this.path = "";
+                this.set("activationCode",data.activationCode);
+                this.set("logged_in", false);
+                this.set("sessionId", "");
+                this.set("hash", "");
+
+
+            }
+        }.bind(this));
+
+    },
     defaults: function() {
         return {
             user_id: '',
             hash: '',
+            sessionId: '',
             step1text: 'Mine www.vifi.ee lehele, registreeri või logi sisse oma kontoga. Võid kasutada oma facebook kontot või teha uue kasutaja',
             step2text: 'Sisesta "CODE" väljale kus küsitakse aktiveerimiskoodi',
             activationCode: '',
@@ -116,23 +132,25 @@ Vifi.User.Session = Backbone.Model.extend({
         var code = this.get("step2text").replace("CODE", this.get("activationCode"));
         this.set("step2text", code);
 
-
         this.profile = new Vifi.User.Profile();
         this.set("profile", this.profile);
 
         Vifi.Event.on('poll:enable', this.enable, this);
         Vifi.Event.on('poll:disable', this.disable, this);
-
+        Vifi.Event.on('activation:show', this.logout, this);
         Vifi.Event.on('user:login', this.onUserAuthenticate, this);
         Vifi.Event.on('user:logout', this.onUserSignout, this);
         this.on('change:sessionId', this.setCookie, this);
-        _.bindAll(this, 'send', 'authorize', 'fetch', "setCookie");
+        this.on("change:activationCode", function() { this.set("step2text", 'Sisesta '+this.get("activationCode")+' väljale kus küsitakse aktiveerimiskoodi');}.bind(this));
+
+        _.bindAll(this, 'send', 'logout', 'authorize', 'fetch', "setCookie", "onUserSignout");
         if (!this.isLoggedIn()) {
             this.enable();
         }
         this.render();
     },
     enable: function() {
+
         if (!this.isLoggedIn() && !this.isEnabled()) {
 
             this.set("enabled", true);
@@ -145,6 +163,7 @@ Vifi.User.Session = Backbone.Model.extend({
     onUserSignout: function() {
         this.set('logged_in', false);
         this.disable();
+        this.logout();
 
         return false;
     },
@@ -275,6 +294,9 @@ Vifi.User.ProfileView = Backbone.View.extend({
     renderEmail: function() {
         if (this.model.isRegisteredUser())
             $('#account_username', this.$el).html(this.model.get('email'));
+        else
+            $('#account_username', this.$el).html("Kasutaja");
+        
         app.pagemanager.redraw("#accountPage", true);
         return this;
     },
@@ -316,7 +338,7 @@ Vifi.User.ToolbarView = Backbone.View.extend({
     initialize: function() {
         this.template = _.template($("#toolbarTemplate").html());
         this.notificationTemplate = _.template($("#notificationTemplate").html());
-        this.listenTo(this.model, 'change:paired_user', this.slideRender);
+        this.listenTo(this.model, 'change:email', this.slideRender);
         this.render();
 
     },

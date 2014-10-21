@@ -259,16 +259,28 @@ Vifi.Platform.prototype.proxy = function() {
         var keys = this.keys();
         window.widgetAPI = new Common.API.Widget();
         window.pluginAPI = new Common.API.Plugin();
+        window.NNaviPlugin = document.getElementById('pluginObjectNNavi');
 
 
     }
     platform.initready = function() {
-
         window.widgetAPI.sendReadyEvent();
-        pluginAPI.unregistKey(Vifi.Engine.getPlatform().keys().KEY_VOL_UP);
-        pluginAPI.unregistKey(Vifi.Engine.getPlatform().keys().KEY_VOL_DOWN);
-        pluginAPI.unregistKey(Vifi.Engine.getPlatform().keys().KEY_PANEL_VOL_UP);
-        pluginAPI.unregistKey(Vifi.Engine.getPlatform().keys().KEY_PANEL_VOL_DOWN);
+
+                setTimeout(function(){
+                    pluginAPI.unregistKey(Vifi.Engine.getPlatform().keys().KEY_VOL_UP);
+                    pluginAPI.unregistKey(Vifi.Engine.getPlatform().keys().KEY_VOL_DOWN);
+                    pluginAPI.unregistKey(Vifi.Engine.getPlatform().keys().KEY_MUTE);
+                    pluginAPI.unregistKey(Vifi.Engine.getPlatform().keys().KEY_PANEL_VOL_UP);
+                    pluginAPI.unregistKey(Vifi.Engine.getPlatform().keys().KEY_PANEL_VOL_DOWN);
+                    pluginAPI.unregistKey(7); //unregister volume up button
+                    pluginAPI.unregistKey(11); //unregister volume down button
+                    pluginAPI.unregistKey(27); //unregister mute button
+                    NNaviPlugin.SetBannerState(1); //this is to see the banner Volume
+
+                },100);
+
+
+
         $log("<< Platform ready (" + this.name + " " + this.matrix() + " on " + window.screen.width + "x" + window.screen.height + " ) >>")
 
     }

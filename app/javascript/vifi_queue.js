@@ -4,6 +4,7 @@ Vifi.Films.BrowserCollection = Backbone.Collection.extend({
     url: '',
     baseUrl: Vifi.Settings.api_url + 'search/',
     initialize: function(models, options) {
+        this.options = options;
         this.state = options.state;
         this.initial_search = options.search;
 

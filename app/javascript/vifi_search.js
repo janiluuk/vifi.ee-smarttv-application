@@ -19,9 +19,9 @@ Vifi.Pages.Browser = Vifi.PageView.extend({
         this.options.genres.bind('all', this.setGenreDropDown, this);
         this.collection.bind('sync', this.renderResults, this);
         this.collection.state.bind('change', this.onChangeCollectionState, this);
-        this.collection.state.bind('change:genre', this.onChangeGenre, this);
-        this.collection.state.bind('change:duration', this.onChangeDuration, this);
-        this.collection.state.bind('change:year', this.onChangeYear, this);
+        this.collection.state.bind('change:genres', this.onChangeGenre, this);
+        this.collection.state.bind('change:durations', this.onChangeDuration, this);
+        this.collection.state.bind('change:periods', this.onChangeYear, this);
         this.collection.state.bind('change:search', this.onChangeText, this);
         this.on("browser:pagination", this.onBrowserPaginationEvent, this);
         this.render();
@@ -36,15 +36,15 @@ Vifi.Pages.Browser = Vifi.PageView.extend({
     },
 
     setGenreDropDown: function(action) {
-        $('#div_id_genre select').empty();
+        $('#div_id_genres select').empty();
         if (this.options.genres.length > 0) {
             if (this.options.genres.length > 1) {
-                $('#div_id_genre select').append(new Option('All Genres', ''));
+                $('#div_id_genres select').append(new Option('All Genres', ''));
             }
             _.each(this.options.genres.models, function(genre, key, list) {
-                $('#div_id_genre select').append(new Option(genre.attributes.name, genre.id));
+                $('#div_id_genres select').append(new Option(genre.attributes.name, genre.id));
             });
-            this.$('#id_genre option[value="' + this.collection.state.get('genre') + '"]').attr('selected', 'selected');
+            this.$('#id_genres option[value="' + this.collection.state.get('genres') + '"]').attr('selected', 'selected');
         }
     },
     redirectToBaseURL: function() {
@@ -90,9 +90,9 @@ Vifi.Pages.Browser = Vifi.PageView.extend({
         var name = "q";
         var value = $("#q").val();
         var search_array = {
-            genre: undefined,
-            duration: undefined,
-            period: undefined
+            genres: undefined,
+            durations: undefined,
+            periods: undefined
         };
         var search_dict = _.extend({}, search_array);
         search_dict[name] = value;
@@ -135,7 +135,7 @@ Vifi.Pages.Browser = Vifi.PageView.extend({
         var query = state.get('q');
         $('#q').val(query);
 
-        var options = ['genre', 'period', 'duration'];
+        var options = ['genres', 'periods', 'durations'];
         $.each(options, function(idx, option) {
             var val = decodeURIComponent(state.get(option));
             if (val != "") {
@@ -157,7 +157,7 @@ Vifi.Pages.Browser = Vifi.PageView.extend({
     },
     onChangeCollectionState: function(state) {
         var changed_keys = _.keys(state.changedAttributes());
-        var genre_is_changed = _.contains(changed_keys, 'genre');
+        var genre_is_changed = _.contains(changed_keys, 'genres');
         if (this.options.redirect_on_genre_change && (genre_is_changed)) {
             return this.redirectToBaseURL();
         }

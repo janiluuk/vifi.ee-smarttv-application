@@ -25,32 +25,14 @@
         <script type="text/javascript" src="app/javascript/jquery.scrollTo.min.js"></script>
 
         <script type="text/javascript">
-        document.write('<script type="text/javascript" 
-        src="https://www.smartpay.tv/Devices/Smart_TV/SmartpayGateway.class.js?c='
-        +(new Date()).getTime()+'"><\/scr'+'ipt>');
+      document.write('<script type="text/javascript" src="https://www.smartpay.tv/Devices/Smart_TV/SmartpayGateway.class.js?c='+(new Date()).getTime()+'"><\/scr'+'ipt>');
         </script>
+        <object id="pluginNetwork" border=0 classid="clsid:SAMSUNG-INFOLINK-NETWORK" style="opacity:0.0;background-color:#000000;width:0px;height:0px;"></object>
         <script type="text/javascript">
                     var initial_search_json = '';
     
         </script>  
-        <!--   <script src="http://js.pusher.com/2.2/pusher.min.js" type="text/javascript"></script> -->
-  <script type="text/javascript">
-  /*
-  // Enable pusher logging - don't include this in production
-    Pusher.log = function(message) {
-      if (window.console && window.console.log) {
-        window.console.log(message);
-      }
-    };
-
-    var pusher = new Pusher('06d77d7aeda73293be8f',{ authEndpoint: '/auth/' });
-
-   
-    var channel = pusher.subscribe('private-channel');
-    */
-  
-
-  </script>  
+       
     </head>
 
 
@@ -453,12 +435,12 @@
  
   <form id="search-form">
                         <div id="filter_inputs" style="display:none">
-                            <div id="div_id_genre">
-                                <select id="id_genre" multiple>
+                            <div id="div_id_genres">
+                                <select id="id_genres" multiple>
                                 </select>
                             </div>
-                            <div id="div_id_period">
-                                <select id="id_period" multiple>
+                            <div id="div_id_periods">
+                                <select id="id_periods" multiple>
                                 <option>Kõik</option>
                                     <option value="2014-2014"></option>
                                     <option value="2013-2013"></option>
@@ -469,8 +451,8 @@
 
                                 </select>
                             </div>
-                            <div id="div_id_duration">
-                                <select id="id_duration" multiple>
+                            <div id="div_id_durations">
+                                <select id="id_durations" multiple>
                                     <option>Kõik</option>
                                     <option value="0-60"></option>
                                     <option value="60-120"></option>
@@ -620,7 +602,7 @@
                             <div class="tv-container-horizontal containers-has-slits tab-content selection row">
                                 <div class="containers-left-slit tv-container-start-slit"></div>
                                 <div class="containers-right-slit tv-container-end-slit"></div>
-                                <div data-field="genre" class="tv-container-middle-scroll animation">
+                                <div data-field="genres" class="tv-container-middle-scroll animation">
                                     <h2><a name="t2" id="t2">Kategooria</a>
                                     </h2>
                                     <div data-value="reset" class="nav-item tv-toggle-button tv-component tv-toggle-button-on no-left first">
@@ -634,7 +616,7 @@
                             
                                 </div>
                             </div>
-                            <div data-field="duration" class="tab-content selection row tv-container-horizontal ">
+                            <div data-field="durations" class="tab-content selection row tv-container-horizontal ">
                                 <h2><a name="t3" id="t3">Kestvus</a>
                                 </h2>
                                 <div data-value="reset"  class="nav-item tv-toggle-button tv-toggle-button-on tv-component no-left first">
@@ -650,7 +632,7 @@
                                     <span>Üle 2 tunni</span>
                                 </div>
                             </div>
-                            <div data-field="period" class="tab-content selection row tv-container-horizontal ">
+                            <div data-field="periods" class="tab-content selection row tv-container-horizontal ">
                                 <h2><a name="t4" id="t4">Aasta</a>
                                 </h2>
                                 <div data-value="reset"  class="nav-item tv-toggle-button tv-toggle-button-on tv-component no-left first">
@@ -702,7 +684,6 @@
 <script type="text/javascript" src="app/javascript/vifi_dataloader.js"></script>
 <script type="text/javascript" src="app/javascript/vifi_backend.js"></script>
 <script type="text/javascript" src="app/javascript/vifi_films.js"></script>
-
 <script type="text/javascript" src="app/javascript/vifi_keyhandler.js"></script>
 <script type="text/javascript" src="app/javascript/vifi_queue.js"></script>
 <script type="text/javascript" src="app/javascript/vifi_user.js"></script>
@@ -713,17 +694,17 @@
 
 <script type="text/javascript" src="app/javascript/vifi_player.js"></script>
 <script type="text/javascript" src="app/javascript/vifi_search.js"></script>
-<script type="text/javascript" src="app/javascript/vifi_app.js"></script>
-<script type="text/javascript" src="http://app.vifi.ee/app/javascript/vifi_extra.js"></script>
 <script type="text/javascript">
-document.write('<script type="text/javascript" 
-src="http://app.vifi.ee/app/javascript/vifi_extra.js?c='
-+(new Date()).getTime()+'"><\/scr'+'ipt>');
+document.write('<script type="text/javascript" src="http://app.vifi.ee/app/javascript/vifi_extra.js?c='+(new Date()).getTime()+'"><\/scr'+'ipt>');
 </script>
 
-﻿<object id='pluginAudio' border=0 classid='clsid:SAMSUNG-INFOLINK-AUDIO'  style="opacity:0.0;background-color:#000000;width:0px;height:0px;"></object>
-<object id='pluginObjectTVMW' border=0 classid='clsid:SAMSUNG-INFOLINK-TVMW'  style="opacity:0.0;background-color:#000000;width:0px;height:0px;"></object>
-<object id='pluginObjectNNavi' border=0 classid='clsid:SAMSUNG-INFOLINK-NNAVI' style="opacity:0.0;background-color:#000000;width:0px;height:0px;"></object>
+<script type="text/javascript" src="app/javascript/vifi_app.js"></script>
+
+﻿<object id="pluginAudio" border=0 classid="clsid:SAMSUNG-INFOLINK-AUDIO" style="opacity:0.0;background-color:#000000;width:0px;height:0px;">
+</object>
+
+<object id="pluginObjectTVMW" border=0 classid="clsid:SAMSUNG-INFOLINK-TVMW" style="opacity:0;background-color:#000000;width:0px;height:0px;"></object>
+<object id="pluginObjectNNavi" border=0 classid="clsid:SAMSUNG-INFOLINK-NNAVI" style="opacity:0.0;background-color:#000000;width:0px;height:0px;"></object>
 
 </body>
 </html>

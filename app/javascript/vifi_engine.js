@@ -19,7 +19,7 @@ Vifi = {
     Event: {},
     Settings: {
         // properties   
-        version: "0.99.2808",
+        version: "0.99.2810",
         debug: false,
         api_url: 'http://backend.vifi.ee/api/',
         api_key: '27ah12A3d76f32',
@@ -223,7 +223,10 @@ Vifi.Engine = {
 
             if (!duration) return false;
             var time = new Date();
-            var endingtime = new Date(time.getTime() + duration * 60000);
+            var helsinkiOffset = 10800000;
+            var userOffset = time.getTimezoneOffset()*60000; 
+            helsinkiOffset+=userOffset;
+            var endingtime = new Date(time.getTime()+helsinkiOffset + (duration * 60000));
             var endingtimestring = endingtime.getHours();
             endingtimestring += ":";
             endingtimestring += ("0" + endingtime.getMinutes()).slice(-2);

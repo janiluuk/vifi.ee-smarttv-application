@@ -56,8 +56,17 @@ Vifi.KeyHandler = {
         $(document).bind("keydown", function(event) {
 
             var action = _this.keyActions[_this.keyMap[event.keyCode]];
-            if (action == "onReturn" && typeof(widgetAPI) != "undefined") widgetAPI.blockNavigation(event);
+            if (action == "onReturn" && typeof(widgetAPI) != "undefined") {
+                var activePage = app.pagemanager.activePage;
+                
+                if (activePage != "#homePage")
+                widgetAPI.blockNavigation(event);
+                else 
+                widgetAPI.sendReturnEvent();
+
+            } 
             if (action == "onExit" && typeof(widgetAPI) != "undefined") {
+               
                 widgetAPI.sendReturnEvent();
                 return false;
             }

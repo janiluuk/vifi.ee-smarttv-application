@@ -72,8 +72,11 @@ Vifi.Player.PlayerView = Backbone.View.extend({
         Vifi.MediaPlayer.on("mediaplayer:bufferingend", this.onBufferingStop, this);
         this.on("player:show", this.onPlayerPageEnter, this);
         this.on("player:exit", this.onPlayerPageExit, this);
+        Vifi.MediaPlayer.on("mediaplayer:onstop", this.onPlayerPageExit, this);
+
         this.render();
         this.listenTo(this.model, "content:load", this.onContentLoad);
+        Vifi.KeyHandler.bind("all", this.touchVideoNavigationTimeout, this);
 
     },
 
@@ -147,18 +150,16 @@ Vifi.Player.PlayerView = Backbone.View.extend({
     },
 
     showNavigation: function() {
-        Vifi.KeyHandler.unbind("all", this.touchVideoNavigationTimeout);
         this.clearAllTimeouts();
         this.showDetails();
         $(this.optionsEl).fadeIn();
         this.touchVideoNavigationTimeout();
-        Vifi.KeyHandler.bind("all", this.touchVideoNavigationTimeout, this);
     },
     hideNavigation: function() {
+
         if (Vifi.MediaPlayer.playing()) {
             this.clearAllTimeouts();
             $(this.optionsEl).fadeOut();
-            Vifi.KeyHandler.bind("all", this.touchVideoNavigationTimeout, this);
         }
     },
 
@@ -192,6 +193,7 @@ Vifi.Player.PlayerView = Backbone.View.extend({
         tv.ui.getComponentByElement(goog.dom.getElement("playerPage")).removeChildren();
 
         $("#playerPage").empty().fadeOut();
+        Vifi.KeyHandler.unbind("all", this.touchVideoNavigationTimeout);
 
         $(".container-hidden").fadeIn();
         $(".container-hidden").removeClass("container-hidden");
@@ -220,6 +222,7 @@ Vifi.Player.PlayerView = Backbone.View.extend({
             $(this.optionsEl).fadeOut();
             $(this.infoEl).fadeOut();
         }.bind(this), 7000);
+        return false;
     }
 });
 
