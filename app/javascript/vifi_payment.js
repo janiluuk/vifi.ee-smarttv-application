@@ -9,6 +9,7 @@ Vifi.Payment = Backbone.Model.extend({
             this.setSession(options.session);
         }
         this.on('payment:creditpurchase', this.creditPurchase, this);
+        _.bindAll(this, 'paymentCallback');
 
     },
 
@@ -18,6 +19,7 @@ Vifi.Payment = Backbone.Model.extend({
     },
 
     paymentCallback: function(response) {
+        $log(response);
 
         if (undefined != response && response.success) {
 
@@ -26,30 +28,28 @@ Vifi.Payment = Backbone.Model.extend({
                 $log("Billing process successfully ended");
 
                 setTimeout(function() {  
-                    app.purchasePage.hide();
+                    this.exitPurchase();
                     app.player.trigger("player:load", app.payment.film.get("film").id);
 
-                },1500);
+                }.bind(this),1500);
 
             }
             //replace this line with the code that should run upon successful billing 
         } else {
-            $log(response);
+            this.exitPurchase();
 
         }
-        app.purchasePage.hide();
 
-        app.pagemanager.enableNavigation();
 
     },
 
-    exitPurchase: function() {
+    exitPurchase: function(e) {
 
         app.pagemanager.enableNavigation();
         app.purchasePage.hide();
         Vifi.Event.trigger("page:change", "movie");
 
-
+        return false;
     },
 
     // Purchase with smartpay
@@ -86,6 +86,10 @@ Vifi.Payment = Backbone.Model.extend({
         }
 
         var price = film.get("film").price;
+        $log("Disabling navigation");
+        setTimeout(function() {
+            app.pagemanager.disableNavigation();
+        }, 500);
 
         SmartpayGateway.init(this.productKey, app.payment.paymentCallback, info, 'EN', price, 'EUR');
         Vifi.Navigation.setReturnButton(this.exitPurchase, this);
@@ -94,10 +98,7 @@ Vifi.Payment = Backbone.Model.extend({
             "top": $("#moviePage").offset().top,
             "z-index": 999
         });
-        $log("Disabling navigation");
-        setTimeout(function() {
-            app.pagemanager.disableNavigation();
-        }, 800);
+        
 
 
     },
@@ -140,13 +141,20 @@ Vifi.PurchaseView = Vifi.Views.DialogView.extend({
     render: function() {
         this.$el.html(this.template(this.model.toJSON()));
         Vifi.Event.trigger("page:ready", "#" + this.$el.attr("id"));
-        Vifi.PageManager.redraw("#purchasePage", true);
 
         return this;
+    },
+    onShow: function() {
+        Vifi.PageManager.redraw("#purchasePage", true);
+        Vifi.Navigation.setReturnButton(this.hide, this);
+
+
     },
     onHide: function() {
         Vifi.Event.trigger("page:change", "movie");
         this.state = "enabled";
+        Vifi.Navigation.setReturnButton();
+
     },
     purchase: function() {
         if (this.state == "enabled")

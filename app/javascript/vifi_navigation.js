@@ -96,8 +96,8 @@ Vifi.Navigation = {
         if (!context) context = this;
 
         if (func && context) {
-
             Vifi.KeyHandler.bind("keyhandler:onReturn", func, context);
+
             return true;
         }
 

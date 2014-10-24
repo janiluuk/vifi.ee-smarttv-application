@@ -211,10 +211,10 @@ Vifi.Films.GenreCollection = Backbone.Collection.extend({
     initialize: function(models, options) {},
     update: function() {
         this.url = this.baseUrl + '&api_key=' + Vifi.Settings.api_key + '&jsoncallback=?';
-        if (!app.browser.collection.state.get('genres')) {
+        if (!app.browser.collection.state.get('genre')) {
             this.reset();
         } else {
-            this.url = this.baseUrl + app.browser.collection.state.get('genres');
+            this.url = this.baseUrl + app.browser.collection.state.get('genre');
             this.fetch();
         }
     },
@@ -226,10 +226,10 @@ Vifi.Films.SubGenreCollection = Backbone.Collection.extend({
     baseUrl: '#',
     initialize: function(models, options) {},
     update: function() {
-        if (!app.browser.collection.state.get('genres')) {
+        if (!app.browser.collection.state.get('genre')) {
             this.reset();
         } else {
-            this.url = this.baseUrl + app.browser.collection.state.get('genres');
+            this.url = this.baseUrl + app.browser.collection.state.get('genre');
             this.fetch();
         }
     },

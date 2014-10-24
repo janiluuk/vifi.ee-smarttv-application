@@ -119,7 +119,6 @@ Vifi.MediaPlayer = {
                 playCallback: playCB,
                 autoratio: true
             });
-            this.active();
 
             this.playerContainer = true;
         } else {
@@ -180,8 +179,9 @@ Vifi.MediaPlayer = {
             $log("ERROR!! " + error.message);
         });
 
-        if (status)
+        if (status) {
             this.state = this.PLAYING;
+        }
         else {
             this.videoError("FAILED TO START STREAM");
             this.state = this.STOPPED;
@@ -190,6 +190,7 @@ Vifi.MediaPlayer = {
         //  this.streamready = false;
         this.trigger("mediaplayer:onplay", this.currentStream.mp4);
         //   if (this.plugin.Play(this.currentStream.url)) {
+        this.active();
 
     },
 
@@ -222,7 +223,7 @@ Vifi.MediaPlayer = {
 
     // Controls
     // 'play','pause','rewind','fastforward', 'show', 'setCoordinates', 'next','setUserBitrate','stop', 'playing','hide', 'mute']
-    stop: function() {
+    stop: function(force) {
         $log("HARD STOPPING VIDEO");
         this.state = this.STOPPED;
         if (this.visible) this.hide();
@@ -233,8 +234,10 @@ Vifi.MediaPlayer = {
             avplayObj.clear();
             avplayObj.hide();
             this.deactive();
-
+            this.currentTime = 0;
+            
             this.currentStream = null;
+            if (!force)
             this.trigger('mediaplayer:onstop');
         }
     },
@@ -242,13 +245,14 @@ Vifi.MediaPlayer = {
 
 
     pause: function() {
-        this.trigger("mediaplayer:onpause");
+        alert("PAUSE!!!")
         if (this.state == this.PAUSED) {
           avplayObj.resume();
           this.state = this.PLAYING;  
         } 
         else { 
         avplayObj.pause();
+        this.trigger("mediaplayer:onpause");
         this.state = this.PAUSED;
         }
     },

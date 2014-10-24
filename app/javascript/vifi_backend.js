@@ -208,7 +208,7 @@ Vifi.PageManager = {
     },
     decorateElement: function(el, handler) { 
         var el = tv.ui.getComponentByElement(goog.dom.getElement(el));
-        if (undefined == el || !el ||!handler) 
+        if (undefined == el || !el || !handler) 
             return false;
         tv.ui.decorateChildren(el.getElement(), function(component) {
                 goog.events.listen(component, tv.ui.Component.EventType.KEY, handler);

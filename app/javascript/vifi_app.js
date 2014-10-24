@@ -247,10 +247,13 @@ Vifi.Engine.bind("app:ready", function() {
     Vifi.Platforms.platform.initready();
 
     $("#loadingWrapper").fadeOut().remove();
-    $("#application").animate({
-        "opacity": 1
-    }, 2000);
-
+   
+        setTimeout(function() { 
+            Vifi.Event.trigger("page:change", "home");
+             $("#application").animate({
+                    "opacity": 1
+             }, 2000);
+        }, 500);
         // if there's no hash, let's render the results
         // ( if there's a hash , the router will take care of this when it sets state from hash)
         if (window.location.hash.indexOf('#search') == -1 && window.location.hash.indexOf('#film') == -1) {
