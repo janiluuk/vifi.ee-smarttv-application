@@ -16,7 +16,7 @@ window.$noop = function(input) {
 Vifi.Platforms = {
 
     // 4 Primary Platforms (for now) samsung, lg, googletv, browser
-    platform: null,
+    platform: null,	
     proxy: "", // Default
 
     supportedPlatforms: {},
@@ -54,6 +54,8 @@ Vifi.Platforms = {
         // Going to add our proxy adding an ajax prefilter to switch to route the url
         // through a proxy for cross domain requests.
         var platform = this.platform;
+         $.ajaxSetup({ cache: false });
+
         if (_.isFunction($.ajaxPrefilter)) {
             $.ajaxPrefilter(function(options, originalOptions) {
                 var proxy = platform.proxy();
@@ -69,6 +71,8 @@ Vifi.Platforms = {
 
     }
 }
+
+
 
 // Master "Class" for Platforms.
 
@@ -235,13 +239,21 @@ Vifi.Platform.prototype.proxy = function() {
 (function() {
     var platform = new Vifi.Platform('Samsung');
     platform.setResolution(1280, 720);
+
+    
+    var detected_width = window.screen.width;
+    var detected_height = window.screen.height;
+    
+    if (detected_width == 1920)
+    platform.setResolution(detected_width,detected_height);
+
     platform.detectPlatform = function() {
         var supported = false;
 
         try {
             webapis.avplay.getAVPlay(function(avplay) {
                 supported = true;
-
+        
             }, function(error) {
 
             });
@@ -254,14 +266,10 @@ Vifi.Platform.prototype.proxy = function() {
     }
 
     platform.init = function() {
-
-
         var keys = this.keys();
         window.widgetAPI = new Common.API.Widget();
         window.pluginAPI = new Common.API.Plugin();
         window.NNaviPlugin = document.getElementById('pluginObjectNNavi');
-
-
     }
     platform.initready = function() {
         window.widgetAPI.sendReadyEvent();
@@ -269,12 +277,12 @@ Vifi.Platform.prototype.proxy = function() {
                 setTimeout(function(){
                     pluginAPI.unregistKey(Vifi.Engine.getPlatform().keys().KEY_VOL_UP);
                     pluginAPI.unregistKey(Vifi.Engine.getPlatform().keys().KEY_VOL_DOWN);
-                    pluginAPI.unregistKey(Vifi.Engine.getPlatform().keys().KEY_MUTE);
+                    //pluginAPI.unregistKey(Vifi.Engine.getPlatform().keys().KEY_MUTE);
                     pluginAPI.unregistKey(Vifi.Engine.getPlatform().keys().KEY_PANEL_VOL_UP);
                     pluginAPI.unregistKey(Vifi.Engine.getPlatform().keys().KEY_PANEL_VOL_DOWN);
                     pluginAPI.unregistKey(7); //unregister volume up button
                     pluginAPI.unregistKey(11); //unregister volume down button
-                    pluginAPI.unregistKey(27); //unregister mute button
+                    //pluginAPI.unregistKey(27); //unregister mute button
                     NNaviPlugin.SetBannerState(1); //this is to see the banner Volume
 
                 },100);

@@ -30,33 +30,6 @@
  html, body {
     height:100%;
 }
-.fr {
-    float:right;
-}
-.fl {
-    float:left;
-}
-
-#application, #application > .animation {
-    height: 100%;
-}
-#application {
-    opacity:0;
-  
-
-}
-
-
-#browserPage {
-    width:100%;
-    /*height: 100%;*/
-    float: left;
-    height: 100%;
-    min-height:600px;
-    /*background-size:100%;
-    background-attachment:fixed;
-    background-image: url('img/blur_background1.jpg');*/
-}
 body {
     font-family:'Open Sans', Helvetica, Arial;
     /*font-size:14pt;*/
@@ -70,15 +43,35 @@ body {
     padding: 0;
     overflow: hidden;
 }
+
+.fr {
+    float:right;
+}
+.fl {
+    float:left;
+}
+
+#application, #application > .animation {
+    height: 100%;
+}
+#application {
+    opacity:0;
+  
+}
+
+
+#browserPage {
+    width:100%;
+    float: left;
+    height: 100%;
+    min-height:600px;
+   
+}
+
 .row {
     white-space: nowrap;
 }
-.float_left {
-    float:left;
-}
-.float_right {
-    float:right;
-}
+
 .width45 {
     width:45% !important;
 }
@@ -90,25 +83,25 @@ ul {
     margin: 0;
     padding: 0;
 }
-span.stars {
+.stars {
     height: 17px;
     width: 80px;
     background: url('img/stars.png') no-repeat 0 0;
     display: inline-block;
 }
-span.stars.r5 {
+.stars.r5 {
     background-position: 0 -85px;
 }
-span.stars.r4 {
+.stars.r4 {
     background-position: 0 -68px;
 }
-span.stars.r3 {
+.stars.r3 {
     background-position: 0 -51px;
 }
-span.stars.r2 {
+.stars.r2 {
     background-position: 0 -34px;
 }
-span.stars.r1 {
+.stars.r1 {
     background-position: 0 -17px;
 }
 /* FILTER BAR */
@@ -346,11 +339,7 @@ span.stars.r1 {
 
 /*HOME PAGE*/
 
-#homePage {
-    float:left; 
-}
-
- #homePage.container {
+#homePage{
     width: 100%;
     height: calc(100% - 7em);
     height: -moz-calc(100% - 7em);
@@ -386,7 +375,7 @@ span.stars.r1 {
     border-left: 0.45em solid rgba(255, 255, 255, 0.1);
 }
 
-#moviePage_background, #home-background {
+#home-background {
     width: 100%;
     height: 100%;
     position: absolute;
@@ -417,16 +406,10 @@ span.stars.r1 {
   opacity:1;
 
 }
-
-#moviePage_background {
-    background-image: url('img/blur_background1.jpg');
-}
-
 #toolbar {
     width: 100%;
     height: 12em;
     position: absolute;
-    /*background-image: url('img/background_dark_60.png');*/
     background-repeat: repeat;
     top: 0;
 }
@@ -480,13 +463,9 @@ span.stars.r1 {
     width: 8em;
     float:right;
     margin-top:2em;
-    /*border: 3pt solid transparent;
-    transition: border-color 0.2s;*/
+ 
 }
-/*#user .avatar:hover, #user.tv-component-focused .avatar {
-    border: 3pt solid #63D116;
-    box-shadow: 0 0 2px rgb(11, 75, 11), 0 0 5px rgb(117, 211, 16), 0 0 10px rgb(109, 255, 63), 0 0 15px rgb(161, 255, 124);
-}*/
+
 .usercontrol {
     margin-top: 1.2em;
     float: right;
@@ -535,28 +514,6 @@ span.stars.r1 {
     padding-left: 10%;
     margin: 0;
 }
-
-/*#featured .tv-component.tv-button.movie.tv-component-focused:after, #browserPage .tv-component.tv-button.movie.tv-container-selected-child.tv-component-focused .thumbWrap:after {
-    content: '▶';
-    position: absolute;
-    width: 1em;
-    height: 1em;
-    top: 0;
-    right: 0;
-    left: 0;
-    bottom: 0;
-    margin: auto;
-    font-size: 10em;
-    border: 0.05em solid #52FF00;
-    color: #52FF00;
-    font-weight: 100;
-    line-height: 0.85em;
-    border-radius: 5em;
-    text-indent: 0.2em;
-    box-shadow: 0 0 0.1em #6FCA3B;
-    text-shadow: 0 0 0.2em #6FCA3B;
-}
-*/
 
 .movie_description .title {
     font-weight: 100;
@@ -672,11 +629,8 @@ span.stars.r1 {
     background-image: url('img/background_dark_60.png');
     float:left;
     width:100%;
-}
- #moviePage.container, #accountPage.container {
-    width: 100%;
-    float:left;
     position: relative;
+
 }
 
  #moviePage.container {
@@ -684,12 +638,7 @@ span.stars.r1 {
     min-height: -moz-calc(100% - 10em);
     min-height: -webkit-calc(100% - 10em);
  }
-#moviePage .background_img, #accountPage .background_img {
-    filter:blur(2pt);
-    -moz-filter:blur(2pt);
-    -webkit-filter:blur(2pt);
-    left:0;
-}
+
 .black_opacity {
     position: absolute;
     background-image: url('img/background_dark_65.png');
@@ -856,7 +805,7 @@ span.stars.r1 {
 
 /* ROW */
 
- .default.row {
+.default.row {
     float: left;
     width:100%;
     background-image: url('img/background_dark_42.png');
@@ -922,6 +871,7 @@ span.stars.r1 {
     height: 25em;
     width: 15em;
 }
+
 #browserPage .tv-component.tv-button.movie.tv-container-selected-child.tv-component-focused .thumb {
     box-shadow: inset 0 1em 5em black;
 }
@@ -950,9 +900,7 @@ span.stars.r1 {
     font-size: 2.5em;
 }
 
-#browserPage .movie img {
-    width: 200px;
-}
+
 .animation {
     -webkit-transition: all 0.2s ease;
     transition: all 0.2s ease;
@@ -973,9 +921,6 @@ span.stars.r1 {
     position: relative;
 }
 
-#browserPage .movie.portrait img {
-    margin-top: -60px;
-}
 .tab-content {
     opacity: 0;
     position: absolute;
@@ -989,7 +934,7 @@ span.stars.r1 {
 }
 
 .containers-left-slit, .containers-right-slit {
-    background-color: transparent ;
+    background-color: transparent;
     bottom: 0;
     position: absolute;
     top: 0;

@@ -421,19 +421,25 @@ Vifi.PageManager = {
         var type = element.attr("data-type");
         var category = element.attr("data-category");
         if (undefined != category) Vifi.Event.trigger("button:" + category, val, this);
-
+        var cnt = 0;
         element.parent().find(".tv-toggle-button").each(function() {
-            $(this).addClass("reset-toggle");
+           if ($(this).hasClass("tv-toggle-button-on")) {  
+                cnt+=1;
+            }
+                $(this).addClass("reset-toggle");
+            
         });
-        var resetbuttons = goog.dom.getElementsByClass("reset-toggle");
-        if (val == "reset" || element.parent().find(".tv-toggle-button-on").length == 0) var reset = true;
+        if (val == "reset" || cnt == 0) var reset = true;
+
+
         if (undefined != type && type == "radio" || reset) {
+            var resetbuttons = goog.dom.getElementsByClass("reset-toggle");
 
             $(resetbuttons).each(function() {
                 var btn = tv.ui.getComponentByElement(this);
                 var value = $(this).attr("data-value");
-
-                btn.setOn(value == val);
+                if (!reset) btn.setOn(value == val);
+                else btn.setOn(value == "reset");
             });
 
         }
@@ -448,6 +454,7 @@ Vifi.PageManager = {
                 }
             });
         }
+
         app.browser.onSearchFieldChange(event);
     },
     /* Handle focusing on the frontpage */

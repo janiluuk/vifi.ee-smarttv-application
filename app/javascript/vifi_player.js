@@ -70,6 +70,10 @@ Vifi.Player.PlayerView = Backbone.View.extend({
         _.bindAll(this, 'render', 'onPlayerPageExit', 'onPlayerPageEnter', 'closeDetails', 'showDetails', 'showNavigation', 'hideNavigation', "clearAllTimeouts", "touchVideoNavigationTimeout", "onBufferingStart");
         Vifi.MediaPlayer.on("mediaplayer:bufferingstart", this.onBufferingStart, this);
         Vifi.MediaPlayer.on("mediaplayer:bufferingend", this.onBufferingStop, this);
+        Vifi.MediaPlayer.on("mediaplayer:onmute", this.onMute, this);
+        Vifi.MediaPlayer.on("mediaplayer:onplay", this.onPlay, this);
+        Vifi.MediaPlayer.on("mediaplayer:onpause", this.onPause, this);
+
         this.on("player:show", this.onPlayerPageEnter, this);
         this.on("player:exit", this.onPlayerPageExit, this);
         Vifi.MediaPlayer.on("mediaplayer:onstop", this.onPlayerPageExit, this);
@@ -136,7 +140,27 @@ Vifi.Player.PlayerView = Backbone.View.extend({
         return this;
 
     },
+    onPlay: function() {
 
+        $(".pause").addClass("play").removeClass("pause");
+        
+
+    },
+    onPause: function() {
+
+        $(".play").addClass("pause").removeClass("play");
+        
+    },
+    
+    onMute: function(muted) {
+
+        if (muted)
+        $(".mute").addClass("unmute").removeClass("mute");
+        else 
+        $(".unmute").addClass("mute").removeClass("unmute");
+
+
+    },
     closeDetails: function() {
         $(this.infoEl).hide();
         this.clearAllTimeouts();

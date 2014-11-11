@@ -8,6 +8,7 @@
  **/
 
 var avplayObj;
+var audioControlObject;
 
 Vifi.MediaPlayer = {
     plugin: avplayObj,
@@ -52,6 +53,7 @@ Vifi.MediaPlayer = {
         try {
             webapis.avplay.getAVPlay(function(avplay) {
                 avplayObj = _this.plugin = avplay;
+                audioControlObject= webapis.audiocontrol;
 
             }, function(error) {
                 alert(error.message);
@@ -245,9 +247,9 @@ Vifi.MediaPlayer = {
 
 
     pause: function() {
-        alert("PAUSE!!!")
         if (this.state == this.PAUSED) {
           avplayObj.resume();
+          this.trigger("mediaplayer:onplay");
           this.state = this.PLAYING;  
         } 
         else { 
@@ -270,8 +272,8 @@ Vifi.MediaPlayer = {
     },
 
     mute: function() {
-        var currentMute = this.audioPlugin.GetSystemMute();
-        this.audioPlugin.SetSystemMute(currentMute == PLR_FALSE);
+        var currentMute = audioControlObject.getMute();
+        audioControlObject.setMute(currentMute == false);
         Vifi.MediaPlayer.trigger("mediaplayer:onmute", !currentMute);
     },
 
@@ -354,9 +356,6 @@ Vifi.MediaPlayer = {
     streamEnded: function() {
         this.trigger("mediaplayer:mediaend", this.playlist.currentItemIndex());
         this.nextVideo();
-    },
-    mute: function(mute) {
-        this.trigger("mediaplayer:muted", mute);
     },
     _streamInfoReady: function() {
         $log("Stream info ready: " + Array.prototype.slice.call(arguments, 0).join("\n "));

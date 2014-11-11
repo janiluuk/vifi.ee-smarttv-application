@@ -1,20 +1,23 @@
-#player { 
+#player {
     width: 1920px;
     height: 1080px;
 }
-#featured .tv-button.tv-component.movie.tv-component-focused.active-item { 
-	width: 24em !important;
-	height: 34em !important;
+#featured .tv-component.movie.tv-component-focused {
+    width: 23em !important;
+    height: 34em !important;
 }
-
-#featured .tv-component.tv-button.movie{
-display: inline-block;
-width: 24em;
-height: 34em;
-
+#featured .tv-component.movie {
+    width: 20em !important;
+    height: 27em !important;
 }
-
-#homePage #featured {
-bottom: 29em;
-
+#homePage .featuredlist {
+    height: 31em;
+    bottom: 14em;
+    width: 80%;
+}
+#browserPage .movie-grid .thumb {
+    height: 30em !important;
+}
+#browserPage .movie-grid .movie {
+    width: 25em !important;
 }

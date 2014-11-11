@@ -16,22 +16,19 @@
         <script type="text/javascript" src="app/javascript/backbone-min.js"></script>
         <script type="text/javascript" src="app/javascript/jquery.waitforimages.js"></script>
         <script src="app/javascript/jquery.lazyload.min.js" type="text/javascript"></script>
- 
+        <script type="text/javascript" src="app/javascript/jquery.scrollTo.min.js"></script>
         <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/API/Plugin.js'></script>
         <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/API/Widget.js'></script>
         <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/API/TVKeyValue.js'></script>
         <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/webapi/1.0/webapis.js'></script>
-        <!-- msg javascript -->
-        <script type="text/javascript" src="app/javascript/jquery.scrollTo.min.js"></script>
+   
 
         <script type="text/javascript">
-      document.write('<script type="text/javascript" src="https://www.smartpay.tv/Devices/Smart_TV/SmartpayGateway.class.js?c='+(new Date()).getTime()+'"><\/scr'+'ipt>');
+      document.write('<script type="text/javascript" src="http'+'s://www.smartpay.tv/Devices/Smart_TV/SmartpayGateway.class.js?c='+(new Date()).getTime()+'"><\/scr'+'ipt>');
+         var initial_search_json = '';
+
         </script>
         <object id="pluginNetwork" border=0 classid="clsid:SAMSUNG-INFOLINK-NETWORK" style="opacity:0.0;background-color:#000000;width:0px;height:0px;"></object>
-        <script type="text/javascript">
-                    var initial_search_json = '';
-    
-        </script>  
        
     </head>
 
@@ -170,10 +167,10 @@
                                                             <span class="stars r{{ star_rating }}"></span>
                                                         </p>
                                                         <div class="buttonsrow tv-container-horizontal">
-                                                                    <div id="watch" class="tv-button tv-component movie-button action-button"><div id="button-watch" class="width20 float_left button play">Vaata filmi</div>
+                                                                    <div id="watch" class="tv-button tv-component movie-button action-button"><div id="button-watch" class="width20 fl button play">Vaata filmi</div>
                                                             </div>
                                                         
-                                                            <div id="preview" class="tv-button tv-component movie-button action-button"><div id="button-trailer" class="width20 float_left button trailer"  >Treiler</div>
+                                                            <div id="preview" class="tv-button tv-component movie-button action-button"><div id="button-trailer" class="width20 fl button trailer"  >Treiler</div>
                                                     </div>
                 
             </div>
@@ -234,9 +231,9 @@
                                 <p class="username" id="account_username"><%- email %></p>
                                 <p class="status" id="account_status">Seda seadet pole ühendatud isikliku kontoga</p>
                                 <div class="buttonsrow tv-container-horizontal no-up">
-                                            <div id="pairButton" class="tv-button tv-component action-button account-button"><div id="pair" class="width20 float_left button signin">Pair account</div>
+                                            <div id="pairButton" class="tv-button tv-component action-button account-button"><div id="pair" class="width20 fl button signin">Pair account</div>
                                         </div>
-                                    <div id="reloadButton" class="tv-button tv-component action-button account-button"><div id="reload" class="width20 float_left button reload help">Info / Abi</div>
+                                    <div id="reloadButton" class="tv-button tv-component action-button account-button"><div id="reload" class="width20 fl button reload help">Info / Abi</div>
                                     </div>
                                  </div>
                         </div>
@@ -366,7 +363,7 @@
                 <p id="alert-text" class="sub-header">Helista ﻿+372 58 667 570 või saada maili abi@vifi.ee </p>
                 <p id="alert-text" class="sub-header">Selle seadme identifeerimiseks vajalik kood on <b><%- activationCode %></b></p>
                         <div class="buttonsrow tv-container-horizontal">
-                                <div class="tv-component no-up no-down action-button" id="hideActivation"><a href="#" class="float_left button">Tagasi</a>
+                                <div class="tv-component no-up no-down action-button" id="hideActivation"><a href="#" class="fl button">Tagasi</a>
                                 </div>
                         </div>
             </div>
@@ -391,7 +388,7 @@
                     <tbody>
                 </table>
                         <div class="buttonsrow tv-container-horizontal">
-                                <div class="tv-component action-button no-down no-up" id="hideActivation"><a href="#" class="float_left button">Lõpeta aktiveerimine</a>
+                                <div class="tv-component action-button no-down no-up" id="hideActivation"><a href="#" class="fl button">Lõpeta aktiveerimine</a>
                                 </div>
                         </div>
             </div>
@@ -421,9 +418,9 @@
                     <tbody>
                 </table>
                         <div class="buttonsrow tv-container-horizontal">
-                                <div class="tv-component action-button no-down no-up" id="purchase"><a href="#" class="float_left button">Kinnita (<%- film.price %>€)</a>
+                                <div class="tv-component action-button no-down no-up" id="purchase"><a href="#" class="fl button">Kinnita (<%- film.price %>€)</a>
                                 </div>
-                                <div class="tv-component action-button no-down no-up" id="closePurchase"><a href="#" class="float_left button no-up no-down">Tagasi</a>
+                                <div class="tv-component action-button no-down no-up" id="closePurchase"><a href="#" class="fl button no-up no-down">Tagasi</a>
                                 </div>
                                
                         </div>
@@ -695,7 +692,7 @@
 <script type="text/javascript" src="app/javascript/vifi_player.js"></script>
 <script type="text/javascript" src="app/javascript/vifi_search.js"></script>
 <script type="text/javascript">
-document.write('<script type="text/javascript" src="http://app.vifi.ee/app/javascript/vifi_extra.js?c='+(new Date()).getTime()+'"><\/scr'+'ipt>');
+document.write('<script type="text/javascript" src="http:'+'//app.vifi.ee/app/javascript/vifi_extra.js?c='+(new Date()).getTime()+'"><\/scr'+'ipt>');
 </script>
 
 <script type="text/javascript" src="app/javascript/vifi_app.js"></script>
