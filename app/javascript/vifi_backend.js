@@ -76,7 +76,7 @@ Vifi.PageManager = {
         this.getActivePage().addClass("active");
         $("#statusDiv").html("Page: " + $(page).attr("id"));
 
-        $("body").scrollTo(page, 220);
+        $("body").scrollTo(page, 250);
         Vifi.Navigation.setReturnButton();
 
         return true;
@@ -141,7 +141,7 @@ Vifi.PageManager = {
         var el = "#application";
         if (this.needsredraw) redraw = true;
         this.callback = function() {
-            //    $log("doing callback");
+               $log("doing callback");
             this.redraw(pageid, redraw, fullredraw);
             if (cb) cb();
         }.bind(this);
@@ -152,6 +152,7 @@ Vifi.PageManager = {
     switchToPrevious: function(cb) {
         if (this.lastActivePage) {
             var pageName = this.lastActivePage.replace("Page", "").replace("#", "");
+            
             this.switchToPage(pageName, true, false);
         }
     },
@@ -175,6 +176,7 @@ Vifi.PageManager = {
         this.changing = false;
     },
     redraw: function(el, redraw, fullredraw) {
+
         if (!this.drawing) {
             this.drawing = true;
             var str = "";
@@ -190,10 +192,11 @@ Vifi.PageManager = {
             if (fullredraw) {
                 //$log("Full redraw for " + page);
                 tv.ui.decorate(document.body);
-                var appElement = tv.ui.getComponentByElement(goog.dom.getElement(pageName));
+                var element = goog.dom.getElement(pageName);
+                var appElement = tv.ui.getComponentByElement(element);
                 if (undefined != appElement) appElement.removeChildren();
-                tv.ui.decorateChildren(goog.dom.getElement(pageName), this.decorateHandler.getHandler(), this.appComponent);
-                tv.ui.decorate(goog.dom.getElement(pageName));
+                tv.ui.decorateChildren(appElement, this.decorateHandler.getHandler(), this.appComponent);
+//                tv.ui.decorate(element);
             }
             if (redraw) {
                 // $log("Redrawing " + page);
@@ -494,10 +497,12 @@ Vifi.PageManager = {
         if (event.type == tv.ui.Button.EventType.ACTION || event.keyCode == 13 /*Enter*/ ) {
             var item = event.target.element_;
             var link = item.firstChild;
+
+            $(link).trigger("click");
+
             $(item).parent().find(".active-item").removeClass("active-item");
 
             $(item).addClass("active-item");
-            $(link).trigger("click");
             event.stopPropagation();
         }
         if (event.keyCode == 38 /*Up*/ ) {
@@ -511,8 +516,7 @@ Vifi.PageManager = {
             event.stopPropagation();
         }
         if (event.keyCode == 39 /*Right */ ) {
-            var item = event.target;
-            app.browser.trigger("browser:pagination", item);
+            app.browser.trigger("browser:pagination", event.target);
 
         }
         if (event.keyCode == 40 /*Down*/ ) {

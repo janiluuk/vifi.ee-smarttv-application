@@ -140,7 +140,7 @@
     font-size: 2.5em;
 }
 
-#player {
+#player, #trailer-player {
     width:100%;
     height:100%;
 } 

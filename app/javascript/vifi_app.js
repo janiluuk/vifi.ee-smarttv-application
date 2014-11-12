@@ -26,7 +26,6 @@ $(function() {
                 model: this.session
             });
             
-
             this.toolbar = new Vifi.User.ToolbarView({
                 model: this.profile
             });
@@ -63,7 +62,7 @@ $(function() {
             '': 'homePage', //
             'search/:searchState': 'search',
             'film/:id': 'showFilm',
-
+            'home' : 'homePage'
         },
         search: function(searchStateHash) {
             //Unescape is required for firefox only to fix unescaped spaces
@@ -79,7 +78,10 @@ $(function() {
             Vifi.Event.trigger('film:show', id);
         },
 
-        homePage: function() {}
+        homePage: function() {
+            Vifi.Event.trigger("page:change", "home");
+
+        }
 
     });
 

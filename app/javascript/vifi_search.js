@@ -123,7 +123,7 @@ Vifi.Pages.Browser = Vifi.PageView.extend({
             });
             fragment.appendChild(filmView.el);
         });
-        appView.$("#search-results").html(fragment);
+        appView.$("#search-results").append(fragment);
         this.loadBrowserImages();
         this.updateUIToState();
         this.rendering = false;

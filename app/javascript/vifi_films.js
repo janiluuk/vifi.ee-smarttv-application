@@ -13,7 +13,6 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
     initialize: function() {
         Vifi.Event.on('film:show', this.showFilm, this);
         Vifi.Event.on('trailer:show', this.playTrailer, this);
-
         _.bindAll(this, 'render');
     },
     playFilm: function(event) {
@@ -23,28 +22,16 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
     },
     playTrailer: function(event) {
         event.preventDefault();
-        var trailerView = new Vifi.Films.TrailerView({
-            model: this.model
-        });
-        trailerView.play();
-        $("#trailer").html(trailerView.el);
-        app.pagemanager.redraw("#moviePage", true);
-        var el = tv.ui.getComponentByElement(goog.dom.getElement("trailer-options-selection"));
-        tv.ui.decorateChildren(el.getElement(), function(component) {
-            goog.events.listen(component, tv.ui.Component.EventType.KEY, function(event) {
-                var keyCode = event.keyCode;
-                event.preventDefault();
-                if (keyCode == 13 /*Enter*/ ) {
-                    var item = event.target.element_;
-                    $(item).trigger("click");
-                }
-                if (keyCode == 38 /*Up*/ || keyCode == 40) {
-                    event.stopPropagation();
-                }
-            })
-        }, el);
-        el.tryFocus();
+        if (this.trailerView) {
+            this.trailerView.model.set(this.model.toJSON());
+        } else {
+            this.trailerView = new Vifi.Films.TrailerView({
+                model: this.model
+            });
+        }
+        this.trailerView.play();
     },
+   
     showFilm: function(id) {
         var film = app.collection.get(id);
         if (undefined == film) {
@@ -96,7 +83,6 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
     }
 });
 Vifi.Films.FilmView = Backbone.View.extend({
-    viewType: 'grid',
     tagName: 'div',
     tagClass: 'tv-component tv-button nav-item',
     events: {
@@ -107,76 +93,17 @@ Vifi.Films.FilmView = Backbone.View.extend({
         this.render();
     },
     render: function() {
-        var model = this.model;
-        this.$el.html(ich.mustacheRawFilmTemplate(model.toJSON()));
-        this.$el.addClass("tv-component tv-button movie film-result").attr("data-id", model.get("id"));
+        this.$el.html(ich.mustacheRawFilmTemplate(this.model.toJSON()));
+        this.$el.addClass("tv-component tv-button movie film-result").attr("data-id", this.model.get("id"));
         return this;
     },
     onClickShowDetails: function(event) {
         event.preventDefault();
-        var model = this.model;
-        $log("Showing film"+model.id);
-        Vifi.Event.trigger("film:show", model.id);
+        $log("Showing film" + this.id);
+        Vifi.Event.trigger("film:show", this.model.id);
         event.stopPropagation();
     },
-    onClickRemoveQueue: function(event) {
-        event.preventDefault();
-        var view = this;
-        $.post('/queue/remove/' + this.model.get('film').id + '?format=json', function(data) {
-            view.onQueueUpdated('removed', data);
-        });
-        app.triggerFilmRemovedFromQueue(this.model);
-    },
-    onDetailsUpdated: function(actionType, data) {
-        if (actionType == 'added') {} else {
-            this.$('.remove-queue').hide();
-            this.$('.add-queue').show();
-            var model = this.options.queue.get(data.id);
-            this.options.queue.remove(model);
-        }
-    },
-    onClickMsgQueue: function(event) {
-        $.msg({
-            content: 'You must have an account to add films to your queue.<br /><a href="/subscription/">Sign Up</a> or <a href="/accounts/login/">Log In</a>.<br /><span class="click-msg"></span>',
-            fadeIn: 300,
-            fadeOut: 200,
-            timeOut: 7000
-        });
-    },
-    resetSizes: function() {
-        this.$('.film-card').css('height', '100%');
-        this.$('.film-card').css('width', '100%');
-    },
-    switchToGridView: function() {
-        this.viewType = 'grid';
-        this.resetSizes();
-        this.hideAddedInfo();
-    },
-    switchToListView: function() {
-        this.viewType = 'list';
-        this.resetSizes();
-        this.showAddedInfo();
-    },
-    showAddedInfo: function() {
-        this.$('.added-info').show();
-        if (this.options.user_is_authenticated) {
-            this.$('.msg-queue').hide();
-            if (this.options.queue.where({
-                'film_id': this.model.get('film').id
-            }).length) {
-                this.$('.remove-queue').show();
-                this.$('.add-queue').hide();
-            } else {
-                this.$('.add-queue').show();
-                this.$('.remove-queue').hide();
-            }
-        } else {
-            this.$('.msg-queue').show();
-            this.$('.remove-queue').hide();
-            this.$('.add-queue').hide();
-        }
-        // this.$('.title').html(this.model.get('film').title);
-    }
+   
 });
 Vifi.Films.FeaturedFilmView = Vifi.Films.FilmView.extend({
     events: {
@@ -185,23 +112,19 @@ Vifi.Films.FeaturedFilmView = Vifi.Films.FilmView.extend({
     },
     onClickShowDetails: function(event) {
         event.preventDefault();
-        var view = this;
-        var model = this.model;
-        Vifi.Event.trigger("film:show", model.id);
+        Vifi.Event.trigger("film:show", this.model.id);
     },
     updateDetails: function(ev, model) {
         $("#homePage .active-item").removeClass("active-item");
         ev.preventDefault();
-        var model = this;
         Vifi.Event.trigger("featured:focus", this.model);
         this.$el.addClass("active-item");
         $("#home-background div.visible").removeClass("visible");
         $("#home-background div#film-" + this.model.get("film").id).addClass("visible");
     },
     render: function() {
-        var model = this.model;
         this.$el.addClass("tv-component tv-button movie featured-movie");
-        this.$el.html(ich.featuredFilmTemplate(model.toJSON()));
+        this.$el.html(ich.featuredFilmTemplate(this.model.toJSON()));
         return this;
     }
 });
@@ -247,10 +170,10 @@ Vifi.Films.FeaturedFilmCollectionView = Backbone.View.extend({
     initialize: function(models) {
         this.models = models;
         this.render();
-        setTimeout(function() { 
+        setTimeout(function() {
             Vifi.Engine.trigger("app:ready");
-        },2000)
-       },
+        }, 1500)
+    },
     render: function() {
         this.renderFilmViews();
         Vifi.PageManager.redraw("#homePage", true);
@@ -281,11 +204,16 @@ Vifi.Films.FeaturedFilmCollectionView = Backbone.View.extend({
 });
 
 Vifi.Films.TrailerView = Backbone.View.extend({
+    hideVideoNavigationTimeout: false,
+    player: false,
+    optionsEl: '#trailer-options',
+    infoEl: '#player-info',
     tagName: 'div',
     events: {
         'click #closeTrailer': 'close',
         'click #watchFilm': 'playFilm'
     },
+
     playFilm: function(event) {
         this.close();
         event.preventDefault();
@@ -293,9 +221,12 @@ Vifi.Films.TrailerView = Backbone.View.extend({
         event.stopPropagation();
     },
     initialize: function() {
+        this.loadPlayer();
+
         Vifi.Event.on("trailer:init", this.play, this);
         this.template = _.template($("#trailerTemplate").html());
-        _.bindAll(this, "render");
+        _.bindAll(this, "render", "touchVideoNavigationTimeout", "close", "onPlayerReady", "loadPlayer","mapKeys", "showNavigation", "stopVideo", "onPlayerStateChange");
+
     },
     fadeOut: function() {
         this.$el.fadeOut();
@@ -304,20 +235,136 @@ Vifi.Films.TrailerView = Backbone.View.extend({
         this.$el.fadeIn();
     },
     play: function() {
+        this.setElement("#trailer");
+        var film = this.model.get("film");
+        if (film.youtube_id) {
+            this.fadeIn();
+            this.render();
+            this.initPlayer();
+            this.showNavigation();
+            Vifi.KeyHandler.bind("all", this.touchVideoNavigationTimeout, this);
+            Vifi.Navigation.setReturnButton(this.close, this);
+            
+        }
+    },
+
+    mapKeys: function() { 
+        app.pagemanager.redraw("#moviePage", true);
+
+         var el = tv.ui.getComponentByElement(goog.dom.getElement("trailer-options-selection"));
+                tv.ui.decorateChildren(el.getElement(), function(component) {
+                    goog.events.listen(component, tv.ui.Component.EventType.KEY, function(event) {
+                        var keyCode = event.keyCode;
+                        event.preventDefault();
+                        if (keyCode == 13 /*Enter*/ ) {
+                            var item = event.target.element_;
+                            $(item).trigger("click");
+                        }
+                        if (keyCode == 38 /*Up*/ || keyCode == 40) {
+                            event.stopPropagation();
+                        }
+                    })
+                }, el);
+        el.tryFocus();
+
+    },
+    initPlayer: function() {
+        var _this = this;
+        if (typeof(YT) == "undefined") {
+            setTimeout(function() {
+                this.initPlayer();
+            }.bind(this), 600);
+            return false;
+        }
+
 
         var film = this.model.get("film");
         if (film.youtube_id) {
-            Vifi.Navigation.setReturnButton(this.close, this);
-            this.render();
+
+            this.done = false;
+
+            this.player = new YT.Player('ytplayer', {
+                height: '100%',
+                playerVars: {
+                    'autoplay': 1,
+                    'controls': 0
+                },
+
+                width: '100%',
+                videoId: film.youtube_id,
+                events: {
+                    'onReady': _this.onPlayerReady,
+                    'onStateChange': _this.onPlayerStateChange
+                }
+            });
         }
+    },
+
+    loadPlayer: function() {
+        if (typeof(YT) != "undefined") return false;
+        $("#youtubeplayer").remove();
+
+        var tag = document.createElement('script');
+        tag.id = "youtubeplayer";
+        tag.src = "http://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        return true;
+
+    },
+    onPlayerReady: function(event) {
+        event.target.playVideo();
+    },
+
+    onPlayerStateChange: function(event) {
+
+        if (event.data == YT.PlayerState.PLAYING && this.done) {
+            setTimeout(this.stopVideo, 6000);
+        }
+        if (event.data == YT.PlayerState.ENDED) {
+            this.stopVideo();
+        }
+    },
+    stopVideo: function() {
+        this.player.stopVideo();
+        this.done = true;
+        this.close();
     },
     close: function() {
         this.fadeOut();
+        this.player.destroy();
         this.$el.empty();
+        this.clearAllTimeouts();
+
+        Vifi.KeyHandler.unbind("all", this.touchVideoNavigationTimeout);
         Vifi.Event.trigger("page:focus");
+    },
+    showNavigation: function() {
+        this.clearAllTimeouts();
+        $(this.optionsEl).fadeIn();
+        $(this.infoEl).fadeIn();
+        this.touchVideoNavigationTimeout();
+    },
+    clearAllTimeouts: function() {
+        clearTimeout(this.hideVideoNavigationTimeout);
+    },
+    touchVideoNavigationTimeout: function() {
+        if (!$(this.optionsEl).is(":visible")) {
+            $(this.optionsEl).fadeIn();
+            $(this.infoEl).fadeIn();
+        }
+
+        clearTimeout(this.hideVideoNavigationTimeout);
+        this.hideVideoNavigationTimeout = setTimeout(function() {
+            $(this.optionsEl).fadeOut();
+            $(this.infoEl).fadeOut();
+        }.bind(this), 2000);
+        return false;
     },
     render: function() {
         this.$el.html(this.template(this.model.toJSON()));
+        this.mapKeys();
+
         return this;
     },
 });

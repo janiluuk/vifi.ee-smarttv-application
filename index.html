@@ -325,22 +325,21 @@
                             </div>
 </script>
 <script type="text/template" id="trailerTemplate">
-<div style="position: absolute; z-index: 15; width: 100%; height: 100%">
+    <div style="position: absolute; z-index: 15; width: 100%; height: 100%">
                 <div id="player-info">
-                        <div id="player-info-title"><%- film.title %></div>
+                        <div id="player-info-title"><%- film.title %> </div>
                         
                         <div id="player-info-additional">
-                                <span><%- film.year %></span>
+                                <span><%- film.year %> </span>
                         </div>
                 </div>
                 <div id="player">
-                    <iframe frameborder="0" height="100%" width="100%" src="http://youtube.com/embed/<%- film.youtube_id %>?autoplay=1&controls=0&showinfo=0&autohide=1">
-                    </iframe>
+                    <div id="ytplayer"></div>
                 </div>
                 
                 
                     <div id="trailer-options" class="tv-tab-container tv-container-vertical">
-                            <div id="trailer-options-selection" class="tv-tab-container-bar tv-container-horizontal tv-container tab-bar domtabs row">
+                            <div id="trailer-options-selection" class="tv-tab-container-bar no-up no-down tv-container-horizontal tv-container tab-bar domtabs row">
                                         <div id="closeTrailer"  class="tv-component tab nav-item normal-item">
                                                     <a href="#d1">Tagasi filmi lehele</a>   
                                         </div>

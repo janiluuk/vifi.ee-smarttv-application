@@ -43,8 +43,6 @@ Vifi.Player.FilmContent = Vifi.Utils.ApiModel.extend({
             this.trigger("subtitles:ready", this.get("subtitles"));
     },
 
-
-
     refresh: function() {
         if (this.get("id") > 0) {
             this.path = "content/" + this.get("id");
@@ -53,21 +51,23 @@ Vifi.Player.FilmContent = Vifi.Utils.ApiModel.extend({
     }
 });
 
-
-
 Vifi.Player.PlayerView = Backbone.View.extend({
     tagName: 'div',
     playerTag: 'player',
-
+    events: { 
+    	'click .play' : 'onClickPlay', 
+    	'click .pause' : 'onClickPause', 
+    	'click .mute' : 'onClickMute', 
+    	'click .unmute' : 'onClickMute', 
+    	
+    },
     el: $("#" + Vifi.Settings.playerPageId),
     hideVideoNavigationTimeout: false,
     optionsEl: '#player-options',
     infoEl: '#player-info',
     initialize: function(options) {
 
-
-
-        _.bindAll(this, 'render', 'onPlayerPageExit', 'onPlayerPageEnter', 'closeDetails', 'showDetails', 'showNavigation', 'hideNavigation', "clearAllTimeouts", "touchVideoNavigationTimeout", "onBufferingStart");
+        _.bindAll(this, 'render', 'onPlayerPageExit','onClickPlay','onClickMute', 'onClickPause', 'onPlayerPageEnter', 'closeDetails', 'showDetails', 'showNavigation', 'hideNavigation', "clearAllTimeouts", "touchVideoNavigationTimeout", "onBufferingStart");
         Vifi.MediaPlayer.on("mediaplayer:bufferingstart", this.onBufferingStart, this);
         Vifi.MediaPlayer.on("mediaplayer:bufferingend", this.onBufferingStop, this);
         Vifi.MediaPlayer.on("mediaplayer:onmute", this.onMute, this);
@@ -82,8 +82,6 @@ Vifi.Player.PlayerView = Backbone.View.extend({
         this.listenTo(this.model, "content:load", this.onContentLoad);
 
     },
-
-
     onContentLoad: function() {
 
 
@@ -124,7 +122,6 @@ Vifi.Player.PlayerView = Backbone.View.extend({
 
         this.$("#player-loading").css("visibility", "visible");
 
-
     },
 
     onBufferingStop: function() {
@@ -151,14 +148,25 @@ Vifi.Player.PlayerView = Backbone.View.extend({
         $(".play").addClass("pause").removeClass("play");
         
     },
-    
+    onClickPause: function() {
+    	
+    	Vifi.MediaPlayer.pause();
+    	
+    },
+    onClickPlay: function() { 
+    	
+    	Vifi.MediaPlayer.pause();
+    	
+    },
+    onClickMute: function() {
+    	
+    	Vifi.MediaPlayer.mute();
+    },
     onMute: function(muted) {
-
         if (muted)
         $(".mute").addClass("unmute").removeClass("mute");
         else 
         $(".unmute").addClass("mute").removeClass("unmute");
-
 
     },
     closeDetails: function() {
@@ -201,8 +209,7 @@ Vifi.Player.PlayerView = Backbone.View.extend({
         this.showNavigation();
         $("body").scrollTo("#playerPage");
         this.onContentLoad();
-        Vifi.KeyHandler.bind("all", this.touchVideoNavigationTimeout,this);
-
+    
         Vifi.Navigation.setReturnButton(this.onPlayerPageExit, this);
 
         setTimeout(function() {

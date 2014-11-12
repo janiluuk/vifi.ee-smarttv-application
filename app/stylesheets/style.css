@@ -569,8 +569,8 @@ ul {
 /*FEATURED LIST */
 
 #homePage .featuredlist {
-    width: 86%;
-    height: 24em;
+    width: 90%;
+    height: 25em;
     position: absolute;
     bottom: 12em;
     margin: auto;
@@ -591,7 +591,7 @@ ul {
 #featured .tv-component.movie.tv-component-focused {
     width: 19em !important;
     height: 27em !important;
-    margin: -14em 1% 0 2%;
+    margin: -14em 1% 0 1%;
     box-shadow: 0 0 2px rgb(11, 75, 11), 0 0 5px rgb(117, 211, 16), 0 0 10px rgb(109, 255, 63), 0 0 15px rgb(161, 255, 124) !important;
     border: 0.7em solid #63D116;
     -webkit-transform: none;
@@ -602,9 +602,10 @@ ul {
 
 #featured .tv-component.movie {
     display: inline-block;
-    width: 14em;
-    height: 20em;
-    margin: 1em;
+    width: 16em;
+    height: 22em;
+    margin-left: 1em;
+    margin-right:1em;
     transition: all 0.2s ease;
     box-shadow: 0.9em 0.9em 2.5em #0C0C0C;
     transform: perspective(0em) rotate3d(0, 1, 0, -30deg);

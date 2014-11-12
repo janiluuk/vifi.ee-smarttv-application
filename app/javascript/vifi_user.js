@@ -91,6 +91,8 @@ Vifi.User.Session = Backbone.Model.extend({
         $.getJSON(this.url()+"&unpair=1", options.data).done(function(data) {
 
             if (data.activationCode) {
+                alert("je");
+                
                 this.path = "";
                 this.set("activationCode",data.activationCode);
                 this.set("logged_in", false);
@@ -163,6 +165,7 @@ Vifi.User.Session = Backbone.Model.extend({
     onUserSignout: function() {
         this.set('logged_in', false);
         this.disable();
+
         this.logout();
 
         return false;
@@ -175,6 +178,7 @@ Vifi.User.Session = Backbone.Model.extend({
 
         var options = this.getParams();
         $.getJSON(this.url(), options.data).done(function(data) {
+
             if (this.isLoggedIn() === false) {
 
                 if (undefined !== data.cookie) {
@@ -212,8 +216,10 @@ Vifi.User.Session = Backbone.Model.extend({
             profile.fetch();
             if (profile.get("user_id") != "") {
                 this.set("profile", profile);
+                if (profile.get("paired_user") != false) {  
                 $log("Logging in with user " + profile.get("email"));
                 Vifi.Event.trigger("user:login");
+                }
             }
         }
         return false;
@@ -241,7 +247,8 @@ Vifi.User.Session = Backbone.Model.extend({
     },
     isLoggedIn: function() {
         var logged = this.get("logged_in");
-        if (logged == true) return true;
+        if (this.isRegisteredUser() && logged === true) 
+            return true;
         return false;
     },
     isRegisteredUser: function() {
@@ -287,7 +294,6 @@ Vifi.User.ProfileView = Backbone.View.extend({
         if (!this.model.isRegisteredUser()) text = "Ühenda oma kontoga";
         else text = "Balance on account: " + balance + "€";
         $('#account_status', this.$el).html(text);
-        app.pagemanager.redraw("#accountPage", true);
 
         return this;
     },
@@ -297,7 +303,6 @@ Vifi.User.ProfileView = Backbone.View.extend({
         else
             $('#account_username', this.$el).html("Kasutaja");
         
-        app.pagemanager.redraw("#accountPage", true);
         return this;
     },
     showPairScreen: function() {
