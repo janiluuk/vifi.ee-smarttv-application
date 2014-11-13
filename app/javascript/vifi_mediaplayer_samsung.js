@@ -223,8 +223,6 @@ Vifi.MediaPlayer = {
         this.visible = false;
     },
 
-    // Controls
-    // 'play','pause','rewind','fastforward', 'show', 'setCoordinates', 'next','setUserBitrate','stop', 'playing','hide', 'mute']
     stop: function(force) {
         $log("HARD STOPPING VIDEO");
         this.state = this.STOPPED;

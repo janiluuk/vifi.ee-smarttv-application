@@ -91,7 +91,6 @@ Vifi.User.Session = Backbone.Model.extend({
         $.getJSON(this.url()+"&unpair=1", options.data).done(function(data) {
 
             if (data.activationCode) {
-                alert("je");
                 
                 this.path = "";
                 this.set("activationCode",data.activationCode);

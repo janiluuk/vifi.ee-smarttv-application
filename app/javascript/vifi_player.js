@@ -73,6 +73,7 @@ Vifi.Player.PlayerView = Backbone.View.extend({
         Vifi.MediaPlayer.on("mediaplayer:onmute", this.onMute, this);
         Vifi.MediaPlayer.on("mediaplayer:onplay", this.onPlay, this);
         Vifi.MediaPlayer.on("mediaplayer:onpause", this.onPause, this);
+        Vifi.MediaPlayer.on("mediaplayer:onstop", this.onPlayerPageExit, this);
 
         this.on("player:show", this.onPlayerPageEnter, this);
         this.on("player:exit", this.onPlayerPageExit, this);
@@ -83,7 +84,6 @@ Vifi.Player.PlayerView = Backbone.View.extend({
 
     },
     onContentLoad: function() {
-
 
         this.renderPlayerInfo();
         this.renderPlayerControls();
@@ -172,7 +172,7 @@ Vifi.Player.PlayerView = Backbone.View.extend({
     closeDetails: function() {
         $(this.infoEl).hide();
         this.clearAllTimeouts();
-        this.hideMenuTimeout = setTimeout(hideNavigation, 7000);
+        this.hideMenuTimeout = setTimeout(hideNavigation, 4000);
     },
 
     showDetails: function() {
@@ -203,15 +203,13 @@ Vifi.Player.PlayerView = Backbone.View.extend({
 
     onPlayerPageEnter: function() {
         this.render();
+-        Vifi.KeyHandler.bind("all", this.touchVideoNavigationTimeout,this);
 
         $(".container:visible:not(#playerPage)").addClass("container-hidden").fadeOut();
         this.$el.fadeIn();
         this.showNavigation();
         $("body").scrollTo("#playerPage");
         this.onContentLoad();
-    
-        Vifi.Navigation.setReturnButton(this.onPlayerPageExit, this);
-
         setTimeout(function() {
 
             Vifi.MediaPlayer.play();
@@ -221,14 +219,11 @@ Vifi.Player.PlayerView = Backbone.View.extend({
     onPlayerPageExit: function() {
  
         app.player.trigger("player:exit");
-
-        Vifi.MediaPlayer.stop(true);
         
         tv.ui.getComponentByElement(goog.dom.getElement("playerPage")).removeChildren();
 
-        $("#playerPage").empty().fadeOut();
+        $("#playerPage").fadeOut().empty();
         Vifi.KeyHandler.unbind("all", this.touchVideoNavigationTimeout);
-
         $(".container-hidden").fadeIn();
         $(".container-hidden").removeClass("container-hidden");
         Vifi.Event.trigger("page:change", "movie");
@@ -257,7 +252,7 @@ Vifi.Player.PlayerView = Backbone.View.extend({
         this.hideVideoNavigationTimeout = setTimeout(function() {
             $(this.optionsEl).fadeOut();
             $(this.infoEl).fadeOut();
-        }.bind(this), 7000);
+        }.bind(this), 4000);
         return false;
     }
 });

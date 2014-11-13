@@ -141,7 +141,7 @@ Vifi.PageManager = {
         var el = "#application";
         if (this.needsredraw) redraw = true;
         this.callback = function() {
-               $log("doing callback");
+            $log("doing callback");
             this.redraw(pageid, redraw, fullredraw);
             if (cb) cb();
         }.bind(this);
@@ -152,7 +152,7 @@ Vifi.PageManager = {
     switchToPrevious: function(cb) {
         if (this.lastActivePage) {
             var pageName = this.lastActivePage.replace("Page", "").replace("#", "");
-            
+
             this.switchToPage(pageName, true, false);
         }
     },
@@ -196,7 +196,7 @@ Vifi.PageManager = {
                 var appElement = tv.ui.getComponentByElement(element);
                 if (undefined != appElement) appElement.removeChildren();
                 tv.ui.decorateChildren(appElement, this.decorateHandler.getHandler(), this.appComponent);
-//                tv.ui.decorate(element);
+                //                tv.ui.decorate(element);
             }
             if (redraw) {
                 // $log("Redrawing " + page);
@@ -209,19 +209,23 @@ Vifi.PageManager = {
         }
         return this;
     },
-    decorateElement: function(el, handler) { 
+    decorateElement: function(el, handler) {
         var el = tv.ui.getComponentByElement(goog.dom.getElement(el));
-        if (undefined == el || !el || !handler) 
+        if (undefined == el || !el ||  !handler)
             return false;
         tv.ui.decorateChildren(el.getElement(), function(component) {
-                goog.events.listen(component, tv.ui.Component.EventType.KEY, handler);
+            goog.events.listen(component, tv.ui.Component.EventType.KEY, handler);
         }.bind(this), el);
         el.tryFocus();
-        
+
     },
+
     // Setup initial handlers for the keyboard navigation
     setHandlers: function() {
         var _this = this;
+        Vifi.PageManager.decorateHandler.addClassHandler('nav-button', function(component) {
+            component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, _this.onNavButtonEvent, false, _this)
+        });
         // Film view buttons
         Vifi.PageManager.decorateHandler.addClassHandler('movie-button', function(component) {
             component.getEventHandler().listen(component, tv.ui.Component.EventType.KEY, _this.onMovieButtonEvent, false, _this)
@@ -288,6 +292,18 @@ Vifi.PageManager = {
         var keyCode = event.keyCode;
         if (keyCode == 40 /*Down*/ ) {
             Vifi.Event.trigger("page:change", "home");
+            event.stopPropagation();
+        }
+    },
+    // Handle nav-button
+    
+    onNavButtonEvent: function(event) {
+        var keyCode = event.keyCode;
+        event.preventDefault();
+        if (keyCode == 13 /*Enter*/ ) {
+
+            var item = event.target.element_;
+            $(item).trigger("click");
             event.stopPropagation();
         }
     },
@@ -399,12 +415,12 @@ Vifi.PageManager = {
         if (keyCode == 40 /*Down*/ ) {
             var el = tv.ui.getComponentByElement(goog.dom.getElement("film-results"));
             if (undefined !== el) {
-                    var selectedEl = el.getElement().getElementsByClassName("tv-container-selected-child")[0];
-                    
-                    this.decorateElement("film-results", this.handleMovieEvent);
-                    if (selectedEl) tv.ui.getComponentByElement(selectedEl).tryFocus();
-                }
-            
+                var selectedEl = el.getElement().getElementsByClassName("tv-container-selected-child")[0];
+
+                this.decorateElement("film-results", this.handleMovieEvent);
+                if (selectedEl) tv.ui.getComponentByElement(selectedEl).tryFocus();
+            }
+
             event.stopPropagation();
         }
         if (keyCode == 38 /*Up*/ ) {
@@ -426,11 +442,11 @@ Vifi.PageManager = {
         if (undefined != category) Vifi.Event.trigger("button:" + category, val, this);
         var cnt = 0;
         element.parent().find(".tv-toggle-button").each(function() {
-           if ($(this).hasClass("tv-toggle-button-on")) {  
-                cnt+=1;
+            if ($(this).hasClass("tv-toggle-button-on")) {
+                cnt += 1;
             }
-                $(this).addClass("reset-toggle");
-            
+            $(this).addClass("reset-toggle");
+
         });
         if (val == "reset" || cnt == 0) var reset = true;
 

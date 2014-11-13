@@ -43,6 +43,7 @@ Vifi.MediaPlayerCore = {
         'onRew': this.rewind,
         'onFF': this.fastforward,
         'onStop': this.stop,
+        'onReturn' : this.stop,
     },
 
     _keyhandler: function(event) {
@@ -64,10 +65,14 @@ Vifi.MediaPlayerCore = {
             case 'onMute':
                 this.mute();
                 break;
+             case 'onReturn':
+                this.stop();
+                break;
 
             case 'onFF':
                 this.fastforward();
                 break;
+            
         }
     }
 
