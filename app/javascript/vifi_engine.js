@@ -19,7 +19,7 @@ Vifi = {
     Event: {},
     Settings: {
         // properties   
-        version: "0.99.2810",
+        version: "0.99.201129",
         debug: false,
         api_url: 'http://backend.vifi.ee/api/',
         api_key: '27ah12A3d76f32',
@@ -30,6 +30,7 @@ Vifi = {
         toolbarId: 'toolbar',
         homePageId: 'homePage',
         alertPageId: 'alertPage',
+        exitPageId: 'exitPage',
         activationPageId: 'activationPage',
         purchasePageId: 'purchasePage'
     }

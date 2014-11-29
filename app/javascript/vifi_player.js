@@ -77,7 +77,6 @@ Vifi.Player.PlayerView = Backbone.View.extend({
 
         this.on("player:show", this.onPlayerPageEnter, this);
         this.on("player:exit", this.onPlayerPageExit, this);
-        Vifi.MediaPlayer.on("mediaplayer:onstop", this.onPlayerPageExit, this);
 
         this.render();
         this.listenTo(this.model, "content:load", this.onContentLoad);

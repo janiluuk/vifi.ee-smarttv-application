@@ -25,7 +25,9 @@ $(function() {
             this.alertPage = new Vifi.User.AlertView({
                 model: this.session
             });
-            
+            this.exitPage = new Vifi.ExitView({
+                model: this.session
+            });
             this.toolbar = new Vifi.User.ToolbarView({
                 model: this.profile
             });

@@ -56,18 +56,19 @@ Vifi.KeyHandler = {
         $(document).bind("keydown", function(event) {
 
             var action = _this.keyActions[_this.keyMap[event.keyCode]];
-            if (action == "onReturn" && typeof(widgetAPI) != "undefined") {
+            if (action == "onReturn") {
                 var activePage = app.pagemanager.activePage;
                 
-                if (activePage != "#homePage")
-                widgetAPI.blockNavigation(event);
-                else 
-                widgetAPI.sendReturnEvent();
+                if (activePage != "#homePage") { 
+                    if (typeof(widgetAPI) != "undefined") widgetAPI.blockNavigation(event);
 
+                } else { 
+                    Vifi.Event.trigger("exit", false); return false; 
+                }
             } 
-            if (action == "onExit" && typeof(widgetAPI) != "undefined") {
+            if (action == "onExit") {
                
-                widgetAPI.sendReturnEvent();
+                Vifi.Event.trigger("exit", true);
                 return false;
             }
             $log("<<< GOT KEY ACTION: " + action + " (" + event.keyCode + ")    >>>");
@@ -86,7 +87,6 @@ Vifi.KeyHandler = {
             return true;
         })
     },
-
     enable: function() {
         this.enabled = true;
     },

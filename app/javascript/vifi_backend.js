@@ -7,6 +7,8 @@ Vifi.PageManager = {
     playerPage: $("#" + Vifi.Settings.playerPageId),
     accountPage: $("#" + Vifi.Settings.accountpageId),
     activationPage: $("#" + Vifi.Settings.activationPageId),
+    exitPage: $("#" + Vifi.Settings.exitPageId),
+
     alertPage: $("#" + Vifi.Settings.activationPageId),
     purchasePage: $("#" + Vifi.Settings.purchasePageId),
     name: "Pagemanager",
@@ -29,6 +31,7 @@ Vifi.PageManager = {
         Vifi.Event.on('page:focus', this.focusFirst, this);
         Vifi.Event.on('page:change', this.switchToPage, this);
         Vifi.Event.on('page:back', this.switchToPrevious, this);
+
         this.decorateHandler = new tv.ui.DecorateHandler;
         _.bindAll(this, 'redraw', 'enableNavigation', 'disableNavigation', 'focusFirst', 'setFocus', 'setFocusByClass', 'switchToPage', 'setHandlers');
         this.setHandlers();
@@ -211,7 +214,7 @@ Vifi.PageManager = {
     },
     decorateElement: function(el, handler) {
         var el = tv.ui.getComponentByElement(goog.dom.getElement(el));
-        if (undefined == el || !el ||  !handler)
+        if (undefined == el || !el || !handler)
             return false;
         tv.ui.decorateChildren(el.getElement(), function(component) {
             goog.events.listen(component, tv.ui.Component.EventType.KEY, handler);
@@ -552,7 +555,7 @@ Vifi.Views.DialogView = Backbone.View.extend({
     },
     tagName: 'div',
 
-    onShow: function() {},
+    onShow: function(param) {},
 
     onHide: function() {
         Vifi.Event.trigger("page:back");
@@ -564,14 +567,14 @@ Vifi.Views.DialogView = Backbone.View.extend({
 
         return this;
     },
-    show: function() {
+    show: function(param) {
         $(".container:visible[not='.active']").addClass("hidden-container").fadeOut();
         $(".hidden-container .tv-component").removeClass("tv-component").addClass("tv-component-hidden");
         var pos = $(".container.active").position();
         this.$el.css("top", pos.top);
         this.$el.fadeIn().show();
         Vifi.Event.trigger("page:change", this.$el.attr("id").replace("Page", ""));
-        this.onShow();
+        this.onShow(param);
     },
     hide: function() {
         if (this.$el.hasClass("active")) {

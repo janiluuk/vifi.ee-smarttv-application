@@ -7,22 +7,14 @@
         <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&subset=latin,cyrillic-ext,greek-ext,greek,vietnamese,latin-ext,cyrillic' rel='stylesheet' type='text/css' />
         <link rel="stylesheet" href="app/stylesheets/player.css" type="text/css" />
 
-        <script type="text/javascript" src="app/javascript/jquery-2.1.0.min.js"></script>
-        <script type="text/javascript" src="app/javascript/jquery-cookie.min.js"></script>
-        <script type="text/javascript" src="app/javascript/tv-ui-compiled.js"  charset="utf-8"></script>
-        <!-- Google dependencies -->
-        <script type="text/javascript" src="app/javascript/icanhaz.min.js"></script>
-        <script type="text/javascript" src="app/javascript/underscore-min.js"></script>
-        <script type="text/javascript" src="app/javascript/backbone-min.js"></script>
-        <script type="text/javascript" src="app/javascript/jquery.waitforimages.js"></script>
-        <script src="app/javascript/jquery.lazyload.min.js" type="text/javascript"></script>
-        <script type="text/javascript" src="app/javascript/jquery.scrollTo.min.js"></script>
+        <script type="text/javascript" src="app/javascript/vendor.js"></script>
         <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/API/Plugin.js'></script>
         <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/API/Widget.js'></script>
         <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/API/TVKeyValue.js'></script>
         <script type='text/javascript' language='javascript' src='$MANAGER_WIDGET/Common/webapi/1.0/webapis.js'></script>
-   
+       <script src="//js.pusher.com/2.2/pusher.min.js"></script> 
 
+       
         <script type="text/javascript">
       document.write('<script type="text/javascript" src="http'+'s://www.smartpay.tv/Devices/Smart_TV/SmartpayGateway.class.js?c='+(new Date()).getTime()+'"><\/scr'+'ipt>');
          var initial_search_json = '';
@@ -58,7 +50,10 @@
         <div id="application" class="containers-shelves tv-container-vertical">
             <!-- VIDEO PLUGIN -->
             <div class="animation">
+                 <div id="exitPage" class="container" style="display:none;"></div>
                 <div id="alertPage" class="container" style="display:none;"></div>
+
+
                 <div id="activationPage" class="container" style="display:none;"></div>
                 <div id="purchasePage" class="container" style="display:none;"></div>
                 <div id="accountPage" class="container"></div>
@@ -88,7 +83,7 @@
                         {{# film }}
                         <a onclick="javascript: return false;" data-id="{{ film.id}}" href="{{ film.seo_friendly_url }}">
                             <div class="thumbWrap">
-                                        <div class="thumb loading lazy" data-original="{{ poster_url }}" /></div>
+                                        <div class="thumb loading lazy" data-original="http://gonzales.vifi.ee/files/images/image.php?src={{ poster_url }}&w=191&h=281" /></div>
                             </div>
                             <figcaption>
                                 <div class="details">
@@ -103,7 +98,7 @@
                         {{#  film }}
                         <a onclick="javascript: return false;" href="{{ film.seo_friendly_url }}">
                             <div class="thumbWrap">
-                                        <div class="thumb" style="background-image:url(' {{ poster_url }}')"></div>
+                                        <div class="thumb" style="background-image:url('http://gonzales.vifi.ee/files/images/image.php?src={{ poster_url }}&w=191&h=281');"></div>
                             </div>
                             </a>
                         {{/ film }}
@@ -182,14 +177,10 @@
     </script>
     <script type="text/html" id="playerTemplate">
                     <div id="player-loading" style="visibility:hidden"></div>
-                    <div id="player-info">
-                           
-                    </div>
-                    <div id="player">
-                    </div>
-                    <div id="subtitles">
-                    </div>
-                     <div id="player-options" class="tv-tab-container tv-container-vertical"></div>
+                    <div id="player-info"></div>
+                    <div id="player"></div>
+                    <div id="subtitles"></div>
+                    <div id="player-options" class="tv-tab-container tv-container-vertical"></div>
 
                    
             
@@ -414,7 +405,7 @@
                             <td class="step-number"><span id="step-number-2">2</span></td>
                             <td class="step-description"><span id="step2">Filmi vaatamist on võimalik jätkata filmi lehelt kuni vaatamisaja lõpuni. Küsimuste korral võta ühendust meie infotelefoniga.</span></td>
                         </tr>
-                    <tbody>
+                    </tbody>
                 </table>
                         <div class="buttonsrow tv-container-horizontal">
                                 <div class="tv-component action-button no-down no-up" id="purchase"><a href="#" class="fl button">Kinnita (<%- film.price %>€)</a>
@@ -426,7 +417,21 @@
             </div>
           
 </script>
-
+<script type="text/template" id="exitTemplate">
+            <div class="alert-container">
+                <div id="alert-icon"></div>
+                <p class="header"><span>Lõpeta rakendus?</span></p><p><br/></p>
+               
+                        <div class="buttonsrow tv-container-horizontal">
+                                <div class="tv-component action-button no-down no-up" id="exit"><a href="#" class="fl button">Jah</a>
+                                </div>
+                                <div class="tv-component action-button no-down no-up" id="closeExit"><a href="#" class="fl button no-up no-down">Tagasi</a>
+                                </div>
+                               
+                        </div>
+            </div>
+          
+</script>
 <script type="text/html" id="browserPageTemplate">
  
   <form id="search-form">
@@ -690,17 +695,16 @@
 
 <script type="text/javascript" src="app/javascript/vifi_player.js"></script>
 <script type="text/javascript" src="app/javascript/vifi_search.js"></script>
+<script type="text/javascript" src="app/javascript/vifi_pusher.js"></script> 
+
 <script type="text/javascript">
 document.write('<script type="text/javascript" src="http:'+'//app.vifi.ee/app/javascript/vifi_extra.js?c='+(new Date()).getTime()+'"><\/scr'+'ipt>');
 </script>
 
 <script type="text/javascript" src="app/javascript/vifi_app.js"></script>
-
 ﻿<object id="pluginAudio" border=0 classid="clsid:SAMSUNG-INFOLINK-AUDIO" style="opacity:0.0;background-color:#000000;width:0px;height:0px;">
 </object>
-
 <object id="pluginObjectTVMW" border=0 classid="clsid:SAMSUNG-INFOLINK-TVMW" style="opacity:0;background-color:#000000;width:0px;height:0px;"></object>
 <object id="pluginObjectNNavi" border=0 classid="clsid:SAMSUNG-INFOLINK-NNAVI" style="opacity:0.0;background-color:#000000;width:0px;height:0px;"></object>
-
 </body>
 </html>

@@ -163,3 +163,42 @@ Vifi.PurchaseView = Vifi.Views.DialogView.extend({
     }
 
 });
+
+Vifi.ExitView = Vifi.Views.DialogView.extend({
+    el: $("#" + Vifi.Settings.exitPageId),
+    fullexit: false,
+    events: {
+        'click #exit': 'exit',
+        'click #closeExit': 'hide'
+    },
+
+    initialize: function() {
+        this.template = _.template($("#exitTemplate").html());
+        this.render();
+        Vifi.Event.on('exit', this.show, this);
+
+    },
+
+    render: function() {
+        this.$el.html(this.template(this.model.toJSON()));
+        Vifi.Event.trigger("page:ready", "#" + this.$el.attr("id"));
+        return this;
+    },
+    onShow: function(fullexit) {
+        this.exit = fullexit;
+        Vifi.PageManager.redraw("#exitPage", true);
+
+        Vifi.Navigation.setReturnButton(this.hide, this);
+
+    },
+    onHide: function() {
+        Vifi.Event.trigger("page:back");
+        Vifi.PageManager.redraw("#purchasePage", true);
+
+    },
+    exit: function() {
+        Vifi.Platforms.platform.exit(this.fullexit);
+        return false;
+    }
+
+});

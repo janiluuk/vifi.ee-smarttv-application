@@ -949,7 +949,7 @@ ul {
 
 /* ACTIVATION PAGE & ALERT PAGE */
 
-#activationPage, #alertPage, #purchasePage {
+#activationPage, #alertPage, #purchasePage, #exitPage {
     position: absolute;
     background-image: url('img/background_dark_90.png');
     background-repeat: repeat;

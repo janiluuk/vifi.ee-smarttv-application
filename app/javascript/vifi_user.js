@@ -54,6 +54,7 @@ Vifi.User.Profile = Vifi.Utils.ApiModel.extend({
         this.set("paired_user", false);
         this.set("email", "Kasutaja");
         this.set("tickets", "");
+        
     },
 
 
@@ -140,6 +141,8 @@ Vifi.User.Session = Backbone.Model.extend({
         Vifi.Event.on('poll:disable', this.disable, this);
         Vifi.Event.on('activation:show', this.logout, this);
         Vifi.Event.on('user:login', this.onUserAuthenticate, this);
+        Vifi.Event.once('guest:login', this.disable, this);
+
         Vifi.Event.on('user:logout', this.onUserSignout, this);
         this.on('change:sessionId', this.setCookie, this);
         this.on("change:activationCode", function() { this.set("step2text", 'Sisesta '+this.get("activationCode")+' väljale kus küsitakse aktiveerimiskoodi');}.bind(this));
@@ -163,9 +166,10 @@ Vifi.User.Session = Backbone.Model.extend({
     },
     onUserSignout: function() {
         this.set('logged_in', false);
+        this.logout();
+
         this.disable();
 
-        this.logout();
 
         return false;
     },
@@ -194,13 +198,17 @@ Vifi.User.Session = Backbone.Model.extend({
     },
     setCookie: function(cookie) {
         if (cookie != "" && cookie) {
-            $.cookie("vifi_session", cookie, {});
+            $.cookie("vifi_tvsession", cookie, {});
         }
         return this;
     },
+    clearCookie: function() { 
+        $.cookie("vifi_tvsession", "", {});
+        $.cookie("uniqueId", "", {});
 
+    },
     getCookie: function() {
-        var sessionId = $.cookie("vifi_session");
+        var sessionId = $.cookie("vifi_tvsession");
         return sessionId;
     },
     authorize: function() {
@@ -218,7 +226,10 @@ Vifi.User.Session = Backbone.Model.extend({
                 if (profile.get("paired_user") != false) {  
                 $log("Logging in with user " + profile.get("email"));
                 Vifi.Event.trigger("user:login");
+                } else {
+                    Vifi.Event.trigger("guest:login");
                 }
+
             }
         }
         return false;
@@ -235,7 +246,7 @@ Vifi.User.Session = Backbone.Model.extend({
             this.fetch();
             setTimeout(function() {
                 this.send();
-            }.bind(this), 5000);
+            }.bind(this), 3000);
         } else {
             $log("Disabling polling, logged in or disabled");
             this.disable();
@@ -253,7 +264,7 @@ Vifi.User.Session = Backbone.Model.extend({
     isRegisteredUser: function() {
         var profile = this.get("profile");
 
-        if (profile.get("user_id") != "" && profile.get("paired_user")) {
+        if (profile.get("user_id") != "" && profile.get("email") != "Kasutaja" ) {
             return true;
         }
         return false;

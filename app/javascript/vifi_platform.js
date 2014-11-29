@@ -191,6 +191,10 @@ Vifi.Platform.prototype.proxy = function() {
 }
 
 
+Vifi.Platform.prototype.exit = function() {
+    $log("Exiting..");
+
+}
 /* The first default platform "browser" */
 ;
 (function() {
@@ -229,11 +233,16 @@ Vifi.Platform.prototype.proxy = function() {
             return false;
         }
     }
+    browser.exit = function(fullexit) { 
+        if (fullexit) console.log("Full exiting..");
+        else console.log("Exiting..");
+        
 
+    }
     browser.defaultPlatform = false;
     Vifi.Platforms.addSupportedPlatform(browser);
     browser.setMediaPlayer("flash");
-
+  
 }());
 
 (function() {
@@ -286,10 +295,16 @@ Vifi.Platform.prototype.proxy = function() {
                     NNaviPlugin.SetBannerState(1); //this is to see the banner Volume
 
                 },100);
-
-
-
         $log("<< Platform ready (" + this.name + " " + this.matrix() + " on " + window.screen.width + "x" + window.screen.height + " ) >>")
+
+    }
+    platform.disableMute = function() { 
+            pluginAPI.registKey(Vifi.Engine.getPlatform().keys().KEY_MUTE);
+
+
+    }
+    platform.enableMute = function() {
+            pluginAPI.unregistKey(Vifi.Engine.getPlatform().keys().KEY_MUTE);
 
     }
     platform.keys = function() {
@@ -309,7 +324,5 @@ Vifi.Platform.prototype.proxy = function() {
             $log("Error with full exit on samung: " + e);
         }
     }
-
-
     Vifi.Platforms.addSupportedPlatform(platform);
 }());

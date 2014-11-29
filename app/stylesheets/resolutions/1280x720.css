@@ -289,3 +289,7 @@
 #subtitles { 
 	font-size: 4.5em;
 }
+#player {
+    width: 1280px;
+    height: 720px;
+}

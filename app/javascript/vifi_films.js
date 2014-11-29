@@ -183,10 +183,12 @@ Vifi.Films.FeaturedFilmCollectionView = Backbone.View.extend({
         var fragment = document.createDocumentFragment();
         var bgfragment = document.createDocumentFragment();
         var bg = this.bg;
+        var size = Vifi.Platforms.platform.matrix().split("x");
+
         this.$el.html('');
         this.models.each(function(model) {
             fragment.appendChild(this.addChildView(model));
-            var img = $("<div>").css("background", "url('" + model.get("film").backdrop_url + "')").attr("id", "film-" + model.get("film").id).addClass("featured_film_background");
+            var img = $("<div>").css("background", "url('http://gonzales.vifi.ee/files/images/image.php?w="+size[0]+"&h="+size[1]+"&src="+model.get("film").backdrop_url+"')").attr("id", "film-" + model.get("film").id).addClass("featured_film_background");
             bg.push(img[0]);
         }, this);
         $.each(bg, function() {
@@ -221,54 +223,65 @@ Vifi.Films.TrailerView = Backbone.View.extend({
         'onStop': "stop",
         'onReturn' : "close",
         'onMute' : "mute",
+        'onFF' : "forward",
+        'onRew' : "rewind"
 
     },
+    initialize: function() {
+        this.loadPlayer();
+
+        Vifi.Event.on("trailer:init", this.play, this);
+        this.template = _.template($("#trailerTemplate").html());
+        _.bindAll(this, "render", "_bindKeys", "_unbindKeys", "touchVideoNavigationTimeout", "close", "onPlayerReady", "loadPlayer","_mapKeys", "showNavigation", "pause","resume","mute", "stop", "onPlayerStateChange");
+
+    },
+
     _bindKeys: function() {
+        Vifi.KeyHandler.bind("all", this.touchVideoNavigationTimeout,this);
+        
+        if (typeof(pluginAPI) != "undefined") Vifi.Platforms.platform.enableMute();
 
         _.each(this._keyMap, function(key,item) {
             Vifi.KeyHandler.unbind("keyhandler:"+item);
 
             Vifi.KeyHandler.bind("keyhandler:"+item, eval("this."+key), this);
         }.bind(this));
-        Vifi.KeyHandler.bind("all", this.touchVideoNavigationTimeout,this);
 
     },
     _unbindKeys: function() { 
         Vifi.KeyHandler.unbind("all", this.touchVideoNavigationTimeout);
+        if (typeof(pluginAPI) != "undefined") Vifi.Platforms.platform.disableMute();
 
         _.each(this._keyMap, function(key,item) { 
             Vifi.KeyHandler.unbind("keyhandler:"+item, eval("this."+key));
         
         }.bind(this));
+        Vifi.Navigation.setReturnButton();
     },
+    _mapKeys: function() { 
+        app.pagemanager.redraw("#moviePage", true);
+        app.pagemanager.setFocusById("trailer-options-selection");
 
+    },
     playFilm: function(event) {
         this.close();
         event.preventDefault();
         app.player.trigger("player:load", this.model.get("id"));
         event.stopPropagation();
     },
-    initialize: function(   ) {
-        this.loadPlayer();
-
-        Vifi.Event.on("trailer:init", this.play, this);
-        this.template = _.template($("#trailerTemplate").html());
-        _.bindAll(this, "render", "_bindKeys", "_unbindKeys", "touchVideoNavigationTimeout", "close", "onPlayerReady", "loadPlayer","mapKeys", "showNavigation", "pause","resume","mute", "stop", "onPlayerStateChange");
-
-    },
     fadeOut: function() {
         this.$el.fadeOut();
+        return this;
     },
     fadeIn: function() {
         this.$el.fadeIn();
+        return this;
     },
     playTrailer: function() {
         this.setElement("#trailer");
         var film = this.model.get("film");
         if (film.youtube_id) {
-                        this.render();
-
-            this.fadeIn();
+            this.render().fadeIn();
             this._bindKeys();
             this.initPlayer();
             this.showNavigation();
@@ -276,11 +289,7 @@ Vifi.Films.TrailerView = Backbone.View.extend({
         }
     },
 
-    mapKeys: function() { 
-        app.pagemanager.redraw("#moviePage", true);
-        app.pagemanager.setFocusById("trailer-options-selection");
 
-    },
     initPlayer: function() {
         var _this = this;
         if (typeof(YT) == "undefined") {
@@ -297,13 +306,12 @@ Vifi.Films.TrailerView = Backbone.View.extend({
             this.done = false;
 
             this.player = new YT.Player('ytplayer', {
-                height: '100%',
                 playerVars: {
                     'autoplay': 1,
                     'controls': 0
                 },
-
-                width: '100%',
+                height: $(window).height(),
+                width: $(window).width(),
                 videoId: film.youtube_id,
                 events: {
                     'onReady': _this.onPlayerReady,
@@ -345,11 +353,35 @@ Vifi.Films.TrailerView = Backbone.View.extend({
     pause: function() {
         this.player.pauseVideo();
     },
+    forward: function(amt) {
+        amt = amt || 10;
+        var time = this.player.getCurrentTime()+amt;
+        this.player.seekTo(time);
+    },
+    rewind: function(amt) {
+        amt = amt || 10;
+        var time = Math.max(this.player.getCurrentTime()-amt,0);
+        this.player.seekTo(time);
 
-    mute: function() {
+    },
+    
+    mute: function(e) {
+        if (e) e.preventDefault();
+
         if (!this.player) return false;
         var currentMute = this.player.isMuted();
-        currentMute ?   this.player.unMute() : this.player.mute();
+        $log("Current mute: "+currentMute);
+
+        if (currentMute !== true) { 
+            $log("Muting audio");
+
+            this.player.mute(); 
+
+        } else {
+            $log("UnMuting audio");
+
+        	this.player.unMute();
+        }
     },
     resume: function() {
         this.player.playVideo();
@@ -385,7 +417,7 @@ Vifi.Films.TrailerView = Backbone.View.extend({
     },
     render: function() {
         this.$el.html(this.template(this.model.toJSON()));
-        this.mapKeys();
+        this._mapKeys();
 
         return this;
     },
