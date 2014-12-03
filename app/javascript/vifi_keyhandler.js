@@ -56,6 +56,9 @@ Vifi.KeyHandler = {
         $(document).bind("keydown", function(event) {
 
             var action = _this.keyActions[_this.keyMap[event.keyCode]];
+
+            /* Return button event */
+
             if (action == "onReturn") {
                 var activePage = app.pagemanager.activePage;
                 
@@ -63,14 +66,22 @@ Vifi.KeyHandler = {
                     if (typeof(widgetAPI) != "undefined") widgetAPI.blockNavigation(event);
 
                 } else { 
-                    Vifi.Event.trigger("exit", false); return false; 
+                    Vifi.Event.trigger("exit", false); 
+                    return false; 
                 }
             } 
+            /* Handling exit event to show confirm dialog or exit */
+
             if (action == "onExit") {
-               
-                Vifi.Event.trigger("exit", true);
+                if (activePage != "#exitPage") { 
+                    Vifi.Event.trigger("exit", true);
+                } else {
+                    Vifi.Engine.getPlatform().exit();
+                }
                 return false;
             }
+
+
             $log("<<< GOT KEY ACTION: " + action + " (" + event.keyCode + ")    >>>");
             if (action && _this.enabled) _this.trigger("keyhandler:" + action);
             else {

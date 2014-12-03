@@ -87,23 +87,7 @@ Vifi.User.Session = Backbone.Model.extend({
     url: function() {
         return Vifi.Settings.api_url + 'session/' + this.path + '?jsoncallback=?';
     },
-    logout: function() { 
-        var options = this.getParams();
-        $.getJSON(this.url()+"&unpair=1", options.data).done(function(data) {
-
-            if (data.activationCode) {
-                
-                this.path = "";
-                this.set("activationCode",data.activationCode);
-                this.set("logged_in", false);
-                this.set("sessionId", "");
-                this.set("hash", "");
-
-
-            }
-        }.bind(this));
-
-    },
+ 
     defaults: function() {
         return {
             user_id: '',
@@ -116,20 +100,7 @@ Vifi.User.Session = Backbone.Model.extend({
             enabled: false
         }
     },
-    getParams: function() {
-        var options = {}
-        var params = {
-            dataType: 'jsonp',
-            data: {
-                api_key: Vifi.Settings.api_key,
-                authId: this.get("hash"),
-                sessionId: this.get("sessionId")
-            }
-        };
-        options.data = JSON.parse(JSON.stringify(params.data));
-        options.dataType = params.dataType;
-        return options;
-    },
+ 
     initialize: function() {
         var code = this.get("step2text").replace("CODE", this.get("activationCode"));
         this.set("step2text", code);
@@ -153,6 +124,20 @@ Vifi.User.Session = Backbone.Model.extend({
         }
         this.render();
     },
+    getParams: function() {
+        var options = {}
+        var params = {
+            dataType: 'jsonp',
+            data: {
+                api_key: Vifi.Settings.api_key,
+                authId: this.get("hash"),
+                sessionId: this.get("sessionId")
+            }
+        };
+        options.data = JSON.parse(JSON.stringify(params.data));
+        options.dataType = params.dataType;
+        return options;
+    },
     enable: function() {
 
         if (!this.isLoggedIn() && !this.isEnabled()) {
@@ -164,14 +149,33 @@ Vifi.User.Session = Backbone.Model.extend({
     disable: function() {
         this.set("enabled", false);
     },
+    logout: function() { 
+        var options = this.getParams();
+        $.getJSON(this.url()+"&unpair=1", options.data).done(function(data) {
+
+            if (data.activationCode) {
+                
+                this.path = "";
+                this.set("activationCode",data.activationCode);
+                this.set("logged_in", false);
+                this.set("sessionId", "");
+                this.set("hash", "");
+
+
+            }
+        }.bind(this));
+
+    },
     onUserSignout: function() {
         this.set('logged_in', false);
         this.logout();
-
         this.disable();
-
-
+        this.clearCookie();
         return false;
+    },
+    onUserAuthenticate: function() {
+        this.set("logged_in", true);
+        this.disable();
     },
     fetch: function() {
         if (!this.isEnabled()) return;
@@ -224,8 +228,8 @@ Vifi.User.Session = Backbone.Model.extend({
             if (profile.get("user_id") != "") {
                 this.set("profile", profile);
                 if (profile.get("paired_user") != false) {  
-                $log("Logging in with user " + profile.get("email"));
-                Vifi.Event.trigger("user:login");
+                    $log("Logging in with user " + profile.get("email"));
+                    Vifi.Event.trigger("user:login");
                 } else {
                     Vifi.Event.trigger("guest:login");
                 }
@@ -256,9 +260,10 @@ Vifi.User.Session = Backbone.Model.extend({
         return this.get("enabled");
     },
     isLoggedIn: function() {
-        var logged = this.get("logged_in");
-        if (this.isRegisteredUser() && logged === true) 
+
+        if (this.isRegisteredUser() && this.get("logged_in") === true) { 
             return true;
+        } 
         return false;
     },
     isRegisteredUser: function() {
@@ -269,10 +274,7 @@ Vifi.User.Session = Backbone.Model.extend({
         }
         return false;
     },
-    onUserAuthenticate: function() {
-        this.set("logged_in", true);
-        this.disable();
-    },
+
     render: function() {
         return this;
     }

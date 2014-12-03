@@ -75,11 +75,13 @@ Vifi.PageManager = {
     // Bring given page to the screen after making preparations accordingly.
     // Looking at this makes ma already feel like sitting in italian restaurant.
     setActivePage: function(page) {
+        //$("#statusDiv")
+        //html("Page: " + $(page).attr("id"));
         this.activePage = page;
-        this.getActivePage().addClass("active");
-        $("#statusDiv").html("Page: " + $(page).attr("id"));
 
         $("body").scrollTo(page, 250);
+        this.getActivePage().addClass("active");
+
         Vifi.Navigation.setReturnButton();
 
         return true;
@@ -214,7 +216,7 @@ Vifi.PageManager = {
     },
     decorateElement: function(el, handler) {
         var el = tv.ui.getComponentByElement(goog.dom.getElement(el));
-        if (undefined == el || !el || !handler)
+        if (undefined == el || !el ||  !handler)
             return false;
         tv.ui.decorateChildren(el.getElement(), function(component) {
             goog.events.listen(component, tv.ui.Component.EventType.KEY, handler);
@@ -577,10 +579,13 @@ Vifi.Views.DialogView = Backbone.View.extend({
         this.onShow(param);
     },
     hide: function() {
+
         if (this.$el.hasClass("active")) {
             $(".hidden-container .tv-component-hidden").addClass("tv-component").removeClass("tv-component-hidden");
             $(".hidden-container").removeClass("hidden-container").fadeIn();
             this.$el.fadeOut().hide();
+            console.log(this.$el);
+
             this.onHide();
         }
     }
@@ -588,6 +593,44 @@ Vifi.Views.DialogView = Backbone.View.extend({
 });
 
 
+Vifi.ExitView = Vifi.Views.DialogView.extend({
+    el: $("#" + Vifi.Settings.exitPageId),
+    fullexit: false,
+    events: {
+        'click #exit': 'exit',
+        'click #closeExit': 'hide'
+    },
+
+    initialize: function() {
+        this.template = _.template($("#exitTemplate").html());
+        this.render();
+        Vifi.Event.on('exit', this.show, this);
+
+    },
+
+    render: function() {
+        this.$el.html(this.template(this.model.toJSON()));
+        Vifi.Event.trigger("page:ready", "#" + this.$el.attr("id"));
+        return this;
+    },
+    onShow: function(fullexit) {
+        this.exit = fullexit;
+        Vifi.PageManager.redraw("#exitPage", true);
+
+        Vifi.Navigation.setReturnButton(this.hide, this);
+
+    },
+    onHide: function() {
+        Vifi.Event.trigger("page:back");
+        Vifi.PageManager.redraw("#purchasePage", true);
+
+    },
+    exit: function() {
+        Vifi.Platforms.platform.exit(this.fullexit);
+        return false;
+    }
+
+});
 
 Vifi.Utils.ApiModel = Backbone.Model.extend({
     defaults: {

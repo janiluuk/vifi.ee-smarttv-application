@@ -80,7 +80,7 @@ Vifi.Platform = function(name) {
     this.name = name;
     this.defaultPlatform = false;
     this._mediaPlayer = "browser";
-
+    this.deviceInfo = {};
     this.start = $noop;
     this.exit = $noop;
     this._keys = {
@@ -128,6 +128,12 @@ Vifi.Platform.prototype.initready = function() {
 Vifi.Platform.prototype.keys = function() {
     return this._keys;
 }
+// override this if necessary
+Vifi.Platform.prototype.getDeviceInfo = function() {
+    return this.deviceInfo;
+}
+Vifi.Platform.prototype.setDeviceInfo = function() {}
+
 Vifi.Platform.prototype.setMediaPlayer = function(mediaplayer) {
     this._mediaPlayer = mediaplayer;
 }
@@ -214,7 +220,17 @@ Vifi.Platform.prototype.exit = function() {
     // browser.needsProxy = true;
     // We want this to fail, and get added as default
     browser.setResolution(window.screen.width, window.screen.height);
+    browser.setDeviceInfo = function() { 
+        this.deviceInfo.appVersion = navigator.appVersion;
+        this.deviceInfo.platform = navigator.platform;
+        this.deviceInfo.userAgent = navigator.userAgent;
 
+    }
+    browser.init = function() {
+
+        this.setDeviceInfo();
+        
+    }
     browser.detectPlatform = function() {
         try {
             if (navigator.plugins != null && navigator.plugins.length > 0) {
@@ -273,12 +289,26 @@ Vifi.Platform.prototype.exit = function() {
         return supported;
 
     }
+    platform.setDeviceInfo = function() { 
+        this.deviceInfo.platform = "Samsung";
+        this.deviceInfo.firmware = NNaviPlugin.GetFirmware();
+        this.deviceInfo.systemVersion = NNaviPlugin.GetSystemVersion(0);
+        this.deviceInfo.productCode = TVPlugin.GetProductCode(1);
+        this.deviceInfo.productType = TVPlugin.GetProductType();
+        this.deviceInfo.mac = networkPlugin.GetMAC();
+        this.deviceInfo.duid = NNaviPlugin.GetDUID(this.deviceInfo.mac);
+        this.deviceInfo.deviceId = NNaviPlugin.GetDUID(networkPlugin.GetHWaddr());
 
+    }
     platform.init = function() {
         var keys = this.keys();
         window.widgetAPI = new Common.API.Widget();
         window.pluginAPI = new Common.API.Plugin();
+        window.networkPlugin = document.getElementById('pluginNetwork');
         window.NNaviPlugin = document.getElementById('pluginObjectNNavi');
+        window.TVPlugin = document.getElementById('pluginObjectTV');
+        this.setDeviceInfo();
+        
     }
     platform.initready = function() {
         window.widgetAPI.sendReadyEvent();

@@ -19,6 +19,10 @@ $(function() {
             this.accountPage = new Vifi.User.ProfileView({
                 model: this.profile
             });
+            this.toolbar = new Vifi.User.ToolbarView({
+                model: this.profile
+            });
+
             this.activationPage = new Vifi.User.ActivationView({
                 model: this.session
             });
@@ -28,10 +32,7 @@ $(function() {
             this.exitPage = new Vifi.ExitView({
                 model: this.session
             });
-            this.toolbar = new Vifi.User.ToolbarView({
-                model: this.profile
-            });
-
+  
             this.detailview = new Vifi.Films.FilmDetailView();
 
             this.player = new Vifi.Player.Player({
@@ -44,12 +45,11 @@ $(function() {
             this.featuredview = new Vifi.Films.FeaturedFilmDetailView();
             this.homePage = new Vifi.Films.FeaturedFilmCollectionView(this.collection.featured());
 
-              this.browser = new Vifi.Pages.Browser({
+            this.browser = new Vifi.Pages.Browser({
                 collection: this.browsercollection,
                 genres: this.genres
             });
             this.purchasePage = new Vifi.PurchaseView();
-
             this.payment = new Vifi.Payment({
                 session: this.session
             });
@@ -64,14 +64,17 @@ $(function() {
             '': 'homePage', //
             'search/:searchState': 'search',
             'film/:id': 'showFilm',
-            'home' : 'homePage'
+            'home': 'homePage'
         },
         search: function(searchStateHash) {
             //Unescape is required for firefox only to fix unescaped spaces
             //https://github.com/documentcloud/backbone/pull/1156
             app.browser.setSearchStateFromHash(unescape(searchStateHash));
-            if (!_.isEmpty(app.browser.collection.state.values().join("")))
-                app.browser.collection.update();
+
+            if (!_.isEmpty(app.browser.collection.state.values().join(""))) { 
+                if( app.browser.collection.state.changedAttributes()) app.browser.collection.update();
+            }
+                   
 
             Vifi.Event.trigger("page:change", "browser");
         },
@@ -138,7 +141,6 @@ $(function() {
 
 
 
-
         var models = initial_search_json.results;
         var pagination = initial_search_json.pagination;
         var activationCode = initial_search_json.activationCode;
@@ -170,7 +172,8 @@ $(function() {
                 search: search
             });
         var collection = new Vifi.Films.FilmCollection(models);
-
+        models = "";
+        
         // Create collection of featured films and add them to the frontpage
 
         var genres = new Vifi.Films.GenreCollection(initial_search_json.genres);
@@ -186,7 +189,7 @@ $(function() {
 
         Vifi.Engine.start(Vifi.Settings);
 
-        
+
         Vifi.KeyHandler.bind("keyhandler:onRed", function() {
             if (!Vifi.Utils.Logger.visible) {
                 Vifi.Utils.Logger.show();
@@ -207,7 +210,7 @@ $(function() {
             usercollection: usercollection
         });
 
-     
+
         //Create an instance of our router
         window.router = new Router();
         window.router.on("page:change", function(page) {
@@ -219,13 +222,6 @@ $(function() {
         });
         //This will search routes from the router and serve them
         window.history = Backbone.history.start();
-
-
-
-
-        initial_search_json="";
-        
-
     }
 
     $(window).load(function() {
@@ -237,6 +233,7 @@ $(function() {
             initApp(initial_search_json);
         }
 
+
     });
 });
 /******************************************************************
@@ -245,34 +242,34 @@ $(function() {
 	This is the real meat of the interactions here. 
 *******************************************************************/
 Vifi.Engine.bind("app:ready", function() {
-	
+
 
     Vifi.Navigation.start();
     Vifi.Platforms.platform.initready();
 
     $("#loadingWrapper").fadeOut().remove();
-   
-        setTimeout(function() { 
-            Vifi.Event.trigger("page:change", "home");
-             $("#application").animate({
-                    "opacity": 1
-             }, 2000);
-        }, 500);
-        // if there's no hash, let's render the results
-        // ( if there's a hash , the router will take care of this when it sets state from hash)
-        if (window.location.hash.indexOf('#search') == -1 && window.location.hash.indexOf('#film') == -1) {
 
-            Vifi.Event.trigger("page:change", "home");
+    setTimeout(function() {
+        Vifi.Event.trigger("page:change", "home");
+        $("#application").animate({
+            "opacity": 1
+        }, 2000);
+    }, 500);
+    // if there's no hash, let's render the results
+    // ( if there's a hash , the router will take care of this when it sets state from hash)
+    if (window.location.hash.indexOf('#search') == -1 && window.location.hash.indexOf('#film') == -1) {
 
-        } else if (window.location.hash.indexOf('#search') == 0) {
+        Vifi.Event.trigger("page:change", "home");
 
-            Vifi.Event.trigger("page:change", "browser");
+    } else if (window.location.hash.indexOf('#search') == 0) {
 
-        } else {
+        Vifi.Event.trigger("page:change", "browser");
 
-            Vifi.Event.trigger("film:show", window.location.hash.substr(6));
-        }
+    } else {
 
-   
+        Vifi.Event.trigger("film:show", window.location.hash.substr(6));
+    }
+
+
 
 }, Vifi.Engine);

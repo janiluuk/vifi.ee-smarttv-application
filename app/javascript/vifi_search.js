@@ -26,11 +26,14 @@ Vifi.Pages.Browser = Vifi.PageView.extend({
         this.on("browser:pagination", this.onBrowserPaginationEvent, this);
         this.render();
         this.setGenreDropDown();
-
         this.renderResults();
     },
     render: function() {
         this.$el.html(ich.browserPageTemplate(this.context));
+        
+        /* Fix the rightmost category item  */ 
+        this.$("#genres-tab div:last").addClass("no-right");
+
         Vifi.PageManager.redraw("#browserPage", true);
         return this;
     },
@@ -75,9 +78,9 @@ Vifi.Pages.Browser = Vifi.PageView.extend({
     },
     loadBrowserImages: function() {
         $("#search-results div.lazy").lazyload({
-            threshold: 4000,
+            threshold: 6000,
             effect: 'fadeIn',
-            effectspeed: 900
+            effectspeed: 600
         });
     },
     
@@ -87,6 +90,7 @@ Vifi.Pages.Browser = Vifi.PageView.extend({
         if (images.length > 0) app.browser.loadBrowserImages();
     },
     onSearchFieldChange: function(event) {
+    
         var name = "q";
         var value = $("#q").val();
         var search_array = {
@@ -157,6 +161,8 @@ Vifi.Pages.Browser = Vifi.PageView.extend({
     },
     onChangeCollectionState: function(state) {
         var changed_keys = _.keys(state.changedAttributes());
+
+
         var genre_is_changed = _.contains(changed_keys, 'genres');
         if (this.options.redirect_on_genre_change && (genre_is_changed)) {
             return this.redirectToBaseURL();
