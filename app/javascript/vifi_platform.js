@@ -54,7 +54,28 @@ Vifi.Platforms = {
         // Going to add our proxy adding an ajax prefilter to switch to route the url
         // through a proxy for cross domain requests.
         var platform = this.platform;
-         $.ajaxSetup({ cache: false });
+        
+             $.ajaxSetup({
+                cache: false,
+        error: function(jqXHR, exception) {
+            if (jqXHR.status === 0) {
+                Vifi.Event.trigger("error");
+
+            } else if (jqXHR.status == 404) {
+                alert('Requested page not found. [404]');
+            } else if (jqXHR.status == 500) {
+                alert('Internal Server Error [500].');
+            } else if (exception === 'parsererror') {
+                alert('Requested JSON parse failed.');
+            } else if (exception === 'timeout') {
+                alert('Time out error.');
+            } else if (exception === 'abort') {
+                alert('Ajax request aborted.');
+            } else {
+                alert('Uncaught Error.\n' + jqXHR.responseText);
+            }
+        }
+    });
 
         if (_.isFunction($.ajaxPrefilter)) {
             $.ajaxPrefilter(function(options, originalOptions) {
@@ -224,6 +245,7 @@ Vifi.Platform.prototype.exit = function() {
         this.deviceInfo.appVersion = navigator.appVersion;
         this.deviceInfo.platform = navigator.platform;
         this.deviceInfo.userAgent = navigator.userAgent;
+        this.deviceInfo.type = "Flash";
 
     }
     browser.init = function() {
@@ -290,7 +312,8 @@ Vifi.Platform.prototype.exit = function() {
 
     }
     platform.setDeviceInfo = function() { 
-        this.deviceInfo.platform = "Samsung";
+        this.deviceInfo.platform = "Samsung Smart-TV";
+        this.deviceInfo.type = "Smart-TV";
         this.deviceInfo.firmware = NNaviPlugin.GetFirmware();
         this.deviceInfo.systemVersion = NNaviPlugin.GetSystemVersion(0);
         this.deviceInfo.productCode = TVPlugin.GetProductCode(1);
@@ -308,7 +331,12 @@ Vifi.Platform.prototype.exit = function() {
         window.NNaviPlugin = document.getElementById('pluginObjectNNavi');
         window.TVPlugin = document.getElementById('pluginObjectTV');
         this.setDeviceInfo();
-        
+        var tag = document.createElement('script');
+        tag.id = "youtubeplayer";
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
     }
     platform.initready = function() {
         window.widgetAPI.sendReadyEvent();
@@ -328,7 +356,7 @@ Vifi.Platform.prototype.exit = function() {
         $log("<< Platform ready (" + this.name + " " + this.matrix() + " on " + window.screen.width + "x" + window.screen.height + " ) >>")
 
     }
-    platform.disableMute = function() { 
+    platform.disableMute = function() {
             pluginAPI.registKey(Vifi.Engine.getPlatform().keys().KEY_MUTE);
 
 

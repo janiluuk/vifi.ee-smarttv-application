@@ -32,7 +32,9 @@ $(function() {
             this.exitPage = new Vifi.ExitView({
                 model: this.session
             });
-  
+            this.errorPage = new Vifi.ErrorView({
+                model: this.session
+            });
             this.detailview = new Vifi.Films.FilmDetailView();
 
             this.player = new Vifi.Player.Player({
@@ -180,12 +182,12 @@ $(function() {
         var queue = new Vifi.Films.QueueCollection(initial_search_json.queue);
         var usercollection = new Vifi.Films.UserCollection(initial_search_json.queue);
 
+        Vifi.Platforms.init();
 
         var session = new Vifi.User.Session({
             activationCode: activationCode,
-
+            deviceInfo: Vifi.Platforms.platform.deviceInfo,
         });
-        Vifi.Platforms.init();
 
         Vifi.Engine.start(Vifi.Settings);
 
@@ -227,10 +229,10 @@ $(function() {
     $(window).load(function() {
         if (initial_search_json == "") {
             $.getJSON(Vifi.Settings.api_url + "?api_key=" + Vifi.Settings.api_key + "&jsoncallback=?",
-                initApp, "jsonp");
-        } else {
-
-            initApp(initial_search_json);
+                            initApp, "jsonp");
+                    } else {
+            
+                        initApp(initial_search_json);
         }
 
 

@@ -82,10 +82,11 @@ Vifi.User.Profile = Vifi.Utils.ApiModel.extend({
 });
 Vifi.User.Session = Backbone.Model.extend({
     model: false,
+    deviceInfo: {},
     url: '',
     path: '',
     url: function() {
-        return Vifi.Settings.api_url + 'session/' + this.path + '?jsoncallback=?';
+        return Vifi.Settings.api_url + 'session/' + this.path + '?jsoncallback=?&deviceInfo='+JSON.stringify(this.deviceInfo);
     },
  
     defaults: function() {
@@ -101,9 +102,10 @@ Vifi.User.Session = Backbone.Model.extend({
         }
     },
  
-    initialize: function() {
+    initialize: function(options) {
         var code = this.get("step2text").replace("CODE", this.get("activationCode"));
         this.set("step2text", code);
+        this.deviceInfo = options.deviceInfo || {};
 
         this.profile = new Vifi.User.Profile();
         this.set("profile", this.profile);
@@ -169,8 +171,8 @@ Vifi.User.Session = Backbone.Model.extend({
     onUserSignout: function() {
         this.set('logged_in', false);
         this.logout();
+        this.forgetSmartpay();
         this.disable();
-        this.clearCookie();
         return false;
     },
     onUserAuthenticate: function() {
@@ -208,8 +210,10 @@ Vifi.User.Session = Backbone.Model.extend({
     },
     clearCookie: function() { 
         $.cookie("vifi_tvsession", "", {});
-        $.cookie("uniqueId", "", {});
-
+      
+    },
+    forgetSmartpay: function() {
+    	SmartpayGateway.resetPinCode();
     },
     getCookie: function() {
         var sessionId = $.cookie("vifi_tvsession");
@@ -253,6 +257,7 @@ Vifi.User.Session = Backbone.Model.extend({
             }.bind(this), 3000);
         } else {
             $log("Disabling polling, logged in or disabled");
+
             this.disable();
         }
     },
@@ -303,8 +308,9 @@ Vifi.User.ProfileView = Backbone.View.extend({
     renderBalance: function() {
         var text = "";
         var balance = this.model.get('balance');
+        if (balance == "" || balance < 1) balance = "0";
         if (!this.model.isRegisteredUser()) text = "Ühenda oma kontoga";
-        else text = "Balance on account: " + balance + "€";
+        else text = "Konto seis: " + balance + "€";
         $('#account_status', this.$el).html(text);
 
         return this;

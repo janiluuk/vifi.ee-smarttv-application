@@ -74,8 +74,13 @@ Vifi.KeyHandler = {
 
             if (action == "onExit") {
                 if (activePage != "#exitPage") { 
+                    if (activePage == "#purchasePage") {
+                        setTimeout(function() { Vifi.Event.trigger("exit", true); },1500);
+                    } 
+
                     Vifi.Event.trigger("exit", true);
                 } else {
+
                     Vifi.Engine.getPlatform().exit();
                 }
                 return false;

@@ -11,8 +11,8 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
         'click #button-trailer': 'playTrailer',
     },
     initialize: function() {
-        Vifi.Event.on('film:show', this.showFilm, this);
-        Vifi.Event.on('trailer:show', this.playTrailer, this);
+        this.listenTo(Vifi.Event, 'film:show', this.showFilm, this);
+        this.listenTo(Vifi.Event, 'trailer:show', this.playTrailer, this);
         _.bindAll(this, 'render');
     },
     playFilm: function(event) {
@@ -37,11 +37,19 @@ Vifi.Films.FilmDetailView = Backbone.View.extend({
         if (undefined == film) {
             var film = app.browsercollection.get(id);
         }
+        /* Clean up a bit */
+
+        if (undefined != goog.dom.getElement("movie-actions")) {
+            var page = tv.ui.getComponentByElement(goog.dom.getElement("movie-actions"));
+            if (undefined !== page) {
+                page.removeChildren();
+            }
+        }
+
         if (undefined !== film) {
             router.navigate('film/' + id);
             this.model = film;
             this.listenToOnce(this.model, "change", this.render);
-
             this.render().showPage();
         }
     },
@@ -99,7 +107,7 @@ Vifi.Films.FilmView = Backbone.View.extend({
     },
     onClickShowDetails: function(event) {
         event.preventDefault();
-        $log("Showing film" + this.id);
+   //     $log("Showing film" + this.id);
         Vifi.Event.trigger("film:show", this.model.id);
         event.stopPropagation();
     },
@@ -239,8 +247,13 @@ Vifi.Films.TrailerView = Backbone.View.extend({
     _bindKeys: function() {
         Vifi.KeyHandler.bind("all", this.touchVideoNavigationTimeout,this);
         
-        if (typeof(pluginAPI) != "undefined") Vifi.Platforms.platform.enableMute();
+        if (typeof(pluginAPI) != "undefined") { 
+        setTimeout(function() {
 
+            Vifi.Platforms.platform.enableMute();
+        },500);
+        
+        }
         _.each(this._keyMap, function(key,item) {
             Vifi.KeyHandler.unbind("keyhandler:"+item);
             Vifi.KeyHandler.bind("keyhandler:"+item, eval("this."+key), this);
@@ -303,7 +316,7 @@ Vifi.Films.TrailerView = Backbone.View.extend({
         if (film.youtube_id) {
 
             this.done = false;
-
+            
             this.player = new YT.Player('ytplayer', {
                 playerVars: {
                     'autoplay': 1,
@@ -323,10 +336,10 @@ Vifi.Films.TrailerView = Backbone.View.extend({
     loadPlayer: function() {
         if (typeof(YT) != "undefined") return false;
         $("#youtubeplayer").remove();
-
+        
         var tag = document.createElement('script');
         tag.id = "youtubeplayer";
-        tag.src = "http://www.youtube.com/iframe_api";
+        tag.src = "https://www.youtube.com/iframe_api";
         var firstScriptTag = document.getElementsByTagName('script')[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
         return true;

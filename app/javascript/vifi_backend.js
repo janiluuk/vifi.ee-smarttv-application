@@ -8,7 +8,7 @@ Vifi.PageManager = {
     accountPage: $("#" + Vifi.Settings.accountpageId),
     activationPage: $("#" + Vifi.Settings.activationPageId),
     exitPage: $("#" + Vifi.Settings.exitPageId),
-
+    errorPage: $("#" + Vifi.Settings.errorPageId),
     alertPage: $("#" + Vifi.Settings.activationPageId),
     purchasePage: $("#" + Vifi.Settings.purchasePageId),
     name: "Pagemanager",
@@ -216,7 +216,7 @@ Vifi.PageManager = {
     },
     decorateElement: function(el, handler) {
         var el = tv.ui.getComponentByElement(goog.dom.getElement(el));
-        if (undefined == el || !el ||  !handler)
+        if (undefined == el || !el || !handler)
             return false;
         tv.ui.decorateChildren(el.getElement(), function(component) {
             goog.events.listen(component, tv.ui.Component.EventType.KEY, handler);
@@ -593,6 +593,42 @@ Vifi.Views.DialogView = Backbone.View.extend({
 });
 
 
+Vifi.ErrorView = Vifi.Views.DialogView.extend({
+    el: $("#" + Vifi.Settings.errorPageId),
+    fullexit: true,
+    events: {
+        'click #errorexit': 'exit',
+    },
+
+    initialize: function() {
+        this.template = _.template($("#errorTemplate").html());
+        this.render();
+        Vifi.Event.on('error', this.show, this);
+
+    },
+
+    render: function() {
+        this.$el.html(this.template(this.model.toJSON()));
+        Vifi.Event.trigger("page:ready", "#" + this.$el.attr("id"));
+        return this;
+    },
+    onShow: function(fullexit) {
+        this.exit = fullexit;
+        Vifi.PageManager.redraw("#errorPage", true);
+
+    },
+    onHide: function() {
+        Vifi.Event.trigger("page:back");
+        
+    
+    },
+    exit: function() {
+        Vifi.Platforms.platform.exit(true);
+        return false;
+    }
+
+});
+
 Vifi.ExitView = Vifi.Views.DialogView.extend({
     el: $("#" + Vifi.Settings.exitPageId),
     fullexit: false,
@@ -622,7 +658,9 @@ Vifi.ExitView = Vifi.Views.DialogView.extend({
     },
     onHide: function() {
         Vifi.Event.trigger("page:back");
+        
         Vifi.PageManager.redraw("#purchasePage", true);
+        
 
     },
     exit: function() {

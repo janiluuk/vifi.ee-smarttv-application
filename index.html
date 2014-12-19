@@ -51,6 +51,8 @@
             <!-- VIDEO PLUGIN -->
             <div class="animation">
                  <div id="exitPage" class="container" style="display:none;"></div>
+                <div id="errorPage" class="container" style="display:none;"></div>
+
                  <div id="alertPage" class="container" style="display:none;"></div>
 
 
@@ -161,7 +163,7 @@
                                                         <p class="rating">
                                                             <span class="stars r{{ star_rating }}"></span>
                                                         </p>
-                                                        <div class="buttonsrow tv-container-horizontal">
+                                                        <div id="movie-actions" class="buttonsrow tv-container-horizontal">
                                                                     <div id="watch" class="tv-button tv-component movie-button action-button"><div id="button-watch" class="width20 fl button play">Vaata filmi</div>
                                                             </div>
                                                         
@@ -222,7 +224,7 @@
                                 <p class="username" id="account_username"><%- email %></p>
                                 <p class="status" id="account_status">Seda seadet pole ühendatud isikliku kontoga</p>
                                 <div class="buttonsrow tv-container-horizontal no-up">
-                                            <div id="pairButton" class="tv-button tv-component action-button account-button"><div id="pair" class="width20 fl button signin">Pair account</div>
+                                            <div id="pairButton" class="tv-button action-button account-button"><div id="pair" class="width20 fl button signin">Pair account</div>
                                         </div>
                                     <div id="reloadButton" class="tv-button tv-component action-button account-button"><div id="reload" class="width20 fl button reload help">Info / Abi</div>
                                     </div>
@@ -427,6 +429,20 @@
                                 </div>
                                 <div class="tv-component action-button no-down no-up" id="closeExit"><a href="#" class="fl button no-up no-down">Tagasi</a>
                                 </div>
+                               
+                        </div>
+            </div>
+          
+</script>
+<script type="text/template" id="errorTemplate">
+            <div class="alert-container">
+                <div id="alert-icon"></div>
+                <p class="header"><span>Ühendusega tekkis probleem, kontrolli ühendus ja proovi hiljem uuesti.</span></p><p><br/></p>
+               
+                        <div class="buttonsrow tv-container-horizontal">
+                                <div class="tv-component action-button no-down no-up" id="errorexit"><a href="#" class="fl button">Ok</a>
+                                </div>
+                         
                                
                         </div>
             </div>
