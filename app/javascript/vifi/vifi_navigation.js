@@ -1,16 +1,26 @@
-/*
-    Main Navigation Object, it does a few things
-    
-    1. Registers for key events.
-    2. Enables and Disables Navigation
-    3. Manages Menus
-    
-    
-    TODO: The History stack is an incomplete implementation.
-*/
+/**
+ * Navigation Module
+ * Handles TV remote control navigation and user input
+ * 
+ * @namespace Vifi.Navigation
+ * @description
+ * Main Navigation Object that manages:
+ * 1. Registration for key events
+ * 2. Enable/Disable navigation states
+ * 3. Menu management
+ * 4. Touch and mouse event handling
+ * 
+ * @todo The History stack is an incomplete implementation
+ */
 Vifi.Navigation = {
+    /** Navigation enabled state */
     enabled: true,
+    /** Array of event names this module handles */
     _eventsIHandle: ['onright', 'onleft', 'onup', 'ondown', 'onselect', 'onred', 'onblue', 'onyellow', 'onback', 'onreturn'],
+    
+    /**
+     * Enable navigation and restore focus
+     */
     enable: function() {
         this.enabled = true;
         this.initTouch();
