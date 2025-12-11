@@ -99,6 +99,7 @@ vifi.ee-smarttv-application/
 - Samsung Smart TV SDK (for development and testing)
 - Web server (for local testing)
 - Modern web browser (for desktop testing)
+- Node.js 14+ (for running tests and build tools)
 
 ### Installation
 
@@ -108,8 +109,16 @@ vifi.ee-smarttv-application/
    cd vifi.ee-smarttv-application
    ```
 
-2. Serve the application using a local web server:
+2. Install dependencies (optional, for testing):
    ```bash
+   npm install
+   ```
+
+3. Serve the application using a local web server:
+   ```bash
+   # Using npm script (recommended)
+   npm start
+   
    # Using Python 3
    python3 -m http.server 8000
    
@@ -126,6 +135,37 @@ vifi.ee-smarttv-application/
    - **Samsung TV**: Deploy to TV using Samsung Smart TV SDK
 
 ## Development
+
+### Testing
+
+The project includes automated tests to validate structure and configuration:
+
+```bash
+# Run all tests
+npm test
+
+# Validate HTML structure
+npm run validate
+
+# Run linter (when configured)
+npm run lint
+```
+
+Tests validate:
+- File structure and organization
+- JavaScript module presence
+- HTML structure and paths
+- Configuration files
+- Documentation completeness
+
+See [tests/README.md](tests/README.md) for more details.
+
+### Continuous Integration
+
+GitHub Actions automatically runs tests on:
+- Push to main/master branches
+- Pull requests
+- Push to feature branches
 
 ### Local Development
 
