@@ -1,5 +1,22 @@
+/**
+ * Global event bus for application-wide communication
+ * Uses Backbone.Events for pub/sub pattern
+ * @namespace Vifi.Event
+ */
 Vifi.Event = _.extend({}, Backbone.Events);
+
+/**
+ * Base view class for pages
+ * @class Vifi.PageView
+ * @extends Backbone.View
+ */
 Vifi.PageView = Backbone.View.extend({});
+
+/**
+ * Page Manager
+ * Manages page navigation, transitions, and TV remote focus handling
+ * @namespace Vifi.PageManager
+ */
 Vifi.PageManager = {
     moviePage: $("#" + Vifi.Settings.moviepageId),
     browserPage: $("#" + Vifi.Settings.browserpageId),

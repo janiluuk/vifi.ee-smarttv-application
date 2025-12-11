@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master, copilot/** ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Install dependencies
+      run: |
+        npm install
+        
+    - name: Run tests
+      run: |
+        npm test
+        
+    - name: Validate HTML structure
+      run: |
+        npm run validate
+        
+    - name: Check file structure
+      run: |
+        echo "Checking required files..."
+        test -f index.html || (echo "index.html not found" && exit 1)
+        test -f mobile.html || (echo "mobile.html not found" && exit 1)
+        test -f config.xml || (echo "config.xml not found" && exit 1)
+        test -d app/javascript/vifi || (echo "app/javascript/vifi not found" && exit 1)
+        test -d app/javascript/lib || (echo "app/javascript/lib not found" && exit 1)
+        test -d app/stylesheets || (echo "app/stylesheets not found" && exit 1)
+        echo "All required files present!"
+        
+    - name: Verify JavaScript modules
+      run: |
+        echo "Checking JavaScript modules..."
+        test -f app/javascript/vifi/vifi_engine.js || (echo "vifi_engine.js not found" && exit 1)
+        test -f app/javascript/vifi/vifi_backend.js || (echo "vifi_backend.js not found" && exit 1)
+        test -f app/javascript/vifi/vifi_player.js || (echo "vifi_player.js not found" && exit 1)
+        test -f app/javascript/lib/jquery-2.1.0.min.js || (echo "jQuery not found" && exit 1)
+        test -f app/javascript/lib/backbone-min.js || (echo "Backbone.js not found" && exit 1)
+        echo "All JavaScript modules present!"
+        
+    - name: Build summary
+      run: |
+        echo "✅ Build completed successfully!"
+        echo "📁 File structure validated"
+        echo "🔧 JavaScript modules verified"
+        echo "✨ Application ready for deployment"

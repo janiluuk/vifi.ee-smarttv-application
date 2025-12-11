@@ -1,3 +1,9 @@
+/**
+ * Film Content Model
+ * Manages movie content data including videos, images, and subtitles
+ * @class Vifi.Player.FilmContent
+ * @extends Vifi.Utils.ApiModel
+ */
 Vifi.Player.FilmContent = Vifi.Utils.ApiModel.extend({
     'path': 'content',
     defaults: {
@@ -51,6 +57,12 @@ Vifi.Player.FilmContent = Vifi.Utils.ApiModel.extend({
     }
 });
 
+/**
+ * Player View
+ * Handles the video player UI and user interactions
+ * @class Vifi.Player.PlayerView
+ * @extends Backbone.View
+ */
 Vifi.Player.PlayerView = Backbone.View.extend({
     tagName: 'div',
     playerTag: 'player',

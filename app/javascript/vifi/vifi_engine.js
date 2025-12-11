@@ -1,49 +1,102 @@
 /**
- *
- *  Vifi Engine
- *
- *  author: Jani Luukkanen
- *  janiluuk@gmail.com
- *
+ * Vifi Engine - Core application module and initialization system
+ * 
+ * @file vifi_engine.js
+ * @author Jani Luukkanen <janiluuk@gmail.com>
+ * @version 0.99.101214
+ * 
+ * @description
+ * The Vifi Engine is the central module that manages the entire application lifecycle.
+ * It handles module registration, initialization, and coordination between different
+ * components of the Smart TV application.
+ * 
+ * @namespace Vifi
  */
 var Vifi = {};
 
+/**
+ * Root namespace for the Vifi Smart TV Application
+ * @namespace Vifi
+ */
 Vifi = {
+    /** @namespace Vifi.Utils - Utility functions */
     Utils: {},
+    /** @namespace Vifi.Views - Backbone views */
     Views: {},
+    /** @namespace Vifi.Films - Movie-related functionality */
     Films: {},
+    /** @namespace Vifi.Browser - Browsing and search functionality */
     Browser: {},
+    /** @namespace Vifi.Player - Video player functionality */
     Player: {},
+    /** @namespace Vifi.Pages - Page views and management */
     Pages: {},
+    /** @namespace Vifi.User - User authentication and profile */
     User: {},
+    /** @namespace Vifi.Event - Application-wide event bus */
     Event: {},
+    
+    /**
+     * Application configuration settings
+     * @namespace Vifi.Settings
+     */
     Settings: {
-        // properties   
+        /** Application version number */
         version: "0.99.101214",
+        /** Debug mode flag - set to true for development */
         debug: false,
+        /** Backend API base URL */
         api_url: 'http://backend.vifi.ee/api/',
+        /** API authentication key */
         api_key: '27ah12A3d76f32',
+        /** DOM ID for browser page */
         browserpageId: 'browserPage',
+        /** DOM ID for movie detail page */
         moviepageId: 'moviePage',
+        /** DOM ID for player page */
         playerPageId: 'playerPage',
+        /** DOM ID for account page */
         accountpageId: 'accountPage',
+        /** DOM ID for toolbar */
         toolbarId: 'toolbar',
+        /** DOM ID for home page */
         homePageId: 'homePage',
+        /** DOM ID for alert page */
         alertPageId: 'alertPage',
+        /** DOM ID for error page */
         errorPageId: 'errorPage',
+        /** DOM ID for exit page */
         exitPageId: 'exitPage',
+        /** DOM ID for activation page */
         activationPageId: 'activationPage',
+        /** DOM ID for purchase page */
         purchasePageId: 'purchasePage'
     }
 }
 
+/**
+ * Core engine module for application initialization and lifecycle management
+ * @namespace Vifi.Engine
+ */
 Vifi.Engine = {
+    /** Collection of registered modules */
     modules: {},
+    /** Array of completion event names */
     _doneEvents: [],
+    /** Count of modules waiting to load */
     _modulesToLoad: 0,
+    /** Default configuration object */
     _defConfig: {},
+    /** Device identifier */
     device_id: false,
 
+    /**
+     * Register a module with the engine
+     * @param {string} name - Module name identifier
+     * @param {Object} module - Module object with init() method
+     * @param {Object} [conf] - Optional configuration object
+     * @param {Array} [conf.callbacks] - Array of callback event names
+     */
     addModule: function(name, module, conf) {
         this.modules[name] = module;
         conf = conf || {}
@@ -58,10 +111,19 @@ Vifi.Engine = {
         }, this)
     },
 
+    /**
+     * Check if a module exists in the registry
+     * @param {string} name - Module name to check
+     * @returns {boolean} True if module exists
+     */
     moduleExists: function(name) {
         return (!_.isNull(this.modules[name]))
     },
 
+    /**
+     * Handle module loading completion
+     * @param {string} callback - Callback event name that completed
+     */
     itemLoaded: function(callback) {
         $log("<<< ITEM LOADED >>>");
         this._modulesToLoad = _.without(this._modulesToLoad, callback);
@@ -71,6 +133,11 @@ Vifi.Engine = {
         }
     },
 
+    /**
+     * Start the application engine
+     * Initializes platform, key handler, and all registered modules
+     * @param {Object} config - Configuration object to merge with defaults
+     */
     start: function(config) {
         this.config = _.defaults(config, this._defConfig);
 
@@ -93,11 +160,19 @@ Vifi.Engine = {
     },
 
 
+    /**
+     * Exit the application
+     * @param {boolean} fullexit - If true, perform complete exit; if false, partial exit
+     */
     exit: function(fullexit) {
         $log("********************************\n       EXIT     \n ********************************");
         this.getPlatform().exit(fullexit);
     },
 
+    /**
+     * Get the current platform adapter
+     * @returns {Object|null} Platform adapter object or null if not available
+     */
     getPlatform: function() {
         if (Vifi.Platforms && Vifi.Platforms.platform) {
             return Vifi.Platforms.platform;
