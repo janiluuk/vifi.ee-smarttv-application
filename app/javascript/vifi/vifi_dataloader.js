@@ -1,4 +1,20 @@
 /**
+ * Data Loader Module
+ * Handles asynchronous data loading from the backend API
+ * 
+ * @file vifi_dataloader.js
+ * @author Jani Luukkanen <janiluuk@gmail.com>
+ * 
+ * @namespace Vifi.DataLoader
+ * @description
+ * This module manages:
+ * - API request queuing and execution
+ * - JSONP requests for cross-domain calls
+ * - Callback handling
+ * - Request prioritization
+ */
+
+/**
  *
  *  Vifi Engine Dataloader
  *

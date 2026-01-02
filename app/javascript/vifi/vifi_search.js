@@ -1,3 +1,25 @@
+/**
+ * Search and Browse Module
+ * Handles movie search and browsing functionality
+ * 
+ * @file vifi_search.js
+ * @author Jani Luukkanen <janiluuk@gmail.com>
+ * 
+ * @namespace Vifi.Pages.Browser
+ * @description
+ * This module manages:
+ * - Movie search functionality
+ * - Genre filtering and browsing
+ * - Search form handling
+ * - Search results display
+ */
+
+/**
+ * Browser Page View
+ * Main view for browsing and searching movies
+ * @class Vifi.Pages.Browser
+ * @extends Vifi.PageView
+ */
 Vifi.Pages.Browser = Vifi.PageView.extend({
     el: $("#browserPage"),
     model: new Vifi.Films.GenreCollection(),

@@ -1,3 +1,26 @@
+/**
+ * User Module
+ * Handles user authentication, profile management, and session handling
+ * 
+ * @file vifi_user.js
+ * @author Jani Luukkanen <janiluuk@gmail.com>
+ * 
+ * @namespace Vifi.User
+ * @description
+ * This module manages:
+ * - User authentication and login
+ * - User profile data and settings
+ * - Session management
+ * - User preferences and favorites
+ * - Purchase history and tickets
+ */
+
+/**
+ * User Profile Model
+ * Represents user profile data and settings
+ * @class Vifi.User.Profile
+ * @extends Vifi.Utils.ApiModel
+ */
 Vifi.User.Profile = Vifi.Utils.ApiModel.extend({
     path: 'profile',
     params: "",
