@@ -311,7 +311,7 @@ test('vifi_mediaplayer_samsung.js defines Samsung player', () => {
     assert(content.includes('Samsung'), 'Samsung player reference not found');
 });
 
-test('vifi_mediaplayer_browser.js defines browser player', () => {
+test('vifi_mediaplayer.js defines MediaPlayer', () => {
     const content = readFile('app/javascript/vifi/vifi_mediaplayer.js');
     assert(content.includes('MediaPlayer'), 'MediaPlayer not found');
 });
