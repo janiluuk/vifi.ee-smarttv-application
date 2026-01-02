@@ -23,9 +23,18 @@ jobs:
       run: |
         npm install
         
-    - name: Run tests
+    - name: Run ESLint
+      run: |
+        npm run lint
+      continue-on-error: true
+        
+    - name: Run structure tests
       run: |
         npm test
+        
+    - name: Run unit tests
+      run: |
+        npm run test:unit
         
     - name: Validate HTML structure
       run: |
@@ -52,9 +61,21 @@ jobs:
         test -f app/javascript/lib/backbone-min.js || (echo "Backbone.js not found" && exit 1)
         echo "All JavaScript modules present!"
         
+    - name: Check documentation
+      run: |
+        echo "Checking documentation..."
+        test -f README.md || (echo "README.md not found" && exit 1)
+        test -f CONTRIBUTING.md || (echo "CONTRIBUTING.md not found" && exit 1)
+        test -f docs/API.md || (echo "docs/API.md not found" && exit 1)
+        test -f docs/ARCHITECTURE.md || (echo "docs/ARCHITECTURE.md not found" && exit 1)
+        test -f docs/DEPLOYMENT.md || (echo "docs/DEPLOYMENT.md not found" && exit 1)
+        test -f docs/TESTING.md || (echo "docs/TESTING.md not found" && exit 1)
+        echo "All documentation present!"
+        
     - name: Build summary
       run: |
         echo "✅ Build completed successfully!"
         echo "📁 File structure validated"
         echo "🔧 JavaScript modules verified"
+        echo "📚 Documentation complete"
         echo "✨ Application ready for deployment"
