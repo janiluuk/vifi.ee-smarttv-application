@@ -9,8 +9,7 @@
  * 2. Enable/Disable navigation states
  * 3. Menu management
  * 4. Touch and mouse event handling
- * 
- * @todo The History stack is an incomplete implementation
+ * 5. Navigation history stack for back button support
  */
 Vifi.Navigation = {
     /** Navigation enabled state */
@@ -187,24 +186,67 @@ Vifi.Navigation = {
         };
     },
 
+    /**
+     * Navigate back to previous focus state
+     */
     back: function() {
         var last = this.History.popLastItem();
-        this.setFocus(last.menu, last.item);
+        if (last) {
+            this.setFocus(last.menu, last.item);
+        }
     },
 
+    /**
+     * Navigation History Stack
+     * Manages navigation history for back button functionality
+     * @namespace Vifi.Navigation.History
+     */
     History: {
+        /** Maximum number of items to keep in history */
         maxStackLength: 50,
+        /** Internal stack array */
         _stack: [],
+        
+        /**
+         * Add an item to the history stack
+         * @param {Object} item - Focus state object with menu and item properties
+         */
         addItemToStack: function(item) {
-            if (this._stack.length == this.maxStackLength) this._stack.shift();
+            if (this._stack.length === this.maxStackLength) {
+                this._stack.shift();
+            }
             this._stack.push(item);
         },
-        // Note this changes the stack.
-        last: function() {
-            return this._stack.pop();
+        
+        /**
+         * Pop and return the last item from the stack
+         * @returns {Object|null} Last focus state or null if stack is empty
+         */
+        popLastItem: function() {
+            return this._stack.length > 0 ? this._stack.pop() : null;
         },
+        
+        /**
+         * Get the last item without removing it from the stack
+         * @returns {Object|null} Last focus state or null if stack is empty
+         */
+        last: function() {
+            return this._stack.length > 0 ? this._stack[this._stack.length - 1] : null;
+        },
+        
+        /**
+         * Clear the history stack
+         */
         clear: function() {
             this._stack = [];
+        },
+        
+        /**
+         * Get the current stack size
+         * @returns {number} Number of items in the stack
+         */
+        size: function() {
+            return this._stack.length;
         }
     }
 }

@@ -1,4 +1,25 @@
+/**
+ * Payment Module
+ * Handles payment processing and credit purchases
+ * 
+ * @file vifi_payment.js
+ * @author Jani Luukkanen <janiluuk@gmail.com>
+ * 
+ * @namespace Vifi.Payment
+ * @description
+ * This module manages:
+ * - SmartPay payment gateway integration
+ * - Credit purchases
+ * - Payment callbacks and verification
+ * - Purchase flow handling
+ */
 
+/**
+ * Payment Model
+ * Manages payment transactions and credit purchases
+ * @class Vifi.Payment
+ * @extends Backbone.Model
+ */
 Vifi.Payment = Backbone.Model.extend({
     film: false,
     session: false,

@@ -17,12 +17,16 @@ Vifi.Films.BrowserCollection = Backbone.Collection.extend({
             this.pagination = options.pagination;
         }
     },
+    /**
+     * Update the collection URL with current state
+     * Handles JSONP callback configuration for cross-domain requests
+     */
     update: function() {
-        //'&callback=?' is for jsonp cross domain  // deleted for now.
-        // TODO: add back in the callback=?  but then we'll need to generate it in django.
+        // Use jsoncallback parameter for JSONP cross-domain requests
+        // The backend API expects 'jsoncallback' as the callback parameter name
+        // jQuery will automatically replace '?' with a generated function name
         this.url = this.baseUrl + this.state.getQueryString() + '&api_key=' + Vifi.Settings.api_key + '&jsoncallback=?';
         this.fetch();
-
     },
 
     parse: function(response) {

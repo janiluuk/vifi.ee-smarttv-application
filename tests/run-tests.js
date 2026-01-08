@@ -198,8 +198,8 @@ test('docs/ARCHITECTURE.md exists', () => {
     assert(fileExists('docs/ARCHITECTURE.md'), 'docs/ARCHITECTURE.md not found');
 });
 
-test('docs/DEPLOYMENT.md exists', () => {
-    assert(fileExists('docs/DEPLOYMENT.md'), 'docs/DEPLOYMENT.md not found');
+test('docs/TESTING.md exists', () => {
+    assert(fileExists('docs/TESTING.md'), 'docs/TESTING.md not found');
 });
 
 // Print summary

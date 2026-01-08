@@ -1,7 +1,37 @@
+/**
+ * Films Module
+ * Manages movie models, collections, and views for browsing and displaying films
+ * 
+ * @file vifi_films.js
+ * @author Jani Luukkanen <janiluuk@gmail.com>
+ * 
+ * @namespace Vifi.Films
+ * @description
+ * This module handles:
+ * - Film data models and collections
+ * - Film detail views
+ * - Film browsing and search results
+ * - Film interaction (play, queue management)
+ */
+
 /******************/
 /* Film Models & Collections */
 /******************************/
+
+/**
+ * Film Model
+ * Represents a single film with its metadata
+ * @class Vifi.Films.FilmModel
+ * @extends Backbone.Model
+ */
 Vifi.Films.FilmModel = Backbone.Model.extend({});
+
+/**
+ * Film Detail View
+ * Displays detailed information about a film
+ * @class Vifi.Films.FilmDetailView
+ * @extends Backbone.View
+ */
 Vifi.Films.FilmDetailView = Backbone.View.extend({
     tagName: 'div',
     el: $("#moviePage"),

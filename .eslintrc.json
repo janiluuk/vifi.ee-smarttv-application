@@ -1,0 +1,52 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "jquery": true
+  },
+  "extends": "eslint:recommended",
+  "globals": {
+    "Vifi": "writable",
+    "Backbone": "readonly",
+    "_": "readonly",
+    "ich": "readonly",
+    "Pusher": "readonly",
+    "webapis": "readonly",
+    "Common": "readonly",
+    "TVKeyValue": "readonly",
+    "widgetAPI": "readonly"
+  },
+  "parserOptions": {
+    "ecmaVersion": 5,
+    "sourceType": "script"
+  },
+  "rules": {
+    "indent": ["warn", 4],
+    "linebreak-style": ["error", "unix"],
+    "quotes": ["warn", "single", { "avoidEscape": true }],
+    "semi": ["warn", "always"],
+    "no-unused-vars": ["warn", { "vars": "all", "args": "none" }],
+    "no-console": "off",
+    "no-undef": "error",
+    "no-redeclare": "error",
+    "no-dupe-keys": "error",
+    "no-duplicate-case": "error",
+    "no-empty": "warn",
+    "no-extra-semi": "warn",
+    "no-unreachable": "warn",
+    "eqeqeq": ["warn", "always", { "null": "ignore" }],
+    "curly": ["warn", "all"],
+    "brace-style": ["warn", "1tbs", { "allowSingleLine": true }],
+    "no-mixed-spaces-and-tabs": "error",
+    "no-trailing-spaces": "warn",
+    "no-multiple-empty-lines": ["warn", { "max": 2 }],
+    "space-before-function-paren": ["warn", {
+      "anonymous": "never",
+      "named": "never",
+      "asyncArrow": "always"
+    }],
+    "comma-spacing": ["warn", { "before": false, "after": true }],
+    "key-spacing": ["warn", { "beforeColon": false, "afterColon": true }],
+    "space-infix-ops": "warn"
+  }
+}

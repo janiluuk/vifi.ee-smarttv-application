@@ -4,9 +4,12 @@
   "description": "Samsung Smart TV application for streaming movies from Vifi.ee",
   "scripts": {
     "test": "node tests/run-tests.js",
+    "test:unit": "node tests/unit-tests.js",
+    "test:all": "npm test && npm run test:unit",
     "validate": "node tests/validate-html.js",
     "start": "npx http-server -p 8000",
-    "lint": "echo 'No linter configured yet'"
+    "lint": "eslint app/javascript/vifi/**/*.js",
+    "lint:fix": "eslint app/javascript/vifi/**/*.js --fix"
   },
   "repository": {
     "type": "git",
@@ -21,7 +24,10 @@
   "author": "Jani Luukkanen <janiluuk@gmail.com>",
   "license": "SEE LICENSE IN LICENSE",
   "devDependencies": {
-    "html-validator": "^6.0.1"
+    "eslint": "^8.57.0",
+    "html-validator": "^6.0.1",
+    "jquery": "^3.7.1",
+    "jsdom": "^24.0.0"
   },
   "engines": {
     "node": ">=14.0.0"

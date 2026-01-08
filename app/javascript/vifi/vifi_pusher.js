@@ -1,3 +1,18 @@
+/**
+ * Pusher Integration Module
+ * Handles real-time communication using Pusher service
+ * 
+ * @file vifi_pusher.js
+ * @author Jani Luukkanen <janiluuk@gmail.com>
+ * 
+ * @namespace Vifi.Pusher
+ * @description
+ * This module manages:
+ * - Real-time event subscription
+ * - Pusher channel authentication
+ * - Client event handling
+ * - Device pairing notifications
+ */
 
 /* Enable pusher logging - don't include this in production
 Pusher.log = function(message) {
@@ -7,6 +22,10 @@ Pusher.log = function(message) {
 };
 */
 
+/**
+ * Pusher instance for real-time communication
+ * @memberof Vifi.Pusher
+ */
 var pusher = new Pusher('4c4fbbdf6a43d69d8a95', {
     authEndpoint: 'http://backend.vifi.ee/auth/',
     authTransport: 'jsonp' 

@@ -138,34 +138,66 @@ vifi.ee-smarttv-application/
 
 ### Testing
 
-The project includes automated tests to validate structure and configuration:
+The project includes comprehensive automated tests to validate structure, functionality, and code quality:
 
 ```bash
-# Run all tests
+# Run all tests (structure + unit tests)
+npm run test:all
+
+# Run structure tests only
 npm test
+
+# Run unit tests only
+npm run test:unit
 
 # Validate HTML structure
 npm run validate
 
-# Run linter (when configured)
+# Run linter
 npm run lint
+
+# Fix linting issues automatically
+npm run lint:fix
 ```
 
-Tests validate:
-- File structure and organization
-- JavaScript module presence
-- HTML structure and paths
-- Configuration files
-- Documentation completeness
+#### Test Coverage
 
-See [tests/README.md](tests/README.md) for more details.
+Tests validate:
+- **File Structure** (32 tests): Project organization and required files
+- **Unit Tests** (28 tests): Module structure and code quality
+- **HTML Validation**: Markup structure and validity
+- **Code Quality**: ESLint rules and JSDoc documentation
+- **Module Dependencies**: Proper library usage
+- **Navigation System**: TV remote handling
+- **Player System**: Media player implementations
+- **Technical Debt**: Tracking TODOs and improvements
+
+See [docs/TESTING.md](docs/TESTING.md) for comprehensive testing documentation.
+
+### Code Quality
+
+The project uses ESLint for code quality enforcement:
+
+- **Configuration**: `.eslintrc.json` with Smart TV-specific globals
+- **Style Guide**: Consistent code formatting with `.editorconfig`
+- **JSDoc**: Comprehensive inline documentation
+- **Best Practices**: Enforced through linting rules
 
 ### Continuous Integration
 
 GitHub Actions automatically runs tests on:
 - Push to main/master branches
 - Pull requests
-- Push to feature branches
+- Push to feature branches (copilot/**)
+
+The CI pipeline includes:
+1. Install dependencies
+2. Run ESLint for code quality
+3. Run structure tests
+4. Run unit tests
+5. Validate HTML structure
+6. Verify file structure and modules
+7. Check documentation completeness
 
 ### Local Development
 
@@ -193,8 +225,12 @@ The application supports multiple resolutions. Test using browser window sizes:
 
 - Use meaningful variable names
 - Follow existing code patterns
-- Comment complex logic
+- Add JSDoc comments for functions and modules
 - Test on multiple resolutions
+- Follow ESLint rules (run `npm run lint`)
+- Use `.editorconfig` for consistent formatting
+
+For detailed guidelines, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Deployment
 
@@ -271,14 +307,32 @@ Use Alpha Blending? = Yes
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+3. Make your changes following the code style guidelines
+4. Run tests: `npm run test:all`
+5. Run linting: `npm run lint`
+6. Commit your changes (`git commit -m 'Add amazing feature'`)
+7. Push to the branch (`git push origin feature/amazing-feature`)
+8. Open a Pull Request
 
 Please ensure:
-- Code follows existing style conventions
-- Test on Samsung TV emulator or browser
+- Code follows existing style conventions and ESLint rules
+- All tests pass (structure + unit tests)
+- Add tests for new functionality
 - Update documentation as needed
+- Test on Samsung TV emulator or browser
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+
+## Documentation
+
+- **[README.md](README.md)** - Project overview and getting started
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
+- **[docs/API.md](docs/API.md)** - Backend API documentation
+- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** - System architecture
+- **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** - Deployment guide
+- **[docs/TESTING.md](docs/TESTING.md)** - Testing guide
+- **[docs/OPTIMIZATION.md](docs/OPTIMIZATION.md)** - Performance optimization
+- **[tests/README.md](tests/README.md)** - Test infrastructure details
 
 ## License
 

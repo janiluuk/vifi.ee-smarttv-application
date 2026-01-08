@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Third-party libraries
+app/javascript/lib/
+app/javascript/flowplayer/
+
+# Build artifacts
+*.min.js
+
+# Test files (temporarily ignore)
+tests/
+
+# Documentation
+docs/
+
+# Configuration files
+*.json
